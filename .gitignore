@@ -1,0 +1,20 @@
+ORE
+# ===== NÃO publicar dados sensíveis no repositório público =====
+# backups e exports de dados
+seed/
+*.json
+acontece_backup_*.json
+ 
+# planilhas (dados reais de imóveis/clientes)
+*.xlsx
+*.xls
+*.csv
+ 
+# segredos / ambiente
+.env
+*.secret
+ 
+# lixo de sistema
+.DS_Store
+Thumbs.db
+ 

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro de Imóveis - Acontece Imobiliária</title>
+<style>
+    :root{--verde:#2c6e2e;--verde-escuro:#1a4d1b;--borda:#e0e0e0;--fundo:#f4f6f4;
+          --erro:#c62828;--sucesso:#2e7d32;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+         background:var(--fundo);color:#212121;min-height:100vh;padding:24px;}
+    .wrap{max-width:860px;margin:0 auto;}
+    .topbar{background:linear-gradient(135deg,var(--verde-escuro) 0%,var(--verde) 100%);
+            border-radius:16px 16px 0 0;padding:24px 32px;color:#fff;
+            display:flex;align-items:center;gap:16px;}
+    .topbar img{height:42px;filter:brightness(0) invert(1);}
+    .topbar h1{font-size:21px;font-weight:700;}
+    .topbar p{font-size:13px;opacity:.85;margin-top:2px;}
+    .topbar .right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:13px;}
+    .topbar .sair{background:rgba(255,255,255,.15);border:none;color:#fff;padding:8px 14px;
+                  border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;}
+    .topbar .sair:hover{background:rgba(255,255,255,.28);}
+    .card{background:#fff;border-radius:0 0 16px 16px;box-shadow:0 12px 40px rgba(0,0,0,.08);padding:32px;}
+    .form-group{margin-bottom:20px;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+    @media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+    .form-label{display:block;font-size:13px;font-weight:600;color:#424242;margin-bottom:7px;}
+    .req{color:var(--erro);}
+    .form-input{width:100%;padding:13px 15px;border:2px solid var(--borda);border-radius:10px;
+                font-size:15px;background:#fafafa;transition:all .2s;font-family:inherit;}
+    .form-input:focus{outline:none;border-color:var(--verde);background:#fff;}
+    textarea.form-input{resize:vertical;min-height:78px;}
+    .hint{display:block;color:#9e9e9e;font-size:12px;margin-top:5px;}
+    .btn{padding:14px 26px;border:none;border-radius:10px;font-size:15px;font-weight:600;
+         cursor:pointer;transition:all .25s;font-family:inherit;}
+    .btn-primary{background:var(--verde);color:#fff;}
+    .btn-primary:hover{background:var(--verde-escuro);transform:translateY(-2px);box-shadow:0 8px 20px rgba(44,110,46,.3);}
+    .btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none;}
+    .btn-ghost{background:#f0f0f0;color:#424242;}
+    .btn-ghost:hover{background:#e4e4e4;}
+    .actions{display:flex;gap:12px;justify-content:flex-end;margin-top:8px;border-top:1px solid #f0f0f0;padding-top:22px;}
+    .alerta{padding:14px 18px;border-radius:10px;font-size:14px;margin-bottom:22px;display:none;}
+    .alerta.show{display:block;animation:slide .3s ease-out;}
+    .alerta.ok{background:#e8f5e9;color:var(--sucesso);border-left:4px solid var(--sucesso);}
+    .alerta.err{background:#ffebee;color:var(--erro);border-left:4px solid var(--erro);}
+    @keyframes slide{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+    .section-title{font-size:13px;font-weight:700;color:var(--verde);text-transform:uppercase;
+                   letter-spacing:.6px;margin:6px 0 18px;display:flex;align-items:center;gap:8px;}
+    .section-title::after{content:"";flex:1;height:1px;background:#eee;}
+    .recentes{margin-top:30px;}
+    .recentes h2{font-size:15px;color:#424242;margin-bottom:14px;}
+    table{width:100%;border-collapse:collapse;font-size:13px;}
+    th{text-align:left;padding:10px;color:#9e9e9e;font-weight:600;border-bottom:2px solid #eee;
+       text-transform:uppercase;font-size:11px;letter-spacing:.4px;}
+    td{padding:11px 10px;border-bottom:1px solid #f2f2f2;}
+    td .cod{color:var(--verde);font-weight:700;}
+    .badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+    .b-disp{background:#e8f5e9;color:#2e7d32;}.b-vend{background:#e3f2fd;color:#1565c0;}.b-susp{background:#fff8e1;color:#f57f17;}
+    .vazio{text-align:center;color:#bdbdbd;padding:26px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="topbar">
+        <img src="Logo01.png" alt="Acontece" onerror="this.style.display='none'">
+        <div>
+            <h1>Cadastro de Imóveis</h1>
+            <p>Captações — Dashboard de Vendas Acontece</p>
+        </div>
+        <div class="right">
+            <span id="userInfo"></span>
+            <button class="sair" onclick="DB.signOut()">Sair</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div id="alerta" class="alerta"></div>
+
+        <form id="formImovel" autocomplete="off">
+            <div class="section-title">Dados do Imóvel</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Código do Imóvel <span class="req">*</span></label>
+                    <input type="text" id="code" class="form-input" placeholder="Ex: AC3930" style="text-transform:uppercase;" required>
+                    <span class="hint">Código único da captação.</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Data de Cadastro <span class="req">*</span></label>
+                    <input type="date" id="date" class="form-input" required>
+                    <span class="hint">Define o mês de referência no dashboard.</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Endereço Completo <span class="req">*</span></label>
+                <textarea id="address" class="form-input" rows="2"
+                    placeholder="Ex: CLNW 10/11, BLOCO G, APARTAMENTO 214, PAULO ZIMBRES, NOROESTE" required></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Valor do Anúncio (R$) <span class="req">*</span></label>
+                    <input type="text" id="priceDisplay" class="form-input" inputmode="numeric" placeholder="Ex: 690.000,00" required>
+                    <input type="hidden" id="price">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status <span class="req">*</span></label>
+                    <select id="status" class="form-input" required>
+                        <option value="Disponível">Disponível</option>
+                        <option value="Vendido">Vendido</option>
+                        <option value="Suspenso">Suspenso</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Captador <span class="req">*</span></label>
+                <select id="captador" class="form-input" required>
+                    <option value="">Carregando captadores...</option>
+                </select>
+                <span class="hint">Lista carregada dos corretores cadastrados no sistema.</span>
+            </div>
+            <div class="actions">
+                <button type="button" class="btn btn-ghost" onclick="limpar()">Limpar</button>
+                <button type="submit" class="btn btn-primary" id="btnSalvar">Salvar Imóvel</button>
+            </div>
+        </form>
+
+        <div class="recentes">
+            <h2>Últimos cadastros</h2>
+            <table>
+                <thead><tr><th>Código</th><th>Endereço</th><th>Valor</th><th>Captador</th><th>Data</th><th>Status</th></tr></thead>
+                <tbody id="tbodyRecentes"><tr><td colspan="6" class="vazio">Carregando...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="db-supabase.js"></script>
+<script>
+function formatBRL(v){ return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+function moedaInput(el){
+    let v=el.value.replace(/\D/g,''); const num=v?parseInt(v,10)/100:0;
+    document.getElementById('price').value=num;
+    el.value=num.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function alerta(msg,tipo){
+    const a=document.getElementById('alerta');
+    a.textContent=msg; a.className='alerta show '+(tipo==='ok'?'ok':'err');
+    if(tipo==='ok') setTimeout(()=>a.classList.remove('show'),4000);
+    a.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function limpar(){
+    document.getElementById('formImovel').reset();
+    document.getElementById('price').value='';
+    document.getElementById('date').valueAsDate=new Date();
+    document.getElementById('alerta').classList.remove('show');
+}
+async function carregarCaptadores(){
+    const sel=document.getElementById('captador');
+    try{
+        const corretores=await DB.listCorretores();
+        sel.innerHTML='<option value="">Selecione o captador</option>';
+        corretores.filter(c=>c.type==='Captador'||c.type==='Ambos')
+            .forEach(c=>sel.add(new Option(c.name,c.name)));
+        if(sel.options.length===1) sel.add(new Option('Acontece','Acontece'));
+    }catch(e){
+        sel.innerHTML='<option value="">Selecione o captador</option>';
+        sel.add(new Option('Acontece','Acontece'));
+    }
+}
+async function renderRecentes(){
+    const tb=document.getElementById('tbodyRecentes');
+    try{
+        const lista=(await DB.listImoveis()).slice(0,8);
+        if(lista.length===0){ tb.innerHTML='<tr><td colspan="6" class="vazio">Nenhum imóvel cadastrado ainda.</td></tr>'; return; }
+        const badge=s=>s==='Vendido'?'<span class="badge b-vend">Vendido</span>'
+                     :s==='Suspenso'?'<span class="badge b-susp">Suspenso</span>'
+                     :'<span class="badge b-disp">Disponível</span>';
+        tb.innerHTML=lista.map(i=>`
+            <tr>
+                <td><span class="cod">${i.code}</span></td>
+                <td title="${i.address}" style="max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${i.address}</td>
+                <td>${formatBRL(i.price)}</td>
+                <td>${i.captador||'-'}</td>
+                <td>${i.date||'-'}</td>
+                <td>${badge(i.status)}</td>
+            </tr>`).join('');
+    }catch(e){ tb.innerHTML='<tr><td colspan="6" class="vazio">Erro ao carregar imóveis.</td></tr>'; }
+}
+async function salvar(e){
+    e.preventDefault();
+    const btn=document.getElementById('btnSalvar');
+    const code=document.getElementById('code').value.trim().toUpperCase();
+    const address=document.getElementById('address').value.trim();
+    const price=parseFloat(document.getElementById('price').value);
+    const dateIso=document.getElementById('date').value;
+    const captador=document.getElementById('captador').value;
+    const status=document.getElementById('status').value;
+    if(!code||!address||!dateIso||!captador||!(price>0)){
+        alerta('Preencha todos os campos obrigatórios (valor maior que zero).','err'); return;
+    }
+    btn.disabled=true;
+    try{
+        if(await DB.codigoExiste(code)){
+            alerta(`O código ${code} já está cadastrado. Use um código diferente.`,'err');
+            btn.disabled=false; return;
+        }
+        await DB.addImovel({code,address,captador,dateIso,price,status});
+        alerta(`Imóvel ${code} cadastrado com sucesso!`,'ok');
+        limpar();
+        await renderRecentes();
+    }catch(err){
+        alerta('Erro ao salvar: '+(err.message||err),'err');
+    }finally{ btn.disabled=false; }
+}
+document.addEventListener('DOMContentLoaded', async function(){
+    await DB.requireAuth();
+    const user=await DB.getUser();
+    if(user) document.getElementById('userInfo').textContent=user.email;
+    document.getElementById('date').valueAsDate=new Date();
+    document.getElementById('priceDisplay').addEventListener('input',function(){moedaInput(this);});
+    document.getElementById('formImovel').addEventListener('submit',salvar);
+    await carregarCaptadores();
+    await renderRecentes();
+});
+</script>
+</body>
+</html>
