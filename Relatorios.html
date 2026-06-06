@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Acontece Imobiliária</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            color: #212121;
+            line-height: 1.6;
+        }
+
+        /* HEADER COM NAVEGAÇÃO */
+        .top-header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-nav {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 40px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height: 45px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #616161;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .nav-links a:hover {
+            color: #2c6e2e;
+            background: #f5f5f5;
+        }
+
+        .nav-links a.active {
+            color: #2c6e2e;
+            font-weight: 600;
+        }
+
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: #fafafa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .user-info:hover {
+            background: #f0f0f0;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #424242;
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 180px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .user-dropdown.active .user-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-menu-item {
+            padding: 12px 16px;
+            color: #616161;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .user-menu-item:hover {
+            background: #fafafa;
+            color: #2c6e2e;
+        }
+
+        .user-menu-item.danger {
+            color: #e53935;
+        }
+
+        .user-menu-item.danger:hover {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c6e2e;
+            margin-bottom: 10px;
+        }
+
+        .page-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .year-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .year-selector label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #616161;
+        }
+
+        .year-selector select {
+            padding: 10px 16px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #2c6e2e;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .year-selector select:hover {
+            border-color: #2c6e2e;
+        }
+
+        .year-selector select:focus {
+            border-color: #2c6e2e;
+            box-shadow: 0 0 0 3px rgba(44, 110, 46, 0.1);
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: #757575;
+            margin-bottom: 40px;
+        }
+
+        /* KPIs ANUAIS */
+        .annual-summary {
+            margin-bottom: 50px;
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .summary-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .summary-badge {
+            background: #2c6e2e;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .kpis-annual-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .kpi-annual-card {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s;
+        }
+
+        .kpi-annual-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .kpi-annual-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #757575;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .kpi-annual-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2c6e2e;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .kpi-annual-value.success {
+            color: #2c6e2e;
+        }
+
+        .kpi-annual-value.warning {
+            color: #f57c00;
+        }
+
+        .kpi-annual-value.danger {
+            color: #212121;
+        }
+
+        .kpi-annual-subtitle {
+            font-size: 14px;
+            color: #9e9e9e;
+            font-weight: 500;
+        }
+
+        .kpi-annual-subtitle.success {
+            color: #2c6e2e;
+            font-weight: 600;
+        }
+
+        .kpi-annual-subtitle.warning {
+            color: #f57c00;
+            font-weight: 600;
+        }
+
+        .kpi-annual-subtitle.danger {
+            color: #616161;
+            font-weight: 600;
+        }
+
+        /* SEÇÃO DE GRÁFICOS */
+        .charts-section {
+            margin-bottom: 40px;
+        }
+
+        .charts-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .charts-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .year-badge {
+            background: #2c6e2e;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #f0f0f0;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 24px;
+        }
+
+        .chart-container {
+            height: 350px;
+            position: relative;
+        }
+
+        /* RANKING */
+        .ranking-section {
+            margin-bottom: 40px;
+        }
+
+        .ranking-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .ranking-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .ranking-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .ranking-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #f0f0f0;
+        }
+
+        .ranking-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 24px;
+        }
+
+        .ranking-chart-container {
+            height: 450px;
+            position: relative;
+        }
+
+        .ranking-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .ranking-table thead {
+            background: #fafafa;
+        }
+
+        .ranking-table th {
+            padding: 14px 12px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            color: #757575;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .ranking-table th:last-child,
+        .ranking-table th:nth-child(4),
+        .ranking-table th:nth-child(5),
+        .ranking-table th:nth-child(6) {
+            text-align: right;
+        }
+
+        .ranking-table td {
+            padding: 16px 12px;
+            font-size: 14px;
+            color: #424242;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .ranking-table td:last-child,
+        .ranking-table td:nth-child(4),
+        .ranking-table td:nth-child(5),
+        .ranking-table td:nth-child(6) {
+            text-align: right;
+        }
+
+        .ranking-table tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .rank-number {
+            background: #2c6e2e;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .rank-number.top-1 {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+
+        .rank-number.top-2 {
+            background: linear-gradient(135deg, #C0C0C0, #808080);
+        }
+
+        .rank-number.top-3 {
+            background: linear-gradient(135deg, #CD7F32, #8B4513);
+        }
+
+        .money {
+            color: #2c6e2e;
+            font-weight: 600;
+        }
+
+        .commission-value {
+            color: #1976d2;
+            font-weight: 600;
+        }
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 1400px) {
+            .kpis-annual-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ranking-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ranking-chart-container {
+                height: 350px;
+            }
+
+            .kpis-annual-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .kpi-annual-card {
+                padding: 20px;
+            }
+
+            .kpi-annual-value {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+
+            .ranking-table th,
+            .ranking-table td {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+
+            .rank-number {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .summary-header h2 {
+                font-size: 18px;
+            }
+
+            .kpi-annual-label {
+                font-size: 12px;
+            }
+
+            .kpi-annual-value {
+                font-size: 24px;
+            }
+
+            .kpi-annual-subtitle {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER COM NAVEGAÇÃO -->
+    <div class="top-header">
+        <div class="header-nav">
+            <img src="Logo01.png" alt="Acontece Imobiliária" class="logo">
+            <div class="nav-links">
+                <a href="Dash5.html">Dashboard</a>
+                <a href="Relatorios.html" class="active">Relatórios</a>
+                <a href="Propostas.html">Propostas</a>
+                <a href="Configuracoes.html">Configurações</a>
+            </div>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-info" onclick="toggleUserMenu()">
+                    <span class="user-name" id="currentUserName">Usuário</span>
+                    <span style="font-size: 12px; color: #9e9e9e;">▼</span>
+                </div>
+                <div class="user-menu" id="userMenu">
+                    <button class="user-menu-item danger" onclick="logout()">
+                        <span>Sair</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-header-row">
+            <h1 class="page-title">Relatórios Anuais</h1>
+            <div class="year-selector">
+                <label for="yearSelect">Ano:</label>
+                <select id="yearSelect" onchange="changeYear()">
+                    <option value="2025">2025</option>
+                    <option value="2026" selected>2026</option>
+                    <option value="2027">2027</option>
+                </select>
+            </div>
+        </div>
+        <p class="page-subtitle">Análise de desempenho e ranking de corretores do ano selecionado</p>
+
+        <!-- RESUMO ANUAL -->
+        <div class="annual-summary">
+            <div class="summary-header">
+                <h2>Resumo Anual</h2>
+                <span class="summary-badge" id="yearBadge">2026</span>
+            </div>
+            
+            <div class="kpis-annual-grid">
+                <div class="kpi-annual-card">
+                    <div class="kpi-annual-label">Total Vendidos</div>
+                    <div class="kpi-annual-value" id="annual-sales-count">0</div>
+                    <div class="kpi-annual-subtitle">imóveis no ano</div>
+                </div>
+
+                <div class="kpi-annual-card">
+                    <div class="kpi-annual-label">Volume Total</div>
+                    <div class="kpi-annual-value" id="annual-volume">R$ 0,00</div>
+                    <div class="kpi-annual-subtitle">faturamento acumulado</div>
+                </div>
+
+                <div class="kpi-annual-card">
+                    <div class="kpi-annual-label">Comissão Total</div>
+                    <div class="kpi-annual-value" id="annual-commission">R$ 0,00</div>
+                    <div class="kpi-annual-subtitle">comissão acumulada</div>
+                </div>
+
+                <div class="kpi-annual-card">
+                    <div class="kpi-annual-label">Meta Anual</div>
+                    <div class="kpi-annual-value" id="annual-goal-percent">0%</div>
+                    <div class="kpi-annual-subtitle" id="annual-goal-text">da meta do ano</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRÁFICOS MENSAIS -->
+        <div class="charts-section">
+            <div class="charts-header">
+                <h2>Desempenho Mensal</h2>
+                <span class="year-badge">2026</span>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-title">Faturamento Mensal</div>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Comissão Mensal</div>
+                    <div class="chart-container">
+                        <canvas id="commissionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RANKING DE CORRETORES -->
+        <div class="ranking-section">
+            <div class="ranking-header">
+                <h2>Ranking de Corretores</h2>
+                <span class="year-badge">2026</span>
+            </div>
+            
+            <div class="ranking-grid">
+                <!-- Card do Gráfico -->
+                <div class="ranking-card">
+                    <div class="ranking-card-title">Vendas por Corretor</div>
+                    <div class="ranking-chart-container">
+                        <canvas id="rankingChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Card da Tabela -->
+                <div class="ranking-card">
+                    <div class="ranking-card-title">Detalhamento</div>
+                    <div class="ranking-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Corretor</th>
+                                    <th>Vendas</th>
+                                    <th>Volume</th>
+                                    <th>Comissão</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ranking-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RANKING DE CAPTADORES -->
+        <div class="ranking-section">
+            <div class="ranking-header">
+                <h2>Ranking de Captadores - Vendas</h2>
+                <span class="year-badge" id="yearBadgeCaptadores">2026</span>
+            </div>
+            
+            <div class="ranking-grid">
+                <!-- Card do Gráfico -->
+                <div class="ranking-card">
+                    <div class="ranking-card-title">Vendas de Imóveis Captados</div>
+                    <div class="ranking-chart-container">
+                        <canvas id="captadoresChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Card da Tabela -->
+                <div class="ranking-card">
+                    <div class="ranking-card-title">Detalhamento</div>
+                    <div class="ranking-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Captador</th>
+                                    <th>Vendidos</th>
+                                    <th>Volume</th>
+                                    <th>Comissão</th>
+                                </tr>
+                            </thead>
+                            <tbody id="captadores-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RANKING DE CAPTAÇÕES TOTAIS -->
+        <div class="ranking-section">
+            <div class="ranking-header">
+                <h2>Ranking de Captações - Total</h2>
+                <span class="year-badge" id="yearBadgeCaptacoes">2026</span>
+            </div>
+            
+            <div class="ranking-grid">
+                <!-- Card do Gráfico -->
+                <div class="ranking-card">
+                    <div class="ranking-card-title">Total de Imóveis Captados</div>
+                    <div class="ranking-chart-container">
+                        <canvas id="captacoesTotaisChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Card da Tabela -->
+                <div class="ranking-card">
+                    <div class="ranking-card-title">Detalhamento por Status</div>
+                    <div class="ranking-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Captador</th>
+                                    <th>Total</th>
+                                    <th>Disponíveis</th>
+                                    <th>Vendidos</th>
+                                    <th>Suspensos</th>
+                                </tr>
+                            </thead>
+                            <tbody id="captacoes-totais-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'dashboard_acontece_v5';
+        const CONFIG_KEYS = {
+            METAS: 'dashboard_metas'
+        };
+
+        // ===== Supabase: popula o localStorage (cache de leitura) com os dados do banco =====
+        async function hydrateFromSupabase() {
+            const [imoveis, vendas, corretores, metas] = await Promise.all([
+                DB.listImoveis(), DB.listVendas(), DB.listCorretores(), DB.listMetas()
+            ]);
+            const v5 = {};
+            const ensure = m => (v5[m] = v5[m] || { sales: [], capted: [] });
+            imoveis.forEach(i => { if (i.mes) ensure(i.mes).capted.push({
+                code:i.code, address:i.address, captador:i.captador, date:i.date, price:i.price, status:i.status }); });
+            vendas.forEach(s => { if (s.mes) ensure(s.mes).sales.push({
+                code:s.code, address:s.address, captador:s.captador, corretor:s.corretor,
+                date:s.date, value:s.value, commission:s.commission }); });
+            localStorage.setItem('dashboard_acontece_v5', JSON.stringify(v5));
+            localStorage.setItem('dashboard_corretores', JSON.stringify(
+                corretores.map(c => ({ id:c.id, name:c.name, type:c.type, email:c.email, phone:c.phone }))));
+            localStorage.setItem('dashboard_metas', JSON.stringify(
+                metas.map(mt => ({ id:mt.id, startDate:mt.data_inicio, endDate:mt.data_fim,
+                    volumeGoal:Number(mt.meta_volume)||0, commissionGoal:Number(mt.meta_comissao)||0,
+                    period:mt.periodo_label }))));
+        }
+
+        function logout() { if (confirm('Tem certeza que deseja sair?')) DB.signOut(); }
+
+        let revenueChart, commissionChart, rankingChart, captadoresChart, captacoesTotaisChart;
+        let selectedYear = '2026'; // Ano selecionado
+
+        // DADOS INICIAIS (mesmo do dashboard)
+        const initialDataByMonth = {
+            '2026-01': {
+                sales: [
+                    { code: 'MAN0002', address: 'SMDB/SUL, CONJUNTO 04, LOTE 07, CASA D, SETOR DE MANSÕES DOM BOSCO', captador: 'Acontece', corretor: 'Acontece', date: '14/01/2026', value: 2000, commission: 2000 },
+                    { code: 'MAN0003', address: 'SQN 411, BLOCO C, APARTAMENTO 202, ASA NORTE', captador: 'Acontece', corretor: 'Acontece', date: '20/01/2026', value: 760000, commission: 38000 },
+                    { code: 'AC3541', address: 'CA 08, LOTE 01, TORRE 5, BLOCO A, APARTAMENTO 13, PREMIER, LAGO NORTE', captador: 'Acontece', corretor: 'João Vitor', date: '29/01/2026', value: 930000, commission: 32550 }
+                ]
+            },
+            '2026-02': {
+                sales: [
+                    { code: 'AC3650', address: 'SQSW 304, BLOCO D, APARTAMENTO 506, EDIFÍCIO ERNESTO SILVA, SUDOESTE', captador: 'Henrique Carvalho', corretor: 'João Vitor', date: '04/02/2026', value: 1040000, commission: 52000 },
+                    { code: 'AC3796', address: 'CLSW 105, BLOCO C, KIT 152, EDIFÍCIO DIANA MALL BUSINESS, SUDOESTE', captador: 'Henrique Carvalho', corretor: 'João Vitor', date: '09/02/2026', value: 340000, commission: 15300 },
+                    { code: 'AC3834', address: 'SQS 305, BLOCO I, APARTAMENTO 303, ASA SUL', captador: 'Acontece', corretor: 'João Vitor', date: '11/02/2026', value: 1390000, commission: 62550 },
+                    { code: 'AC3786', address: 'AOS 01, BLOCO B, APARTAMENTO 508, OCTOGONAL', captador: 'Henrique Carvalho', corretor: 'Mauro Reis', date: '12/02/2026', value: 880000, commission: 30800 },
+                    { code: 'AC3752', address: 'QS 07, RUA 800, LOTE 09, APARTAMENTO 501, RES. LAURA, AREAL, ÁGUAS CLARAS', captador: 'João Vitor', corretor: 'João Vitor', date: '23/02/2026', value: 294000, commission: 14700 },
+                    { code: 'AC3774', address: 'SHCES 1409, BLOCO I, APARTAMENTO 301, CRUZEIRO NOVO', captador: 'Acontece', corretor: 'João Vitor', date: '26/02/2026', value: 465000, commission: 23250 }
+                ]
+            },
+            '2026-03': {
+                sales: [
+                    { code: 'AC3795', address: 'QS 501, CJ 03, LOTE 04, AP 1304, VG 57, RES. BELA VISTA, SAMAMBAIA', captador: 'Acontece', corretor: 'João Vitor', date: '14/03/2026', value: 212000, commission: 12000 },
+                    { code: 'AC3856', address: 'SQS 415, BLOCO T, APARTAMENTO 302, ASA SUL', captador: 'Acontece', corretor: 'João Vitor', date: '24/03/2026', value: 645000, commission: 32250 },
+                    { code: 'AC3857', address: 'COND. SANTA BÁRBARA, R. FLAMBOYANTS, MÓD G, CASA 05, JARDIM BOTÂNICO', captador: 'Acontece', corretor: 'Mauro Reis', date: '26/03/2026', value: 700000, commission: 34999.98 }
+                ]
+            },
+            '2026-04': {
+                sales: [
+                    { code: 'AC3803', address: 'AVENIDA DAS ARAUCÁRIAS, BLOCO B, APT 1605, REAL QUALITY, ÁGUAS CLARAS', captador: 'João Vitor', corretor: 'Mauro Reis', date: '01/04/2026', value: 370000, commission: 14800 },
+                    { code: 'AC3628', address: 'RUA 22 SUL, LOTE 10, APARTAMENTO 1505 EDIFÍCIO CASTRO ALVES, ÁGUAS CLARAS', captador: 'Acontece', corretor: 'João Vitor', date: '05/04/2026', value: 430000, commission: 21500 },
+                    { code: 'AC3842', address: 'QNM 33, ÁREA ESPECIAL LOTE D, APARTAMENTO 604, RESIDENCIAL ASTRAL, CEILÂNDIA', captador: 'Acontece', corretor: 'Mauro Reis', date: '05/04/2026', value: 275000, commission: 13750 },
+                    { code: 'AC3184', address: 'QR 223, CONJUNTO 06, CASA 13, SAMAMBAIA', captador: 'Henrique Carvalho', corretor: 'Mauro Reis', date: '06/04/2026', value: 155000, commission: 5425 },
+                    { code: 'AC3527', address: 'RUA DAS PITANGUEIRAS, LOTE 3, APARTAMENTO 303, EDIFÍCIO THE POINT, ÁGUAS CLARAS', captador: 'João Vitor', corretor: 'João Vitor', date: '07/04/2026', value: 340000, commission: 17000 },
+                    { code: 'AC3814', address: 'EQRSW 2/3, ÁREA ESPECIAL 2, KIT 101, EDIFÍCIO CARTIER, SUDOESTE', captador: 'Henrique Carvalho', corretor: 'João Vitor', date: '12/04/2026', value: 270000, commission: 9450 },
+                    { code: 'AC3622', address: 'CCSW 03, BLOCO B, APARTAMENTO 108, PORTO FELIZ, SUDOESTE', captador: 'Acontece', corretor: 'Mauro Reis', date: '13/04/2026', value: 815000, commission: 40750 },
+                    { code: 'AC3896', address: 'CCSW 02, LOTE 05, BLOCO A, APARTAMENTO 501, GERALDO CARNEIRO, SUDOESTE', captador: 'Henrique Carvalho', corretor: 'Mauro Reis', date: '16/04/2026', value: 915000, commission: 45750 },
+                    { code: 'AC3758', address: 'SQN 104, BLOCO B, APARTAMENTO 105, ASA NORTE', captador: 'Henrique Carvalho', corretor: 'João Vitor', date: '20/04/2026', value: 1200000, commission: 25200 }
+                ]
+            }
+        };
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', { 
+                style: 'currency', 
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        function formatCompact(value) {
+            if (value >= 1000000) return 'R$ ' + (value/1000000).toFixed(1) + 'M';
+            if (value >= 1000) return 'R$ ' + (value/1000).toFixed(0) + 'K';
+            return formatCurrency(value);
+        }
+
+        function initCharts() {
+            const chartConfig = {
+                type: 'bar',
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            padding: 12,
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 },
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#f0f0f0'
+                            },
+                            ticks: {
+                                color: '#757575',
+                                font: { size: 12 },
+                                callback: function(value) {
+                                    return 'R$ ' + (value/1000000).toFixed(1) + 'M';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#757575',
+                                font: { size: 12 }
+                            }
+                        }
+                    }
+                }
+            };
+
+            revenueChart = new Chart(document.getElementById('revenueChart'), {
+                ...chartConfig,
+                data: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                    datasets: [{
+                        label: 'Faturamento',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        backgroundColor: '#2c6e2e',
+                        borderRadius: 8,
+                        barThickness: 40
+                    }]
+                }
+            });
+
+            commissionChart = new Chart(document.getElementById('commissionChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                    datasets: [{
+                        label: 'Comissão',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        backgroundColor: '#1976d2',
+                        borderRadius: 8,
+                        barThickness: 40
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            padding: 12,
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 },
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#f0f0f0'
+                            },
+                            ticks: {
+                                color: '#757575',
+                                font: { size: 12 },
+                                callback: function(value) {
+                                    return 'R$ ' + (value/1000).toFixed(0) + 'K';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#757575',
+                                font: { size: 12 }
+                            }
+                        }
+                    }
+                }
+            });
+
+            rankingChart = new Chart(document.getElementById('rankingChart'), {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Vendas',
+                        data: [],
+                        backgroundColor: '#2c6e2e',
+                        borderRadius: 8,
+                        barThickness: 30
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            padding: 12,
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#f0f0f0'
+                            },
+                            ticks: {
+                                color: '#757575',
+                                font: { size: 12 }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#757575',
+                                font: { size: 13 }
+                            }
+                        }
+                    }
+                }
+            });
+
+            captadoresChart = new Chart(document.getElementById('captadoresChart'), {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Captações',
+                        data: [],
+                        backgroundColor: '#1976d2',
+                        borderRadius: 8,
+                        barThickness: 30
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            padding: 12,
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#f0f0f0'
+                            },
+                            ticks: {
+                                color: '#757575',
+                                font: { size: 12 }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#757575',
+                                font: { size: 13 }
+                            }
+                        }
+                    }
+                }
+            });
+
+            captacoesTotaisChart = new Chart(document.getElementById('captacoesTotaisChart'), {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Total Captado',
+                        data: [],
+                        backgroundColor: '#43a047',
+                        borderRadius: 8,
+                        barThickness: 30
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            padding: 12,
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#f0f0f0'
+                            },
+                            ticks: {
+                                color: '#757575',
+                                font: { size: 12 }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#757575',
+                                font: { size: 13 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function changeYear() {
+            selectedYear = document.getElementById('yearSelect').value;
+            document.getElementById('yearBadge').textContent = selectedYear;
+            document.getElementById('yearBadgeCaptadores').textContent = selectedYear;
+            document.getElementById('yearBadgeCaptacoes').textContent = selectedYear;
+            updateCharts();
+        }
+
+        function updateCharts() {
+            let allData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            
+            // Se localStorage estiver vazio, usar dados iniciais
+            if (Object.keys(allData).length === 0) {
+                allData = { ...initialDataByMonth };
+            }
+            
+            const revenueByMonth = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            const commissionByMonth = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+            // Variáveis para KPIs anuais
+            let totalSalesCount = 0;
+            let totalVolume = 0;
+            let totalCommission = 0;
+
+            // Agregar dados de todos os meses DO ANO SELECIONADO
+            Object.keys(allData).forEach(monthKey => {
+                const parts = monthKey.split('-');
+                if (parts.length === 2 && parts[0] === selectedYear) {
+                    const month = parseInt(parts[1]) - 1;
+                    const sales = allData[monthKey].sales || [];
+                    
+                    // Para gráficos mensais
+                    const monthRevenue = sales.reduce((sum, sale) => sum + Number(sale.value), 0);
+                    const monthCommission = sales.reduce((sum, sale) => sum + Number(sale.commission), 0);
+                    revenueByMonth[month] += monthRevenue;
+                    commissionByMonth[month] += monthCommission;
+                    
+                    // Para KPIs anuais
+                    totalSalesCount += sales.length;
+                    totalVolume += monthRevenue;
+                    totalCommission += monthCommission;
+                }
+            });
+
+            // Atualizar KPIs anuais
+            updateAnnualKPIs(totalSalesCount, totalVolume, totalCommission);
+
+            // Atualizar gráficos
+            revenueChart.data.datasets[0].data = revenueByMonth;
+            revenueChart.update();
+
+            commissionChart.data.datasets[0].data = commissionByMonth;
+            commissionChart.update();
+
+            // Ranking de corretores (filtrado por ano)
+            updateRanking(allData);
+            
+            // Ranking de captadores (filtrado por ano)
+            updateCaptadores(allData);
+            
+            // Ranking de captações totais (filtrado por ano)
+            updateCaptacoesTotais(allData);
+        }
+
+        function updateAnnualKPIs(salesCount, volume, commission) {
+            // Atualizar Total Vendidos
+            document.getElementById('annual-sales-count').textContent = salesCount;
+            
+            // Atualizar Volume Total
+            document.getElementById('annual-volume').textContent = formatCurrency(volume);
+            
+            // Atualizar Comissão Total
+            document.getElementById('annual-commission').textContent = formatCurrency(commission);
+            
+            // Calcular Meta Anual
+            const metas = JSON.parse(localStorage.getItem(CONFIG_KEYS.METAS) || '[]');
+            let totalAnnualGoal = 0;
+            
+            // Somar todas as metas do ano selecionado
+            for (let month = 1; month <= 12; month++) {
+                const monthKey = `${selectedYear}-${String(month).padStart(2, '0')}`;
+                const currentDate = new Date(`${selectedYear}-${String(month).padStart(2, '0')}-15`);
+                
+                // Encontrar meta vigente para este mês
+                const currentMeta = metas.find(meta => {
+                    const startDate = new Date(meta.startDate);
+                    const endDate = new Date(meta.endDate);
+                    return currentDate >= startDate && currentDate <= endDate;
+                });
+                
+                if (currentMeta) {
+                    totalAnnualGoal += Number(currentMeta.commissionGoal);
+                } else {
+                    // Meta padrão se não houver meta configurada
+                    totalAnnualGoal += 350000;
+                }
+            }
+            
+            // Calcular porcentagem
+            const goalPercent = totalAnnualGoal > 0 ? (commission / totalAnnualGoal) * 100 : 0;
+            
+            // Atualizar KPI de Meta
+            const goalPercentElement = document.getElementById('annual-goal-percent');
+            const goalTextElement = document.getElementById('annual-goal-text');
+            
+            goalPercentElement.textContent = goalPercent.toFixed(1) + '%';
+            goalTextElement.textContent = `de ${formatCurrency(totalAnnualGoal)}`;
+            
+            // Aplicar classes de cor baseado no desempenho
+            goalPercentElement.classList.remove('success', 'warning', 'danger');
+            goalTextElement.classList.remove('success', 'warning', 'danger');
+            
+            if (goalPercent >= 100) {
+                goalPercentElement.classList.add('success');
+                goalTextElement.classList.add('success');
+                goalTextElement.textContent = `Meta atingida! 🎯`;
+            } else if (goalPercent >= 70) {
+                goalPercentElement.classList.add('warning');
+                goalTextElement.classList.add('warning');
+                goalTextElement.textContent = `de ${formatCurrency(totalAnnualGoal)}`;
+            } else {
+                goalPercentElement.classList.add('danger');
+                goalTextElement.classList.add('danger');
+                goalTextElement.textContent = `de ${formatCurrency(totalAnnualGoal)}`;
+            }
+        }
+
+        function updateRanking(allData) {
+            // Se não receber allData, buscar do localStorage ou usar dados iniciais
+            if (!allData) {
+                allData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+                if (Object.keys(allData).length === 0) {
+                    allData = { ...initialDataByMonth };
+                }
+            }
+            
+            const corretorStats = {};
+
+            // Agregar vendas de todos os meses DO ANO SELECIONADO
+            Object.keys(allData).forEach(monthKey => {
+                const parts = monthKey.split('-');
+                if (parts.length === 2 && parts[0] === selectedYear) {
+                    const sales = allData[monthKey].sales || [];
+                    sales.forEach(sale => {
+                        if (!corretorStats[sale.corretor]) {
+                            corretorStats[sale.corretor] = { vendas: 0, volume: 0, comissao: 0 };
+                        }
+                        corretorStats[sale.corretor].vendas++;
+                        corretorStats[sale.corretor].volume += Number(sale.value);
+                        corretorStats[sale.corretor].comissao += Number(sale.commission);
+                    });
+                }
+            });
+
+            // Ordenar por quantidade de vendas
+            const ranking = Object.entries(corretorStats)
+                .map(([corretor, stats]) => ({ corretor, ...stats }))
+                .sort((a, b) => b.vendas - a.vendas)
+                .slice(0, 10);
+
+            // Atualizar gráfico
+            rankingChart.data.labels = ranking.map(r => r.corretor);
+            rankingChart.data.datasets[0].data = ranking.map(r => r.vendas);
+            rankingChart.update();
+
+            // Atualizar tabela
+            const tbody = document.getElementById('ranking-body');
+            tbody.innerHTML = '';
+            
+            if (ranking.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px; color:#9e9e9e;">Nenhuma venda registrada ainda</td></tr>';
+                return;
+            }
+            
+            ranking.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                const rankClass = index === 0 ? 'top-1' : index === 1 ? 'top-2' : index === 2 ? 'top-3' : '';
+                tr.innerHTML = `
+                    <td><span class="rank-number ${rankClass}">${index + 1}</span></td>
+                    <td><strong>${item.corretor}</strong></td>
+                    <td>${item.vendas}</td>
+                    <td class="money">${formatCurrency(item.volume)}</td>
+                    <td class="commission-value">${formatCurrency(item.comissao)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateCaptadores(allData) {
+            // Se não receber allData, buscar do localStorage ou usar dados iniciais
+            if (!allData) {
+                allData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+                if (Object.keys(allData).length === 0) {
+                    allData = { ...initialDataByMonth };
+                }
+            }
+            
+            const captadorStats = {};
+
+            // Agregar apenas captações que viraram vendas DO ANO SELECIONADO
+            Object.keys(allData).forEach(monthKey => {
+                const parts = monthKey.split('-');
+                if (parts.length === 2 && parts[0] === selectedYear) {
+                    const sales = allData[monthKey].sales || [];
+                    
+                    // Para cada venda, buscar quem foi o captador original
+                    sales.forEach(sale => {
+                        if (!captadorStats[sale.captador]) {
+                            captadorStats[sale.captador] = { vendidos: 0, volume: 0, comissao: 0 };
+                        }
+                        captadorStats[sale.captador].vendidos++;
+                        captadorStats[sale.captador].volume += Number(sale.value);
+                        captadorStats[sale.captador].comissao += Number(sale.commission);
+                    });
+                }
+            });
+
+            // Ordenar por quantidade de vendidos
+            const rankingCaptadores = Object.entries(captadorStats)
+                .map(([captador, stats]) => ({ captador, ...stats }))
+                .sort((a, b) => b.vendidos - a.vendidos)
+                .slice(0, 10);
+
+            // Atualizar gráfico
+            captadoresChart.data.labels = rankingCaptadores.map(r => r.captador);
+            captadoresChart.data.datasets[0].data = rankingCaptadores.map(r => r.vendidos);
+            captadoresChart.update();
+
+            // Atualizar tabela
+            const tbody = document.getElementById('captadores-body');
+            tbody.innerHTML = '';
+            
+            if (rankingCaptadores.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px; color:#9e9e9e;">Nenhuma venda de imóvel captado registrada ainda</td></tr>';
+                return;
+            }
+            
+            rankingCaptadores.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                const rankClass = index === 0 ? 'top-1' : index === 1 ? 'top-2' : index === 2 ? 'top-3' : '';
+                tr.innerHTML = `
+                    <td><span class="rank-number ${rankClass}">${index + 1}</span></td>
+                    <td><strong>${item.captador}</strong></td>
+                    <td>${item.vendidos}</td>
+                    <td class="money">${formatCurrency(item.volume)}</td>
+                    <td class="commission-value">${formatCurrency(item.comissao)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateCaptacoesTotais(allData) {
+            // Se não receber allData, buscar do localStorage ou usar dados iniciais
+            if (!allData) {
+                allData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+                if (Object.keys(allData).length === 0) {
+                    allData = { ...initialDataByMonth };
+                }
+            }
+            
+            const captadorStats = {};
+
+            // Agregar TODOS os imóveis captados DO ANO SELECIONADO
+            Object.keys(allData).forEach(monthKey => {
+                const parts = monthKey.split('-');
+                if (parts.length === 2 && parts[0] === selectedYear) {
+                    const capted = allData[monthKey].capted || [];
+                    
+                    capted.forEach(item => {
+                        const captador = item.captador || 'Não informado';
+                        
+                        if (!captadorStats[captador]) {
+                            captadorStats[captador] = {
+                                total: 0,
+                                disponiveis: 0,
+                                vendidos: 0,
+                                suspensos: 0
+                            };
+                        }
+                        
+                        captadorStats[captador].total++;
+                        
+                        // Contar por status
+                        const status = item.status || 'Disponível';
+                        if (status === 'Disponível') {
+                            captadorStats[captador].disponiveis++;
+                        } else if (status === 'Vendido') {
+                            captadorStats[captador].vendidos++;
+                        } else if (status === 'Suspenso') {
+                            captadorStats[captador].suspensos++;
+                        }
+                    });
+                }
+            });
+
+            // Ordenar por quantidade total
+            const rankingCaptacoes = Object.entries(captadorStats)
+                .map(([captador, stats]) => ({ captador, ...stats }))
+                .sort((a, b) => b.total - a.total)
+                .slice(0, 10);
+
+            // Atualizar gráfico
+            captacoesTotaisChart.data.labels = rankingCaptacoes.map(r => r.captador);
+            captacoesTotaisChart.data.datasets[0].data = rankingCaptacoes.map(r => r.total);
+            captacoesTotaisChart.update();
+
+            // Atualizar tabela
+            const tbody = document.getElementById('captacoes-totais-body');
+            tbody.innerHTML = '';
+            
+            if (rankingCaptacoes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:#9e9e9e;">Nenhum imóvel captado registrado ainda</td></tr>';
+                return;
+            }
+            
+            rankingCaptacoes.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                const rankClass = index === 0 ? 'top-1' : index === 1 ? 'top-2' : index === 2 ? 'top-3' : '';
+                tr.innerHTML = `
+                    <td><span class="rank-number ${rankClass}">${index + 1}</span></td>
+                    <td><strong>${item.captador}</strong></td>
+                    <td><strong>${item.total}</strong></td>
+                    <td>${item.disponiveis}</td>
+                    <td style="color:#2c6e2e; font-weight:600;">${item.vendidos}</td>
+                    <td>${item.suspensos}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // INICIALIZAÇÃO
+        window.addEventListener('load', async function() {
+            await DB.requireAuth();
+            const user = await DB.getUser();
+            const nameEl = document.getElementById('currentUserName');
+            if (user && nameEl) nameEl.textContent = user.email;
+            await hydrateFromSupabase();
+            initCharts();
+            updateCharts();
+        });
+
+        // Toggle menu do usuário
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Fechar dropdown ao clicar fora
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="db-supabase.js"></script>
+</body>
+</html>

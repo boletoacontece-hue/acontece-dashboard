@@ -89,7 +89,7 @@
         // Se já estiver logado, vai direto pro dashboard
         (async () => {
             const session = await DB.getSession();
-            if (session) window.location.href = 'CadastroImovel.html';
+            if (session) window.location.href = 'Dash5.html';
         })();
 
         async function handleLogin(e) {
@@ -106,7 +106,7 @@
 
             try {
                 await DB.signIn(email, password);
-                window.location.href = 'CadastroImovel.html';
+                window.location.href = 'Dash5.html';
             } catch (err) {
                 let msg = 'Não foi possível entrar. Verifique e-mail e senha.';
                 if (err && /Invalid login/i.test(err.message)) msg = 'E-mail ou senha incorretos.';
