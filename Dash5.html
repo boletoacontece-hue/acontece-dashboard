@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Acontece Imobiliária</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            color: #212121;
+            line-height: 1.6;
+        }
+
+        /* HEADER COM NAVEGAÇÃO */
+        .top-header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-nav {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 40px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height: 45px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #616161;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .nav-links a:hover {
+            color: #2c6e2e;
+            background: #f5f5f5;
+        }
+
+        .nav-links a.active {
+            color: #2c6e2e;
+            font-weight: 600;
+        }
+
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: #fafafa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .user-info:hover {
+            background: #f0f0f0;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #424242;
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 180px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .user-dropdown.active .user-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-menu-item {
+            padding: 12px 16px;
+            color: #616161;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .user-menu-item:hover {
+            background: #fafafa;
+            color: #2c6e2e;
+        }
+
+        .user-menu-item.danger {
+            color: #e53935;
+        }
+
+        .user-menu-item.danger:hover {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* CONTAINER PRINCIPAL */
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* TÍTULO E SELETOR */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c6e2e;
+        }
+
+        .month-selector-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .month-selector-wrapper label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #757575;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .month-selector {
+            padding: 10px 16px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #212121;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+            min-width: 180px;
+        }
+
+        .month-selector:hover {
+            border-color: #2c6e2e;
+        }
+
+        .month-selector:focus {
+            border-color: #2c6e2e;
+            box-shadow: 0 0 0 3px rgba(44, 110, 46, 0.1);
+        }
+
+        /* KPI CARDS - 6 EM LINHA */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.2s;
+            border: 1px solid #f0f0f0;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .kpi-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #9e9e9e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .kpi-value.green {
+            color: #2c6e2e;
+        }
+
+        .kpi-subtitle {
+            font-size: 12px;
+            color: #9e9e9e;
+            font-weight: 500;
+        }
+
+        /* Cores dos ícones - REMOVIDO */
+
+        /* TABELAS LADO A LADO */
+        .tables-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .table-panel h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-add {
+            background: #2c6e2e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add:hover {
+            background: #1a4d1b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(44, 110, 46, 0.3);
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #f0f0f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #fafafa;
+        }
+
+        th {
+            padding: 14px 12px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            color: #757575;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        td {
+            padding: 12px;
+            font-size: 13px;
+            color: #424242;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .money {
+            color: #2c6e2e;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-vendido {
+            background: #e8f5e9;
+            color: #2c6e2e;
+        }
+
+        .status-disponivel {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .action-btn {
+            background: #f5f5f5;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #616161;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #2c6e2e;
+            color: white;
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal h2 {
+            margin-bottom: 24px;
+            color: #212121;
+            font-size: 24px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #616161;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #fafafa;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #2c6e2e;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(44, 110, 46, 0.1);
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background: #f5f5f5;
+            color: #616161;
+        }
+
+        .btn-cancel:hover {
+            background: #eeeeee;
+        }
+
+        .btn-save {
+            background: #2c6e2e;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #1a4d1b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(44, 110, 46, 0.3);
+        }
+
+        .btn-delete {
+            background: #d32f2f;
+            color: white;
+            margin-right: auto;
+        }
+
+        .btn-delete:hover {
+            background: #b71c1c;
+        }
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 1400px) {
+            .kpi-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .tables-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .full-width {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER COM NAVEGAÇÃO -->
+    <div class="top-header">
+        <div class="header-nav">
+            <img src="Logo01.png" alt="Acontece Imobiliária" class="logo">
+            <div class="nav-links">
+                <a href="Dash5.html" class="active">Dashboard</a>
+                <a href="Relatorios.html">Relatórios</a>
+                <a href="Propostas.html">Propostas</a>
+                <a href="Configuracoes.html">Configurações</a>
+            </div>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-info" onclick="toggleUserMenu()">
+                    <span class="user-name" id="currentUserName">Usuário</span>
+                    <span style="font-size: 12px; color: #9e9e9e;">▼</span>
+                </div>
+                <div class="user-menu" id="userMenu">
+                    <button class="user-menu-item danger" onclick="logout()">
+                        <span>Sair</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- TÍTULO E SELETOR DE MÊS -->
+        <div class="page-header">
+            <h1 id="dashboard-title">Dashboard de Vendas</h1>
+            <div class="month-selector-wrapper">
+                <label for="yearSelect">Ano</label>
+                <select id="yearSelect" class="month-selector" onchange="changeYear()" style="width: 100px;">
+                    <option value="2019">2019</option>
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                </select>
+                <label for="monthSelect">Mês</label>
+                <select id="monthSelect" class="month-selector" onchange="changeMonth()">
+                    <option value="01">Janeiro</option>
+                    <option value="02">Fevereiro</option>
+                    <option value="03">Março</option>
+                    <option value="04">Abril</option>
+                    <option value="05">Maio</option>
+                    <option value="06">Junho</option>
+                    <option value="07">Julho</option>
+                    <option value="08">Agosto</option>
+                    <option value="09">Setembro</option>
+                    <option value="10">Outubro</option>
+                    <option value="11">Novembro</option>
+                    <option value="12">Dezembro</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- KPI CARDS - 6 EM LINHA -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Total Vendidos</div>
+                <div class="kpi-value green" id="kpi-count">0</div>
+                <div class="kpi-subtitle">imóveis</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Volume Total</div>
+                <div class="kpi-value money" id="kpi-volume">R$ 0</div>
+                <div class="kpi-subtitle">vendas</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Comissão Total</div>
+                <div class="kpi-value money" id="kpi-commission">R$ 0</div>
+                <div class="kpi-subtitle">acumulada</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Imóveis Captados</div>
+                <div class="kpi-value green" id="kpi-captados">0</div>
+                <div class="kpi-subtitle">imóveis</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Meta Volume</div>
+                <div class="kpi-value green" id="kpi-goal-volume">0%</div>
+                <div class="kpi-subtitle">de R$ 10.000.000</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Meta Comissão</div>
+                <div class="kpi-value green" id="kpi-goal-commission">0%</div>
+                <div class="kpi-subtitle">de R$ 350.000</div>
+            </div>
+        </div>
+
+        <!-- TABELAS LADO A LADO -->
+        <div class="tables-section">
+            <!-- Tabela de Vendas -->
+            <div class="table-panel">
+                <h2>
+                    Imóveis Vendidos
+                    <button class="btn-add" onclick="location.href='RegistrarVenda.html'">+ Registrar Venda</button>
+                </h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Endereço</th>
+                                <th>Captador</th>
+                                <th>Corretor</th>
+                                <th>Data</th>
+                                <th>Valor</th>
+                                <th>Comissão</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="sales-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tabela de Captados -->
+            <div class="table-panel">
+                <h2>
+                    Imóveis Captados
+                    <button class="btn-add" onclick="location.href='CadastroImovel.html'">+ Cadastrar Imóvel</button>
+                </h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Endereço</th>
+                                <th>Captador</th>
+                                <th>Data</th>
+                                <th>Preço</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="capted-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="actionModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-title">Adicionar</h2>
+            
+            <!-- Campos para Vendas -->
+            <div id="sale-fields" style="display:none;">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Código</label>
+                        <input type="text" id="saleCode" placeholder="Ex: AC3896">
+                    </div>
+                    <div class="form-group">
+                        <label>Data Venda</label>
+                        <input type="text" id="saleDate" placeholder="DD/MM/AAAA">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Endereço Completo</label>
+                        <input type="text" id="saleAddress">
+                    </div>
+                    <div class="form-group">
+                        <label>Captador</label>
+                        <select id="saleCaptador" required>
+                            <option value="">Selecione...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Corretor</label>
+                        <select id="saleCorretor" required>
+                            <option value="">Selecione...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Valor Venda</label>
+                        <input type="number" id="saleValue">
+                    </div>
+                    <div class="form-group">
+                        <label>Comissão Total</label>
+                        <input type="number" id="saleCommission">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campos para Captados -->
+            <div id="capted-fields" style="display:none;">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Código</label>
+                        <input type="text" id="captedCode" placeholder="Ex: AC3901">
+                    </div>
+                    <div class="form-group">
+                        <label>Data Captação</label>
+                        <input type="text" id="captedDate" placeholder="DD/MM/AAAA">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Endereço Completo</label>
+                        <input type="text" id="captedAddress">
+                    </div>
+                    <div class="form-group">
+                        <label>Captador</label>
+                        <select id="captedCaptador" required>
+                            <option value="">Selecione...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Preço</label>
+                        <input type="number" id="captedPrice">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="captedStatus">
+                            <option value="Disponível">Disponível</option>
+                            <option value="Vendido">Vendido</option>
+                            <option value="Suspenso">Suspenso</option>
+                            <option value="Distrato">Distrato</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-buttons">
+                <button class="btn btn-delete" id="delete-btn" onclick="deleteData()" style="display:none;">Apagar</button>
+                <button class="btn btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-save" onclick="saveData()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DADOS INICIAIS
+        const initialDataByMonth = {
+            '2026-01': {
+                sales: [
+                    { code: 'MAN0002', address: 'SMDB/SUL, CONJUNTO 04, LOTE 07, CASA D, SETOR DE MANSÕES DOM BOSCO', captador: 'Acontece', corretor: 'Acontece', date: '14/01/2026', value: 2000, commission: 2000 },
+                    { code: 'MAN0003', address: 'SQN 411, BLOCO C, APARTAMENTO 202, ASA NORTE', captador: 'Acontece', corretor: 'Acontece', date: '20/01/2026', value: 760000, commission: 38000 },
+                    { code: 'AC3541', address: 'CA 08, LOTE 01, TORRE 5, BLOCO A, APARTAMENTO 13, PREMIER, LAGO NORTE', captador: 'Acontece', corretor: 'João Vitor', date: '29/01/2026', value: 930000, commission: 32550 }
+                ],
+                capted: [
+                    { code: 'AC3790', address: 'CLSW 301 BLOCO C LOJA 85 SUBSOLO DAKOTA SHOPPING - SUDOESTE', captador: 'Acontece', date: '05/01/2026', price: 249000, status: 'Disponível' },
+                    { code: 'AC3793', address: 'QUADRA 202', captador: 'Henrique Carvalho', date: '05/01/2026', price: 699000, status: 'Suspenso' },
+                    { code: 'AC3796', address: 'CLSW 105, BLOCO C, KIT 152, EDIFÍCIO DIANA MALL BUSINESS, SUDOESTE', captador: 'Henrique Carvalho', date: '05/01/2026', price: 350000, status: 'Vendido' },
+                    { code: 'AC3795', address: 'QS 501, CJ 03, LOTE 04, AP 1304, VG 57, RES. BELA VISTA, SAMAMBAIA', captador: 'Acontece', date: '06/01/2026', price: 219000, status: 'Vendido' },
+                    { code: 'AC3800', address: 'AV. PARQUE ÁGUAS CLARAS, LT 3825, AP 1008, NATALIA VALOIS, ÁGUAS CLARAS', captador: 'Acontece', date: '10/01/2026', price: 540000, status: 'Disponível' },
+                    { code: 'MAN0002', address: 'SMDB/SUL, CONJUNTO 04, LOTE 07, CASA D, SETOR DE MANSÕES DOM BOSCO', captador: 'Acontece', date: '14/01/2026', price: 2000, status: 'Vendido' },
+                    { code: 'AC3803', address: 'AVENIDA DAS ARAUCÁRIAS, BLOCO B, APT 1605, REAL QUALITY, ÁGUAS CLARAS', captador: 'João Vitor', date: '15/01/2026', price: 390000, status: 'Vendido' },
+                    { code: 'AC3806', address: 'SHTN TRECHO 02, LOTE 04, BLOCO 5, APARTAMENTO 112, THE SUN, ASA NORTE', captador: 'Henrique Carvalho', date: '15/01/2026', price: 470000, status: 'Disponível' },
+                    { code: 'AC3804', address: 'QMSW 05, BLOCO H, KIT 203, EDIFÍCIO SAINT TROPEZ, SUDOESTE', captador: 'Acontece', date: '16/01/2026', price: 434000, status: 'Disponível' },
+                    { code: 'AC3802', address: 'CLSW 300B, BLOCO 02, APARTAMENTO 106, LINCOLN CENTER, SUDOESTE', captador: 'João Vitor', date: '16/01/2026', price: 498000, status: 'Disponível' },
+                    { code: 'AC3801', address: 'CCSW 05, BLOCO C, KIT 102, EDIFÍCIO BETA STUDIOS, SUDOESTE', captador: 'João Vitor', date: '16/01/2026', price: 434000, status: 'Disponível' },
+                    { code: 'AC3808', address: 'QUADRA 2, ETAPA D, CASA 22, VALPARAISO I, VALPARAÍSO DE GOIÁS', captador: 'João Vitor', date: '16/01/2026', price: 419999, status: 'Disponível' },
+                    { code: 'AC3809', address: 'RUA 36 NORTE, LOTE 3350, BLOCO G, APARTAMENTO 906, TOP LIFE, ÁGUAS CLARAS', captador: 'Acontece', date: '20/01/2026', price: 550000, status: 'Disponível' },
+                    { code: 'AC3810', address: 'RUA 24 NORTE, LOTE 03, BLOCO B, APT 1501, PIAZZA D\'ORO, ÁGUAS CLARAS', captador: 'João Vitor', date: '21/01/2026', price: 550000, status: 'Disponível' },
+                    { code: 'AC3812', address: 'RANCHO PIMENTA PICANTE, LOCALIZADO A BEIRA DA REPRESA DOS QUEIMADOS, CRISTALINA', captador: 'João Vitor', date: '22/01/2026', price: 1950000, status: 'Disponível' },
+                    { code: 'AC3814', address: 'EQRSW 2/3, ÁREA ESPECIAL 2, KIT 101, EDIFÍCIO CARTIER, SUDOESTE', captador: 'Henrique Carvalho', date: '22/01/2026', price: 299900, status: 'Vendido' },
+                    { code: 'AC3817', address: 'QE 44, CONJUNTO D1, CASA 06, GUARÁ 2', captador: 'Henrique Carvalho', date: '24/01/2026', price: 799000, status: 'Disponível' },
+                    { code: 'AC3820', address: 'SMPW QUADRA 04, CONJUNTO 03, LOTE 10, PARK WAY', captador: 'Frederico Wanderley', date: '28/01/2026', price: 1750000, status: 'Suspenso' },
+                    { code: 'AC3819', address: 'QE 15, CONJUNTO D, LOTE 25, GUARÁ 2', captador: 'Henrique Carvalho', date: '28/01/2026', price: 690000, status: 'Disponível' },
+                    { code: 'AC3818', address: 'QE 15, CONJUNTO D, CASA 25, GUARÁ 2', captador: 'Henrique Carvalho', date: '28/01/2026', price: 690000, status: 'Disponível' }
+                ]
+            },
+            '2026-02': {
+                sales: [
+                    { code: 'AC3650', address: 'SQSW 304, BLOCO D, APARTAMENTO 506, EDIFÍCIO ERNESTO SILVA, SUDOESTE', captador: 'Henrique Carvalho', corretor: 'João Vitor', date: '04/02/2026', value: 1040000, commission: 52000 },
+                    { code: 'AC3796', address: 'CLSW 105, BLOCO C, KIT 152, EDIFÍCIO DIANA MALL BUSINESS, SUDOESTE', captador: 'Henrique Carvalho', corretor: 'João Vitor', date: '09/02/2026', value: 340000, commission: 15300 },
+                    { code: 'AC3834', address: 'SQS 305, BLOCO I, APARTAMENTO 303, ASA SUL', captador: 'Acontece', corretor: 'João Vitor', date: '11/02/2026', value: 1390000, commission: 62550 },
+                    { code: 'AC3786', address: 'AOS 01, BLOCO B, APARTAMENTO 508, OCTOGONAL', captador: 'Henrique Carvalho', corretor: 'Mauro Reis', date: '12/02/2026', value: 880000, commission: 30800 },
+                    { code: 'AC3752', address: 'QS 07, RUA 800, LOTE 09, APARTAMENTO 501, RES. LAURA, AREAL, ÁGUAS CLARAS', captador: 'João Vitor', corretor: 'João Vitor', date: '23/02/2026', value: 294000, commission: 14700 },
+                    { code: 'AC3774', address: 'SHCES 1409, BLOCO I, APARTAMENTO 301, CRUZEIRO NOVO', captador: 'Acontece', corretor: 'João Vitor', date: '26/02/2026', value: 465000, commission: 23250 }
+                ],
+                capted: [
+                    { code: 'AC3828', address: 'CLS 208, LOTE ÚNICO RUV, RESTAURANTE UNIDADE VIZINHANÇA - ASA SUL', captador: 'Acontece', date: '05/02/2026', price: 7000000, status: 'Disponível' },
+                    { code: 'AC3834', address: 'SQS 305, BLOCO I, APARTAMENTO 303, ASA SUL', captador: 'Acontece', date: '07/02/2026', price: 1490000, status: 'Vendido' },
+                    { code: 'AC3833', address: 'SEPS 715 SUL BLOCO D SALA 117 EDIFÍCIO PACINI - ASA SUL', captador: 'Henrique Carvalho', date: '07/02/2026', price: 159000, status: 'Disponível' },
+                    { code: 'AC3843', address: 'QE 56, CONJUNTO L, CASA 15, GUARÁ II', captador: 'Henrique Carvalho', date: '15/02/2026', price: 1150000, status: 'Disponível' },
+                    { code: 'AC3836', address: 'EQRSW 2/3, ÁREA ESPECIAL 2, KIT 114, EDIFÍCIO CARTIER, SUDOESTE', captador: 'João Vitor', date: '20/02/2026', price: 439000, status: 'Disponível' },
+                    { code: 'AC3835', address: 'RUA DAS CARNAÚBAS, LOTE 6 E 8, BLOCO A, LOJA 03, ED. LUNA PARK, ÁGUAS CLARAS', captador: 'Acontece', date: '20/02/2026', price: 500000, status: 'Disponível' },
+                    { code: 'AC3837', address: 'QS 09, LOTE 07, APARTAMENTO 604, EDIFÍCIO JULIA APART, AREAL (ÁGUAS CLARAS)', captador: 'Henrique Carvalho', date: '20/02/2026', price: 229000, status: 'Disponível' },
+                    { code: 'AC3842', address: 'QNM 33, ÁREA ESPECIAL LOTE D, APARTAMENTO 604, RESIDENCIAL ASTRAL, CEILÂNDIA', captador: 'Acontece', date: '20/02/2026', price: 295000, status: 'Vendido' },
+                    { code: 'AC3838', address: 'RUA BURITI, LOTE 01, APARTAMENTO 604, E VG 66, RES. ÁGUAS DE TAMBAÚ', captador: 'Acontece', date: '20/02/2026', price: 650000, status: 'Disponível' },
+                    { code: 'AC3847', address: 'SHIS QI 25 CHÁCARA 07 UNIDADE D - LAGO SUL', captador: 'Acontece', date: '20/02/2026', price: 16299999, status: 'Disponível' },
+                    { code: 'AC3850', address: 'ROD. DF 440, KM 2,5, COND. RK, CONJ CENTAUROS, LOTE G, CASA 6, REGIÃO DOS LAGOS', captador: 'Henrique Carvalho', date: '27/02/2026', price: 649000, status: 'Disponível' },
+                    { code: 'AC3848', address: 'SRTVS 701, LOTE 05, BLOCO A, SALA 518, CENTRO EMPRESARIAL BRASÍLIA, ASA SUL', captador: 'Acontece', date: '27/02/2026', price: 199000, status: 'Disponível' }
+                ]
+            },
+            '2026-03': {
+                sales: [
+                    { code: 'AC3795', address: 'QS 501, CJ 03, LOTE 04, AP 1304, VG 57, RES. BELA VISTA, SAMAMBAIA', captador: 'Acontece', corretor: 'João Vitor', date: '14/03/2026', value: 212000, commission: 12000 },
+                    { code: 'AC3856', address: 'SQS 415, BLOCO T, APARTAMENTO 302, ASA SUL', captador: 'Acontece', corretor: 'João Vitor', date: '24/03/2026', value: 645000, commission: 32250 },
+                    { code: 'AC3857', address: 'COND. SANTA BÁRBARA, R. FLAMBOYANTS, MÓD G, CASA 05, JARDIM BOTÂNICO', captador: 'Acontece', corretor: 'Mauro Reis', date: '26/03/2026', value: 700000, commission: 34999.98 }
+                ],
+                capted: [
+                    { code: 'AC3852', address: 'RUA 24 NORTE, LOTE 08, APARTAMENTO 1404, ÁGUAS DE MANAÍRA, ÁGUAS CLARAS', captador: 'Acontece', date: '01/03/2026', price: 550000, status: 'Disponível' },
+                    { code: 'AC3860', address: 'SHN QUADRA 01 BLOCO B APARTAMENTO 416 - ASA NORTE', captador: 'Henrique Carvalho', date: '05/03/2026', price: 420000, status: 'Suspenso' },
+                    { code: 'AC3857', address: 'COND. SANTA BÁRBARA, R. FLAMBOYANTS, MÓD G, CASA 05, JARDIM BOTÂNICO', captador: 'Acontece', date: '05/03/2026', price: 730000, status: 'Vendido' },
+                    { code: 'AC3856', address: 'SQS 415, BLOCO T, APARTAMENTO 302, ASA SUL', captador: 'Acontece', date: '05/03/2026', price: 690000, status: 'Vendido' },
+                    { code: 'AC3859', address: 'QMSW 06, LOTE 04, KIT 303, ED. LÉLITON GONÇALVES JR, SUDOESTE', captador: 'Acontece', date: '06/03/2026', price: 390000, status: 'Disponível' },
+                    { code: 'AC3865', address: 'RUA 37 SUL, LOTE 17 E 19, LOJA 18, EDIFÍCIO REAL CELEBRATION, ÁGUAS CLARAS', captador: 'Acontece', date: '11/03/2026', price: 890000, status: 'Disponível' },
+                    { code: 'AC3863', address: 'ENDEREÇO NÃO INFORMADO', captador: 'Acontece', date: '11/03/2026', price: 38000000, status: 'Disponível' },
+                    { code: 'AC3869', address: 'ÁREA ESPECIAL 2, BLOCO C, APARTAMENTO 305, COND. BELVEDERE ANTARES, GUARÁ II', captador: 'João Vitor', date: '15/03/2026', price: 530000, status: 'Disponível' },
+                    { code: 'AC3872', address: 'RUA 25 SUL, LOTE 18, TORRE B, APARTAMENTO 1407, ELEVA 25', captador: 'Frederico Wanderley', date: '17/03/2026', price: 1108800, status: 'Disponível' },
+                    { code: 'AC3871', address: 'RUA 25 SUL, LOTE 18, TORRE B, APARTAMENTO 1811, ELEVA 25', captador: 'Frederico Wanderley', date: '17/03/2026', price: 686716, status: 'Disponível' },
+                    { code: 'AC3873', address: 'QUADRA 06, LOTE 28, CONDOMÍNIO JARDINS GENEBRA, PARANOÁ', captador: 'Mauro Reis', date: '18/03/2026', price: 849000, status: 'Disponível' },
+                    { code: 'AC3875', address: 'RUA 25 SUL, LOTE 18, TORRE B, APARTAMENTO 2210, ELEVA 25, ÁGUAS CLARAS', captador: 'Frederico Wanderley', date: '19/03/2026', price: 2289838, status: 'Disponível' },
+                    { code: 'AC3874', address: 'QUADRA 06, LOTE 28, CONDOMÍNIO JARDINS GENEBRA, PARANOÁ', captador: 'Mauro Reis', date: '19/03/2026', price: 149000, status: 'Disponível' },
+                    { code: 'AC3877', address: 'CCSW 03, LOTE 05, BLOCO A, APARTAMENTO 603, PORTO FELIZ, SUDOESTE', captador: 'Acontece', date: '20/03/2026', price: 919000, status: 'Disponível' },
+                    { code: 'AC3879', address: 'AVENIDA FLAMBOYANT, LOTE 12, APARTAMENTO (GARDEN) 303, CASA PEDRA', captador: 'Frederico Wanderley', date: '24/03/2026', price: 2005802, status: 'Disponível' },
+                    { code: 'AC3878', address: 'AV DAS ARAUCÁRIAS, LOTE 4150, BLOCO A, APARTAMENTO 1214, BLEND, ÁGUAS CLARAS', captador: 'Acontece', date: '24/03/2026', price: 338000, status: 'Disponível' },
+                    { code: 'AC3882', address: 'AVENIDA FLAMBOYANT, LOTE 12, COBERTURA 1702, CASA PEDRA, ÁGUAS CLARAS', captador: 'Frederico Wanderley', date: '25/03/2026', price: 3505116, status: 'Disponível' },
+                    { code: 'AC3885', address: 'QMW 05, LOTE 03, BLOCO D, KIT 312, MONT SERRAT, SUDOESTE', captador: 'João Vitor', date: '31/03/2026', price: 465000, status: 'Disponível' },
+                    { code: 'AC3887', address: 'CCSW 05, LOTE 02, BLOCO 2, ENTRADAS 18 E 46, KIT 122, ANTARES CENTER, SUDOESTE', captador: 'João Vitor', date: '31/03/2026', price: 434000, status: 'Disponível' }
+                ]
+            },
+            '2026-04': {
+                sales: [
+                    { code: 'AC3803', address: 'AVENIDA DAS ARAUCÁRIAS, BLOCO B, APT 1605, REAL QUALITY, ÁGUAS CLARAS', captador: 'João Vitor', corretor: 'Mauro Reis', date: '01/04/2026', value: 370000, commission: 14800 },
+                    { code: 'AC3628', address: 'RUA 22 SUL, LOTE 10, APARTAMENTO 1505 EDIFÍCIO CASTRO ALVES, ÁGUAS CLARAS', captador: 'Acontece', corretor: 'João Vitor', date: '05/04/2026', value: 430000, commission: 21500 },
+                    { code: 'AC3842', address: 'QNM 33, ÁREA ESPECIAL LOTE D, APARTAMENTO 604, RESIDENCIAL ASTRAL, CEILÂNDIA', captador: 'Acontece', corretor: 'Mauro Reis', date: '05/04/2026', value: 275000, commission: 13750 },
+                    { code: 'AC3184', address: 'QR 223, CONJUNTO 06, CASA 13, SAMAMBAIA', captador: 'Henrique Carvalho', corretor: 'Mauro Reis', date: '06/04/2026', value: 155000, commission: 5425 },
+                    { code: 'AC3527', address: 'RUA DAS PITANGUEIRAS, LOTE 3, APARTAMENTO 303, EDIFÍCIO THE POINT, ÁGUAS CLARAS', captador: 'João Vitor', corretor: 'João Vitor', date: '07/04/2026', value: 340000, commission: 17000 },
+                    { code: 'AC3814', address: 'EQRSW 2/3, ÁREA ESPECIAL 2, KIT 101, EDIFÍCIO CARTIER, SUDOESTE', captador: 'Henrique Carvalho', corretor: 'João Vitor', date: '12/04/2026', value: 270000, commission: 9450 },
+                    { code: 'AC3622', address: 'CCSW 03, BLOCO B, APARTAMENTO 108, PORTO FELIZ, SUDOESTE', captador: 'Acontece', corretor: 'Mauro Reis', date: '13/04/2026', value: 815000, commission: 40750 },
+                    { code: 'AC3896', address: 'CCSW 02, LOTE 05, BLOCO A, APARTAMENTO 501, GERALDO CARNEIRO, SUDOESTE', captador: 'Henrique Carvalho', corretor: 'Mauro Reis', date: '16/04/2026', value: 915000, commission: 45750 },
+                    { code: 'AC3758', address: 'SQN 104, BLOCO B, APARTAMENTO 105, ASA NORTE', captador: 'Henrique Carvalho', corretor: 'João Vitor', date: '20/04/2026', value: 1200000, commission: 25200 }
+                ],
+                capted: [
+                    { code: 'AC3896', address: 'CCSW 02, LOTE 05, BLOCO A, APARTAMENTO 501, GERALDO CARNEIRO, SUDOESTE', captador: 'Henrique Carvalho', date: '02/04/2026', price: 950000, status: 'Vendido' },
+                    { code: 'AC3897', address: 'CLNW 10/11, BLOCO G, APARTAMENTO 214, PAULO ZIMBRES, NOROESTE', captador: 'Acontece', date: '06/04/2026', price: 539000, status: 'Disponível' },
+                    { code: 'AC3901', address: 'RUA 35 SUL, LOTE 12, APARTAMENTO 1503, EDIFÍCIO CASA 35, ÁGUAS CLARAS', captador: 'Frederico Wanderley', date: '10/04/2026', price: 2126031, status: 'Disponível' },
+                    { code: 'AC3900', address: 'RUA 35 SUL, LOTE 12, APARTAMENTO 1307, EDIFÍCIO CASA 35, ÁGUAS CLARAS', captador: 'Frederico Wanderley', date: '10/04/2026', price: 797671, status: 'Disponível' },
+                    { code: 'AC3899', address: 'RUA 35 SUL, LOTE 12, APARTAMENTO 506, EDIFÍCIO CASA 35, ÁGUAS CLARAS', captador: 'Frederico Wanderley', date: '10/04/2026', price: 815258, status: 'Disponível' },
+                    { code: 'AC3902', address: 'RUA 35 SUL, LOTE 12, APARTAMENTO 1704, EDIFÍCIO CASA 35, ÁGUAS CLARAS', captador: 'Frederico Wanderley', date: '10/04/2026', price: 3017846, status: 'Disponível' },
+                    { code: 'AC3905', address: 'RUA 31 SUL, LOTE 11, APARTAMENTO 202, LIGIA VALOIS - LV 31, ÁGUAS CLARAS', captador: 'Frederico Wanderley', date: '10/04/2026', price: 1536660, status: 'Disponível' },
+                    { code: 'AC3904', address: 'RUA 31 SUL, LOTE 11, APARTAMENTO 201, LIGIA VALOIS - LV 31, ÁGUAS CLARAS', captador: 'Frederico Wanderley', date: '10/04/2026', price: 1176133, status: 'Disponível' },
+                    { code: 'AC3906', address: 'SHIS QI 25, BLOCO E, LOJA 66, LAGO SUL', captador: 'Acontece', date: '12/04/2026', price: 500000, status: 'Disponível' },
+                    { code: 'AC3917', address: 'SHIN CA 09, LOTE 10, BLOCO J, APARTAMENTO 208, SILCO BOULEVARD', captador: 'Acontece', date: '16/04/2026', price: 299000, status: 'Disponível' }
+                ]
+            }
+        };
+
+        const STORAGE_KEY = 'dashboard_acontece_v5';
+        const CONFIG_KEYS = {
+            CORRETORES: 'dashboard_corretores',
+            METAS: 'dashboard_metas'
+        };
+
+        // ===== Supabase: popula o localStorage (cache de leitura) com os dados do banco =====
+        async function hydrateFromSupabase() {
+            const [imoveis, vendas, corretores, metas] = await Promise.all([
+                DB.listImoveis(), DB.listVendas(), DB.listCorretores(), DB.listMetas()
+            ]);
+            const v5 = {};
+            const ensure = m => (v5[m] = v5[m] || { sales: [], capted: [] });
+            imoveis.forEach(i => {
+                const m = i.mes; if (!m) return;
+                ensure(m).capted.push({ code:i.code, address:i.address, captador:i.captador,
+                                        date:i.date, price:i.price, status:i.status });
+            });
+            vendas.forEach(s => {
+                const m = s.mes; if (!m) return;
+                ensure(m).sales.push({ code:s.code, address:s.address, captador:s.captador,
+                                       corretor:s.corretor, date:s.date, value:s.value, commission:s.commission });
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(v5));
+
+            localStorage.setItem(CONFIG_KEYS.CORRETORES, JSON.stringify(
+                corretores.map(c => ({ id:c.id, name:c.name, type:c.type, email:c.email, phone:c.phone }))
+            ));
+            localStorage.setItem(CONFIG_KEYS.METAS, JSON.stringify(
+                metas.map(mt => ({
+                    id: mt.id, startDate: mt.data_inicio, endDate: mt.data_fim,
+                    volumeGoal: Number(mt.meta_volume) || 0,
+                    commissionGoal: Number(mt.meta_comissao) || 0,
+                    period: mt.periodo_label
+                }))
+            ));
+        }
+
+        // Logout via Supabase (substitui o antigo auth.js)
+        function logout() {
+            if (confirm('Tem certeza que deseja sair?')) DB.signOut();
+        }
+        
+        const monthNames = {
+            '01': 'Janeiro', '02': 'Fevereiro', '03': 'Março', '04': 'Abril',
+            '05': 'Maio', '06': 'Junho', '07': 'Julho', '08': 'Agosto',
+            '09': 'Setembro', '10': 'Outubro', '11': 'Novembro', '12': 'Dezembro'
+        };
+
+        // Período inicial: mês e ano do relógio do sistema (opção A)
+        function getInitialYearMonth() {
+            const d = new Date();
+            let y = d.getFullYear();
+            if (y < 2025) y = 2025;
+            if (y > 2027) y = 2027;
+            return {
+                year: String(y),
+                month: String(d.getMonth() + 1).padStart(2, '0')
+            };
+        }
+
+        const _initPeriod = getInitialYearMonth();
+        let currentYear = _initPeriod.year;
+        let currentMonth = _initPeriod.month;
+        let salesData = [];
+        let captedData = [];
+        let editingIndex = null;
+        let currentMode = null;
+        let currentGoals = { volume: 10000000, commission: 350000 }; // Valores padrão
+
+        // FUNÇÕES UTILITÁRIAS
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', { 
+                style: 'currency', 
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        function formatCompact(value) {
+            if (value >= 1000000) return 'R$ ' + (value/1000000).toFixed(1) + 'M';
+            if (value >= 1000) return 'R$ ' + (value/1000).toFixed(0) + 'K';
+            return formatCurrency(value);
+        }
+
+        function getMonthDisplay() {
+            return `${monthNames[currentMonth]} ${currentYear}`;
+        }
+
+        function getCurrentMonthKey() {
+            return `${currentYear}-${currentMonth}`;
+        }
+
+        function generateCode() {
+            return 'AC' + Math.floor(Math.random() * 9000 + 1000);
+        }
+
+        // Carregar metas vigentes
+        function loadCurrentGoals() {
+            const metas = JSON.parse(localStorage.getItem(CONFIG_KEYS.METAS) || '[]');
+            const currentDate = new Date(`${currentYear}-${currentMonth}-15`); // Meio do mês
+            
+            // Encontrar meta vigente para a data atual
+            const currentMeta = metas.find(meta => {
+                const startDate = new Date(meta.startDate);
+                const endDate = new Date(meta.endDate);
+                return currentDate >= startDate && currentDate <= endDate;
+            });
+            
+            if (currentMeta) {
+                currentGoals.volume = currentMeta.volumeGoal;
+                currentGoals.commission = currentMeta.commissionGoal;
+            } else {
+                // Valores padrão se não houver meta
+                currentGoals.volume = 10000000;
+                currentGoals.commission = 350000;
+            }
+        }
+
+        // Carregar lista de corretores e captadores
+        function loadCorretoresList() {
+            const corretores = JSON.parse(localStorage.getItem(CONFIG_KEYS.CORRETORES) || '[]');
+            return corretores.map(c => c.name);
+        }
+
+        // GESTÃO DE DADOS
+        function loadData() {
+            const monthKey = getCurrentMonthKey();
+            const allData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            
+            if (allData[monthKey]) {
+                salesData = allData[monthKey].sales || [];
+                captedData = allData[monthKey].capted || [];
+            } else if (initialDataByMonth[monthKey]) {
+                salesData = [...initialDataByMonth[monthKey].sales];
+                captedData = [...initialDataByMonth[monthKey].capted];
+            } else {
+                salesData = [];
+                captedData = [];
+            }
+            
+            loadCurrentGoals();
+            updateTitle();
+            render();
+        }
+
+        function saveDataToStorage() {
+            const monthKey = getCurrentMonthKey();
+            const allData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            allData[monthKey] = {
+                sales: salesData,
+                capted: captedData
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(allData));
+        }
+
+        function changeYear() {
+            saveDataToStorage();
+            currentYear = document.getElementById('yearSelect').value;
+            loadData();
+        }
+
+        function changeMonth() {
+            saveDataToStorage();
+            currentMonth = document.getElementById('monthSelect').value;
+            loadData();
+        }
+
+        function updateTitle() {
+            const title = document.getElementById('dashboard-title');
+            const displayMonth = getMonthDisplay();
+            title.textContent = `Dashboard de Vendas - ${displayMonth}`;
+        }
+
+        // RENDERIZAÇÃO
+        function render() {
+            renderSalesTable();
+            renderCaptedTable();
+            updateKPIs();
+        }
+
+        function renderSalesTable() {
+            const tbody = document.getElementById('sales-body');
+            tbody.innerHTML = '';
+            
+            salesData.forEach((sale, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${sale.code}</strong></td>
+                    <td style="max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${sale.address}</td>
+                    <td>${sale.captador}</td>
+                    <td>${sale.corretor}</td>
+                    <td>${sale.date}</td>
+                    <td class="money">${formatCurrency(sale.value)}</td>
+                    <td class="money">${formatCurrency(sale.commission)}</td>
+                    <td><button class="action-btn" onclick="editSale(${index})">Editar</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderCaptedTable() {
+            const tbody = document.getElementById('capted-body');
+            tbody.innerHTML = '';
+            
+            captedData.forEach((item, index) => {
+                const badgeClass = item.status === 'Vendido' ? 'status-vendido' : 'status-disponivel';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${item.code}</strong></td>
+                    <td style="max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.address}</td>
+                    <td>${item.captador}</td>
+                    <td>${item.date}</td>
+                    <td class="money">${formatCurrency(item.price)}</td>
+                    <td><span class="status-badge ${badgeClass}">${item.status}</span></td>
+                    <td><button class="action-btn" onclick="editCapted(${index})">Editar</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateKPIs() {
+            const totalValue = salesData.reduce((sum, sale) => sum + Number(sale.value), 0);
+            const totalCommission = salesData.reduce((sum, sale) => sum + Number(sale.commission), 0);
+            
+            document.getElementById('kpi-count').textContent = salesData.length;
+            document.getElementById('kpi-volume').textContent = formatCurrency(totalValue);
+            document.getElementById('kpi-commission').textContent = formatCurrency(totalCommission);
+            document.getElementById('kpi-captados').textContent = captedData.length;
+            
+            const percentVolume = (totalValue / currentGoals.volume) * 100;
+            document.getElementById('kpi-goal-volume').textContent = percentVolume.toFixed(1) + '%';
+            
+            // Atualizar subtítulo do card com meta atual
+            const volumeSubtitle = document.querySelector('#kpi-goal-volume').parentElement.querySelector('.kpi-subtitle');
+            if (volumeSubtitle) {
+                volumeSubtitle.textContent = `de ${formatCompact(currentGoals.volume)}`;
+            }
+            
+            const percentCommission = (totalCommission / currentGoals.commission) * 100;
+            document.getElementById('kpi-goal-commission').textContent = percentCommission.toFixed(1) + '%';
+            
+            // Atualizar subtítulo do card com meta atual
+            const commissionSubtitle = document.querySelector('#kpi-goal-commission').parentElement.querySelector('.kpi-subtitle');
+            if (commissionSubtitle) {
+                commissionSubtitle.textContent = `de ${formatCompact(currentGoals.commission)}`;
+            }
+        }
+
+        // MODAL
+        // Carregar lista de captadores e corretores nos dropdowns
+        function loadCorretoresDropdowns() {
+            const corretores = JSON.parse(localStorage.getItem(CONFIG_KEYS.CORRETORES) || '[]');
+            
+            // Popular dropdown de Captador (Vendas)
+            const saleCaptadorSelect = document.getElementById('saleCaptador');
+            saleCaptadorSelect.innerHTML = '<option value="">Selecione...</option>';
+            
+            // Popular dropdown de Corretor (Vendas)
+            const saleCorretorSelect = document.getElementById('saleCorretor');
+            saleCorretorSelect.innerHTML = '<option value="">Selecione...</option>';
+            
+            // Popular dropdown de Captador (Captados)
+            const captedCaptadorSelect = document.getElementById('captedCaptador');
+            captedCaptadorSelect.innerHTML = '<option value="">Selecione...</option>';
+            
+            // Filtrar e adicionar pessoas aos dropdowns
+            corretores.forEach(pessoa => {
+                // Adicionar aos captadores se for Captador ou Ambos
+                if (pessoa.type === 'Captador' || pessoa.type === 'Ambos') {
+                    const optionSale = document.createElement('option');
+                    optionSale.value = pessoa.name;
+                    optionSale.textContent = pessoa.name;
+                    saleCaptadorSelect.appendChild(optionSale);
+                    
+                    const optionCapted = document.createElement('option');
+                    optionCapted.value = pessoa.name;
+                    optionCapted.textContent = pessoa.name;
+                    captedCaptadorSelect.appendChild(optionCapted);
+                }
+                
+                // Adicionar aos corretores se for Corretor ou Ambos
+                if (pessoa.type === 'Corretor' || pessoa.type === 'Ambos') {
+                    const option = document.createElement('option');
+                    option.value = pessoa.name;
+                    option.textContent = pessoa.name;
+                    saleCorretorSelect.appendChild(option);
+                }
+            });
+        }
+
+        function openModal(mode, type) {
+            const modal = document.getElementById('actionModal');
+            const title = document.getElementById('modal-title');
+            const saleFields = document.getElementById('sale-fields');
+            const captedFields = document.getElementById('capted-fields');
+            const deleteBtn = document.getElementById('delete-btn');
+            
+            // Carregar lista de corretores/captadores nos dropdowns
+            loadCorretoresDropdowns();
+            
+            currentMode = type;
+            editingIndex = null;
+            modal.style.display = 'flex';
+            deleteBtn.style.display = 'none';
+
+            if (mode === 'add') {
+                if (type === 'sale') {
+                    title.textContent = 'Adicionar Venda';
+                    saleFields.style.display = 'block';
+                    captedFields.style.display = 'none';
+                    document.getElementById('saleCode').value = generateCode();
+                    document.getElementById('saleAddress').value = '';
+                    document.getElementById('saleCaptador').value = '';
+                    document.getElementById('saleCorretor').value = '';
+                    document.getElementById('saleDate').value = '';
+                    document.getElementById('saleValue').value = '';
+                    document.getElementById('saleCommission').value = '';
+                } else {
+                    title.textContent = 'Adicionar Captado';
+                    saleFields.style.display = 'none';
+                    captedFields.style.display = 'block';
+                    document.getElementById('captedCode').value = generateCode();
+                    document.getElementById('captedAddress').value = '';
+                    document.getElementById('captedCaptador').value = '';
+                    document.getElementById('captedDate').value = '';
+                    document.getElementById('captedPrice').value = '';
+                    document.getElementById('captedStatus').value = 'Disponível';
+                }
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('actionModal').style.display = 'none';
+            editingIndex = null;
+        }
+
+        function editSale(index) {
+            const sale = salesData[index];
+            editingIndex = index;
+            currentMode = 'sale';
+            
+            // Carregar lista de corretores/captadores nos dropdowns
+            loadCorretoresDropdowns();
+            
+            document.getElementById('modal-title').textContent = 'Editar Venda: ' + sale.code;
+            document.getElementById('sale-fields').style.display = 'block';
+            document.getElementById('capted-fields').style.display = 'none';
+            document.getElementById('delete-btn').style.display = 'block';
+            
+            document.getElementById('saleCode').value = sale.code;
+            document.getElementById('saleAddress').value = sale.address;
+            document.getElementById('saleCaptador').value = sale.captador;
+            document.getElementById('saleCorretor').value = sale.corretor;
+            document.getElementById('saleDate').value = sale.date;
+            document.getElementById('saleValue').value = sale.value;
+            document.getElementById('saleCommission').value = sale.commission;
+            
+            document.getElementById('actionModal').style.display = 'flex';
+        }
+
+        function editCapted(index) {
+            const item = captedData[index];
+            editingIndex = index;
+            currentMode = 'capted';
+            
+            // Carregar lista de corretores/captadores nos dropdowns
+            loadCorretoresDropdowns();
+            
+            document.getElementById('modal-title').textContent = 'Editar Captado: ' + item.code;
+            document.getElementById('sale-fields').style.display = 'none';
+            document.getElementById('capted-fields').style.display = 'block';
+            document.getElementById('delete-btn').style.display = 'block';
+            
+            document.getElementById('captedCode').value = item.code;
+            document.getElementById('captedAddress').value = item.address;
+            document.getElementById('captedCaptador').value = item.captador;
+            document.getElementById('captedDate').value = item.date;
+            document.getElementById('captedPrice').value = item.price;
+            document.getElementById('captedStatus').value = item.status;
+            
+            document.getElementById('actionModal').style.display = 'flex';
+        }
+
+        function saveData() {
+            if (currentMode === 'sale') {
+                const saleData = {
+                    code: document.getElementById('saleCode').value,
+                    address: document.getElementById('saleAddress').value,
+                    captador: document.getElementById('saleCaptador').value,
+                    corretor: document.getElementById('saleCorretor').value,
+                    date: document.getElementById('saleDate').value,
+                    value: Number(document.getElementById('saleValue').value),
+                    commission: Number(document.getElementById('saleCommission').value)
+                };
+
+                if (!saleData.value || !saleData.address) {
+                    alert('Preencha pelo menos o Endereço e o Valor Venda.');
+                    return;
+                }
+
+                if (editingIndex !== null) salesData[editingIndex] = saleData;
+                else salesData.push(saleData);
+
+            } else if (currentMode === 'capted') {
+                const captedDataItem = {
+                    code: document.getElementById('captedCode').value,
+                    address: document.getElementById('captedAddress').value,
+                    captador: document.getElementById('captedCaptador').value,
+                    date: document.getElementById('captedDate').value,
+                    price: Number(document.getElementById('captedPrice').value),
+                    status: document.getElementById('captedStatus').value
+                };
+
+                if (!captedDataItem.price || !captedDataItem.address) {
+                    alert('Preencha pelo menos o Endereço e o Preço.');
+                    return;
+                }
+
+                if (editingIndex !== null) captedData[editingIndex] = captedDataItem;
+                else captedData.push(captedDataItem);
+            }
+
+            saveDataToStorage();
+            render();
+            closeModal();
+        }
+
+        function deleteData() {
+            if (editingIndex === null) return;
+            
+            const confirmMsg = currentMode === 'sale' 
+                ? 'Tem certeza que deseja apagar esta venda?' 
+                : 'Tem certeza que deseja apagar este imóvel captado?';
+            
+            if (!confirm(confirmMsg)) return;
+            
+            if (currentMode === 'sale') {
+                salesData.splice(editingIndex, 1);
+            } else if (currentMode === 'capted') {
+                captedData.splice(editingIndex, 1);
+            }
+            
+            saveDataToStorage();
+            render();
+            closeModal();
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('actionModal');
+            if (event.target == modal) closeModal();
+        }
+
+        function syncPeriodSelectors() {
+            const ys = document.getElementById('yearSelect');
+            const ms = document.getElementById('monthSelect');
+            if (ys) ys.value = currentYear;
+            if (ms) ms.value = currentMonth;
+        }
+
+        syncPeriodSelectors();
+
+        // INICIALIZAÇÃO
+        window.addEventListener('load', async function() {
+            await DB.requireAuth();                       // exige login (Supabase)
+            const user = await DB.getUser();
+            const nameEl = document.getElementById('currentUserName');
+            if (user && nameEl) nameEl.textContent = user.email;
+
+            // modo somente-leitura: esconde os botões "Editar" da tabela
+            const ro = document.createElement('style');
+            ro.textContent = '.action-btn{display:none!important;}';
+            document.head.appendChild(ro);
+
+            await hydrateFromSupabase();                  // carrega dados do banco
+            syncPeriodSelectors();
+            loadData();
+        });
+
+        // Detectar mudanças no localStorage (quando atualiza em Configurações)
+        window.addEventListener('storage', function(e) {
+            if (e.key === CONFIG_KEYS.CORRETORES) {
+                // Recarregar dropdowns quando lista de corretores mudar
+                loadCorretoresDropdowns();
+            }
+        });
+
+        // Atualizar dropdowns quando a janela recebe foco (volta de outra aba)
+        window.addEventListener('focus', function() {
+            loadCorretoresDropdowns();
+        });
+
+        // Toggle menu do usuário
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Fechar dropdown ao clicar fora
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="db-supabase.js"></script>
+</body>
+</html>

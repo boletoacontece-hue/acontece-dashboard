@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cadastro de Imóveis - Acontece Imobiliária</title>
+<title>Registrar Venda - Acontece Imobiliária</title>
 <style>
     :root{--verde:#2c6e2e;--verde-escuro:#1a4d1b;--borda:#e0e0e0;--fundo:#f4f6f4;
           --erro:#c62828;--sucesso:#2e7d32;}
@@ -30,7 +30,7 @@
     .form-input{width:100%;padding:13px 15px;border:2px solid var(--borda);border-radius:10px;
                 font-size:15px;background:#fafafa;transition:all .2s;font-family:inherit;}
     .form-input:focus{outline:none;border-color:var(--verde);background:#fff;}
-    textarea.form-input{resize:vertical;min-height:78px;}
+    .form-input:disabled{background:#eee;color:#777;}
     .hint{display:block;color:#9e9e9e;font-size:12px;margin-top:5px;}
     .btn{padding:14px 26px;border:none;border-radius:10px;font-size:15px;font-weight:600;
          cursor:pointer;transition:all .25s;font-family:inherit;}
@@ -55,8 +55,6 @@
        text-transform:uppercase;font-size:11px;letter-spacing:.4px;}
     td{padding:11px 10px;border-bottom:1px solid #f2f2f2;}
     td .cod{color:var(--verde);font-weight:700;}
-    .badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
-    .b-disp{background:#e8f5e9;color:#2e7d32;}.b-vend{background:#e3f2fd;color:#1565c0;}.b-susp{background:#fff8e1;color:#f57f17;}
     .vazio{text-align:center;color:#bdbdbd;padding:26px;}
     .nav{display:flex;gap:10px;margin-bottom:18px;}
     .nav a{font-size:13px;color:var(--verde);text-decoration:none;font-weight:600;
@@ -69,8 +67,8 @@
     <div class="topbar">
         <img src="Logo01.png" alt="Acontece" onerror="this.style.display='none'">
         <div>
-            <h1>Cadastro de Imóveis</h1>
-            <p>Captações — Dashboard de Vendas Acontece</p>
+            <h1>Registrar Venda</h1>
+            <p>Vendas — Dashboard de Vendas Acontece</p>
         </div>
         <div class="right">
             <span id="userInfo"></span>
@@ -81,61 +79,68 @@
     <div class="card">
         <div class="nav">
             <a href="Dash5.html">← Dashboard</a>
-            <a href="RegistrarVenda.html">Registrar Venda</a>
+            <a href="CadastroImovel.html">Cadastrar Imóvel</a>
         </div>
+
         <div id="alerta" class="alerta"></div>
 
-        <form id="formImovel" autocomplete="off">
-            <div class="section-title">Dados do Imóvel</div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Código do Imóvel <span class="req">*</span></label>
-                    <input type="text" id="code" class="form-input" placeholder="Ex: AC3930" style="text-transform:uppercase;" required>
-                    <span class="hint">Código único da captação.</span>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Data de Cadastro <span class="req">*</span></label>
-                    <input type="date" id="date" class="form-input" required>
-                    <span class="hint">Define o mês de referência no dashboard.</span>
-                </div>
-            </div>
+        <form id="formVenda" autocomplete="off">
+            <div class="section-title">Dados da Venda</div>
+
             <div class="form-group">
-                <label class="form-label">Endereço Completo <span class="req">*</span></label>
-                <textarea id="address" class="form-input" rows="2"
-                    placeholder="Ex: CLNW 10/11, BLOCO G, APARTAMENTO 214, PAULO ZIMBRES, NOROESTE" required></textarea>
+                <label class="form-label">Imóvel (código) <span class="req">*</span></label>
+                <select id="imovel" class="form-input" required>
+                    <option value="">Carregando imóveis...</option>
+                </select>
+                <span class="hint">Selecione o imóvel vendido. Endereço e captador são preenchidos automaticamente.</span>
             </div>
+
+            <div class="form-group">
+                <label class="form-label">Endereço</label>
+                <input type="text" id="endereco" class="form-input" disabled>
+            </div>
+
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Valor do Anúncio (R$) <span class="req">*</span></label>
-                    <input type="text" id="priceDisplay" class="form-input" inputmode="numeric" placeholder="Ex: 690.000,00" required>
-                    <input type="hidden" id="price">
+                    <label class="form-label">Captador</label>
+                    <input type="text" id="captador" class="form-input" disabled>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Status <span class="req">*</span></label>
-                    <select id="status" class="form-input" required>
-                        <option value="Disponível">Disponível</option>
-                        <option value="Vendido">Vendido</option>
-                        <option value="Suspenso">Suspenso</option>
+                    <label class="form-label">Corretor (vendedor) <span class="req">*</span></label>
+                    <select id="corretor" class="form-input" required>
+                        <option value="">Selecione o corretor</option>
                     </select>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">Captador <span class="req">*</span></label>
-                <select id="captador" class="form-input" required>
-                    <option value="">Carregando captadores...</option>
-                </select>
-                <span class="hint">Lista carregada dos corretores cadastrados no sistema.</span>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Data da Venda <span class="req">*</span></label>
+                    <input type="date" id="date" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Valor da Venda (R$) <span class="req">*</span></label>
+                    <input type="text" id="valorDisplay" class="form-input" inputmode="numeric" placeholder="Ex: 370.000,00" required>
+                    <input type="hidden" id="valor">
+                </div>
             </div>
+
+            <div class="form-group" style="max-width:50%;">
+                <label class="form-label">Comissão (R$) <span class="req">*</span></label>
+                <input type="text" id="comissaoDisplay" class="form-input" inputmode="numeric" placeholder="Ex: 14.800,00" required>
+                <input type="hidden" id="comissao">
+            </div>
+
             <div class="actions">
                 <button type="button" class="btn btn-ghost" onclick="limpar()">Limpar</button>
-                <button type="submit" class="btn btn-primary" id="btnSalvar">Salvar Imóvel</button>
+                <button type="submit" class="btn btn-primary" id="btnSalvar">Registrar Venda</button>
             </div>
         </form>
 
         <div class="recentes">
-            <h2>Últimos cadastros</h2>
+            <h2>Últimas vendas</h2>
             <table>
-                <thead><tr><th>Código</th><th>Endereço</th><th>Valor</th><th>Captador</th><th>Data</th><th>Status</th></tr></thead>
+                <thead><tr><th>Código</th><th>Endereço</th><th>Corretor</th><th>Data</th><th>Valor</th><th>Comissão</th></tr></thead>
                 <tbody id="tbodyRecentes"><tr><td colspan="6" class="vazio">Carregando...</td></tr></tbody>
             </table>
         </div>
@@ -145,11 +150,13 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="db-supabase.js"></script>
 <script>
+let imoveisCache = [];
+
 function formatBRL(v){ return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
-function moedaInput(el){
-    let v=el.value.replace(/\D/g,''); const num=v?parseInt(v,10)/100:0;
-    document.getElementById('price').value=num;
-    el.value=num.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+function moedaInput(displayEl, hiddenId){
+    let v=displayEl.value.replace(/\D/g,''); const num=v?parseInt(v,10)/100:0;
+    document.getElementById(hiddenId).value=num;
+    displayEl.value=num.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 function alerta(msg,tipo){
     const a=document.getElementById('alerta');
@@ -158,78 +165,109 @@ function alerta(msg,tipo){
     a.scrollIntoView({behavior:'smooth',block:'center'});
 }
 function limpar(){
-    document.getElementById('formImovel').reset();
-    document.getElementById('price').value='';
+    document.getElementById('formVenda').reset();
+    document.getElementById('valor').value='';
+    document.getElementById('comissao').value='';
+    document.getElementById('endereco').value='';
+    document.getElementById('captador').value='';
     document.getElementById('date').valueAsDate=new Date();
-    document.getElementById('alerta').classList.remove('show');
 }
-async function carregarCaptadores(){
-    const sel=document.getElementById('captador');
+function isoParaBR(iso){ if(!iso) return ''; const [a,m,d]=iso.split('-'); return `${d}/${m}/${a}`; }
+function mesRef(iso){ if(!iso) return null; const [a,m]=iso.split('-'); return `${a}-${m}`; }
+
+async function carregarImoveis(){
+    const sel=document.getElementById('imovel');
+    try{
+        imoveisCache = await DB.listImoveis();
+        sel.innerHTML='<option value="">Selecione o imóvel</option>';
+        imoveisCache
+            .filter(i => i.status !== 'Vendido')   // prioriza os ainda não vendidos
+            .forEach(i => sel.add(new Option(`${i.code} — ${i.address.substring(0,45)}`, i.code)));
+        if(sel.options.length===1){
+            imoveisCache.forEach(i => sel.add(new Option(`${i.code} — ${i.address.substring(0,45)}`, i.code)));
+        }
+    }catch(e){ sel.innerHTML='<option value="">Erro ao carregar imóveis</option>'; }
+}
+
+function aoSelecionarImovel(){
+    const code=document.getElementById('imovel').value;
+    const imo=imoveisCache.find(i=>i.code===code);
+    document.getElementById('endereco').value = imo ? imo.address : '';
+    document.getElementById('captador').value = imo ? (imo.captador||'') : '';
+}
+
+async function carregarCorretores(){
+    const sel=document.getElementById('corretor');
     try{
         const corretores=await DB.listCorretores();
-        sel.innerHTML='<option value="">Selecione o captador</option>';
-        corretores.filter(c=>c.type==='Captador'||c.type==='Ambos')
+        sel.innerHTML='<option value="">Selecione o corretor</option>';
+        corretores.filter(c=>c.type==='Corretor'||c.type==='Ambos')
             .forEach(c=>sel.add(new Option(c.name,c.name)));
-        if(sel.options.length===1) sel.add(new Option('Acontece','Acontece'));
-    }catch(e){
-        sel.innerHTML='<option value="">Selecione o captador</option>';
-        sel.add(new Option('Acontece','Acontece'));
-    }
+    }catch(e){ /* mantém opção padrão */ }
 }
+
 async function renderRecentes(){
     const tb=document.getElementById('tbodyRecentes');
     try{
-        const lista=(await DB.listImoveis()).slice(0,8);
-        if(lista.length===0){ tb.innerHTML='<tr><td colspan="6" class="vazio">Nenhum imóvel cadastrado ainda.</td></tr>'; return; }
-        const badge=s=>s==='Vendido'?'<span class="badge b-vend">Vendido</span>'
-                     :s==='Suspenso'?'<span class="badge b-susp">Suspenso</span>'
-                     :'<span class="badge b-disp">Disponível</span>';
-        tb.innerHTML=lista.map(i=>`
+        const lista=(await DB.listVendas()).slice(0,8);
+        if(lista.length===0){ tb.innerHTML='<tr><td colspan="6" class="vazio">Nenhuma venda registrada ainda.</td></tr>'; return; }
+        tb.innerHTML=lista.map(v=>`
             <tr>
-                <td><span class="cod">${i.code}</span></td>
-                <td title="${i.address}" style="max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${i.address}</td>
-                <td>${formatBRL(i.price)}</td>
-                <td>${i.captador||'-'}</td>
-                <td>${i.date||'-'}</td>
-                <td>${badge(i.status)}</td>
+                <td><span class="cod">${v.code}</span></td>
+                <td title="${v.address||''}" style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${v.address||'-'}</td>
+                <td>${v.corretor||'-'}</td>
+                <td>${v.date||'-'}</td>
+                <td>${formatBRL(v.value)}</td>
+                <td>${formatBRL(v.commission)}</td>
             </tr>`).join('');
-    }catch(e){ tb.innerHTML='<tr><td colspan="6" class="vazio">Erro ao carregar imóveis.</td></tr>'; }
+    }catch(e){ tb.innerHTML='<tr><td colspan="6" class="vazio">Erro ao carregar vendas.</td></tr>'; }
 }
+
 async function salvar(e){
     e.preventDefault();
     const btn=document.getElementById('btnSalvar');
-    const code=document.getElementById('code').value.trim().toUpperCase();
-    const address=document.getElementById('address').value.trim();
-    const price=parseFloat(document.getElementById('price').value);
-    const dateIso=document.getElementById('date').value;
+    const code=document.getElementById('imovel').value;
+    const endereco=document.getElementById('endereco').value;
     const captador=document.getElementById('captador').value;
-    const status=document.getElementById('status').value;
-    if(!code||!address||!dateIso||!captador||!(price>0)){
-        alerta('Preencha todos os campos obrigatórios (valor maior que zero).','err'); return;
+    const corretor=document.getElementById('corretor').value;
+    const dateIso=document.getElementById('date').value;
+    const valor=parseFloat(document.getElementById('valor').value);
+    const comissao=parseFloat(document.getElementById('comissao').value);
+
+    if(!code||!corretor||!dateIso||!(valor>0)){
+        alerta('Preencha imóvel, corretor, data e valor (maior que zero).','err'); return;
     }
     btn.disabled=true;
     try{
-        if(await DB.codigoExiste(code)){
-            alerta(`O código ${code} já está cadastrado. Use um código diferente.`,'err');
-            btn.disabled=false; return;
-        }
-        await DB.addImovel({code,address,captador,dateIso,price,status});
-        alerta(`Imóvel ${code} cadastrado com sucesso!`,'ok');
+        const { error } = await DB.client.from('vendas').insert({
+            imovel_codigo: code, endereco: endereco, captador: captador,
+            corretor: corretor, data_venda: dateIso,
+            valor: valor, comissao: comissao || 0, mes_ref: mesRef(dateIso)
+        });
+        if(error) throw error;
+
+        // marca o imóvel como Vendido
+        await DB.client.from('imoveis').update({ status:'Vendido' }).eq('codigo', code);
+
+        alerta(`Venda do imóvel ${code} registrada com sucesso!`,'ok');
         limpar();
+        await carregarImoveis();
         await renderRecentes();
     }catch(err){
-        alerta('Erro ao salvar: '+(err.message||err),'err');
+        alerta('Erro ao registrar: '+(err.message||err),'err');
     }finally{ btn.disabled=false; }
 }
+
 document.addEventListener('DOMContentLoaded', async function(){
     await DB.requireAuth();
     const user=await DB.getUser();
     if(user) document.getElementById('userInfo').textContent=user.email;
     document.getElementById('date').valueAsDate=new Date();
-    document.getElementById('priceDisplay').addEventListener('input',function(){moedaInput(this);});
-    document.getElementById('formImovel').addEventListener('submit',salvar);
-    await carregarCaptadores();
-    await renderRecentes();
+    document.getElementById('valorDisplay').addEventListener('input',function(){moedaInput(this,'valor');});
+    document.getElementById('comissaoDisplay').addEventListener('input',function(){moedaInput(this,'comissao');});
+    document.getElementById('imovel').addEventListener('change', aoSelecionarImovel);
+    document.getElementById('formVenda').addEventListener('submit', salvar);
+    await Promise.all([carregarImoveis(), carregarCorretores(), renderRecentes()]);
 });
 </script>
 </body>
