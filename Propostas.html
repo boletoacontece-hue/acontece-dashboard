@@ -1,0 +1,3278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propostas - Acontece Imobiliária</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            color: #212121;
+            line-height: 1.6;
+        }
+
+        /* HEADER COM NAVEGAÇÃO */
+        .top-header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-nav {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 40px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height: 45px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #616161;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .nav-links a:hover {
+            color: #2c6e2e;
+            background: #f5f5f5;
+        }
+
+        .nav-links a.active {
+            color: #2c6e2e;
+            font-weight: 600;
+        }
+
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: #fafafa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .user-info:hover {
+            background: #f0f0f0;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #424242;
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 180px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .user-dropdown.active .user-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-menu-item {
+            padding: 12px 16px;
+            color: #616161;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .user-menu-item:hover {
+            background: #fafafa;
+            color: #2c6e2e;
+        }
+
+        .user-menu-item.danger {
+            color: #e53935;
+        }
+
+        .user-menu-item.danger:hover {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* CONTAINER PRINCIPAL */
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* TÍTULO E SELETOR */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c6e2e;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .month-selector-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .month-selector-wrapper label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #757575;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .month-selector {
+            padding: 10px 16px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #212121;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+            min-width: 180px;
+        }
+
+        .month-selector:hover {
+            border-color: #2c6e2e;
+        }
+
+        .month-selector:focus {
+            border-color: #2c6e2e;
+            box-shadow: 0 0 0 3px rgba(44, 110, 46, 0.1);
+        }
+
+        /* KPI CARDS */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.2s;
+            border: 1px solid #f0f0f0;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .kpi-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #9e9e9e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .kpi-value.green {
+            color: #2c6e2e;
+        }
+
+        .kpi-value.blue {
+            color: #1976d2;
+        }
+
+        .kpi-value.purple {
+            color: #795548;
+        }
+
+        .kpi-subtitle {
+            font-size: 12px;
+            color: #9e9e9e;
+            font-weight: 500;
+        }
+
+        /* SECTION BADGES */
+        .section-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 20px;
+        }
+
+        .section-badge.verde {
+            background: #2c6e2e;
+            color: white;
+        }
+
+        .section-badge.azul {
+            background: #1976d2;
+            color: white;
+        }
+
+        .section-badge.cinza {
+            background: #757575;
+            color: white;
+        }
+
+        .section-badge.cinza-claro {
+            background: #9e9e9e;
+            color: white;
+        }
+
+        /* PIPELINE */
+        .pipeline-section {
+            margin-bottom: 40px;
+        }
+
+        .pipeline-header {
+            font-size: 20px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 20px;
+        }
+
+        .pipeline-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .pipeline-column {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #f0f0f0;
+            min-height: 400px;
+        }
+
+        .pipeline-column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .pipeline-column-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pipeline-column-count {
+            background: #f5f5f5;
+            color: #616161;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .pipeline-column.nova .pipeline-column-count {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .pipeline-column.contra .pipeline-column-count {
+            background: #efebe9;
+            color: #795548;
+        }
+
+        .pipeline-column.analise .pipeline-column-count {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .pipeline-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .pipeline-card {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pipeline-card:hover {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transform: translateX(4px);
+        }
+
+        .pipeline-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .pipeline-card-codigo {
+            font-size: 13px;
+            font-weight: 700;
+            color: #2c6e2e;
+        }
+
+        .pipeline-card-order {
+            background: #616161;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .pipeline-card-order.primeira {
+            background: #2c6e2e;
+        }
+
+        .pipeline-card-endereco {
+            font-size: 11px;
+            color: #9e9e9e;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .pipeline-card-info {
+            font-size: 12px;
+            color: #616161;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .pipeline-card-info strong {
+            color: #212121;
+            font-weight: 600;
+        }
+
+        .pipeline-card-value {
+            font-size: 12px;
+            color: #616161;
+            margin-bottom: 4px;
+        }
+
+        .pipeline-card-value-number {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2c6e2e;
+        }
+
+        .pipeline-card-timestamp {
+            font-size: 11px;
+            color: #9e9e9e;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .pipeline-card-alert {
+            background: #fff3e0;
+            border: 1.5px solid #f57c00;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-top: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #e65100;
+            text-align: left;
+            line-height: 1.5;
+        }
+
+        .pipeline-card-alert.cliente {
+            background: #ffebee;
+            border-color: #e53935;
+            color: #c62828;
+        }
+
+        .pipeline-card-alert.proprietario {
+            background: #fff3e0;
+            border-color: #f57c00;
+            color: #e65100;
+        }
+
+        .pipeline-card-alert.acionado {
+            background: #e8f5e9;
+            border-color: #66bb6a;
+            color: #2e7d32;
+        }
+
+        .pipeline-card-waiting {
+            font-size: 10px;
+            color: inherit;
+            opacity: 0.8;
+            margin-top: 3px;
+            font-weight: 500;
+        }
+
+        .btn-acionar {
+            background: white;
+            border: 1.5px solid currentColor;
+            color: inherit;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-acionar:hover {
+            background: #212121;
+            border-color: #212121;
+            color: white;
+        }
+
+        .pipeline-action-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .pipeline-action-btn {
+            padding: 8px 6px;
+            border: none;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pipeline-action-btn.proprietario {
+            background: #efebe9;
+            color: #795548;
+        }
+
+        .pipeline-action-btn.proprietario:hover {
+            background: #795548;
+            color: white;
+        }
+
+        .pipeline-action-btn.cliente {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .pipeline-action-btn.cliente:hover {
+            background: #1976d2;
+            color: white;
+        }
+
+        .pipeline-action-btn.status {
+            background: #f5f5f5;
+            color: #616161;
+        }
+
+        .pipeline-action-btn.status:hover {
+            background: #616161;
+            color: white;
+        }
+
+        .acionamento-obs {
+            font-size: 10px;
+            font-style: italic;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid currentColor;
+            opacity: 0.7;
+            line-height: 1.3;
+        }
+
+        /* SEÇÃO INATIVAS */
+        .inativas-section {
+            margin-bottom: 40px;
+        }
+
+        .inativas-toggle {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .inativas-toggle:hover {
+            background: #fafafa;
+        }
+
+        .inativas-toggle-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #212121;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .inativas-toggle-count {
+            background: #f5f5f5;
+            color: #616161;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .inativas-toggle-icon {
+            font-size: 20px;
+            color: #9e9e9e;
+            transition: transform 0.3s;
+        }
+
+        .inativas-section.expanded .inativas-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .inativas-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .inativas-section.expanded .inativas-content {
+            max-height: 2000px;
+        }
+
+        .inativas-table-wrapper {
+            background: white;
+            border-radius: 0 0 12px 12px;
+            padding: 0 24px 24px 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #f0f0f0;
+            border-top: none;
+        }
+
+        /* TABELA */
+        .table-section {
+            margin-bottom: 40px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .table-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .table-filters {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #616161;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .filter-select:hover {
+            border-color: #2c6e2e;
+        }
+
+        .btn-add {
+            background: #2c6e2e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add:hover {
+            background: #1a4d1b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(44, 110, 46, 0.3);
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #f0f0f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #fafafa;
+        }
+
+        th {
+            padding: 14px 12px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            color: #757575;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        td {
+            padding: 16px 12px;
+            font-size: 13px;
+            color: #424242;
+            border-bottom: 1px solid #f5f5f5;
+            vertical-align: top;
+        }
+
+        tbody tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: #fafafa;
+        }
+
+        tbody tr.expandable {
+            cursor: default;
+        }
+
+        .order-badge {
+            display: inline-block;
+            background: #616161;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-right: 6px;
+        }
+
+        .order-badge.primeira {
+            background: #2c6e2e;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-nova {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-analise {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-contra {
+            background: #efebe9;
+            color: #795548;
+        }
+
+        .status-aceita {
+            background: #e8f5e9;
+            color: #2c6e2e;
+        }
+
+        .status-fechada {
+            background: #e8f5e9;
+            color: #2c6e2e;
+        }
+
+        .status-recusada {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-aguardando {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .money {
+            color: #2c6e2e;
+            font-weight: 600;
+        }
+
+        .action-btn {
+            background: #f5f5f5;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #616161;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #2c6e2e;
+            color: white;
+        }
+
+        /* TIMELINE EXPANDIDA */
+        .timeline-row {
+            display: none;
+        }
+
+        .timeline-row.show {
+            display: table-row;
+        }
+
+        .timeline-content {
+            padding: 24px;
+            background: #fafafa;
+        }
+
+        .timeline-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timeline-item {
+            padding: 16px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 3px solid #e0e0e0;
+        }
+
+        .timeline-item.cliente {
+            border-left-color: #1976d2;
+        }
+
+        .timeline-item.proprietario {
+            border-left-color: #795548;
+        }
+
+        .timeline-item.sistema {
+            border-left-color: #616161;
+        }
+
+        .timeline-item.fechado {
+            border-left-color: #2c6e2e;
+        }
+
+        .timeline-details {
+            width: 100%;
+        }
+
+        .timeline-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .timeline-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timeline-badge.cliente {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .timeline-badge.proprietario {
+            background: #efebe9;
+            color: #795548;
+        }
+
+        .timeline-badge.sistema {
+            background: #f5f5f5;
+            color: #616161;
+        }
+
+        .timeline-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: #2c6e2e;
+            margin-bottom: 4px;
+        }
+
+        .timeline-meta {
+            font-size: 12px;
+            color: #9e9e9e;
+        }
+
+        .timeline-obs {
+            font-size: 12px;
+            color: #616161;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #e0e0e0;
+            font-style: italic;
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal h2 {
+            margin-bottom: 24px;
+            color: #212121;
+            font-size: 24px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #616161;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #fafafa;
+            transition: all 0.2s;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #2c6e2e;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(44, 110, 46, 0.1);
+        }
+
+        .form-group input[readonly] {
+            background: #f5f5f5;
+            color: #9e9e9e;
+            cursor: not-allowed;
+        }
+
+        .form-info {
+            background: #e3f2fd;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 3px solid #1976d2;
+        }
+
+        .form-info-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-info-text {
+            font-size: 13px;
+            color: #424242;
+        }
+
+        .form-warning {
+            background: #fff3e0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 3px solid #f57c00;
+        }
+
+        .form-warning-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #f57c00;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-warning-text {
+            font-size: 13px;
+            color: #424242;
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background: #f5f5f5;
+            color: #616161;
+        }
+
+        .btn-cancel:hover {
+            background: #eeeeee;
+        }
+
+        .btn-save {
+            background: #2c6e2e;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #1a4d1b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(44, 110, 46, 0.3);
+        }
+
+        .btn-delete {
+            background: #d32f2f;
+            color: white;
+            margin-right: auto;
+        }
+
+        .btn-delete:hover {
+            background: #b71c1c;
+        }
+
+        /* LOADING */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #9e9e9e;
+            font-size: 14px;
+        }
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 1400px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .pipeline-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .full-width {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER COM NAVEGAÇÃO -->
+    <div class="top-header">
+        <div class="header-nav">
+            <img src="Logo01.png" alt="Acontece Imobiliária" class="logo">
+            <div class="nav-links">
+                <a href="Dash5.html">Dashboard</a>
+                <a href="Relatorios.html">Relatórios</a>
+                <a href="Propostas.html" class="active">Propostas</a>
+                <a href="Configuracoes.html">Configurações</a>
+            </div>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-info" onclick="toggleUserMenu()">
+                    <span class="user-name" id="currentUserName">Usuário</span>
+                    <span style="font-size: 12px; color: #9e9e9e;">▼</span>
+                </div>
+                <div class="user-menu" id="userMenu">
+                    <button class="user-menu-item danger" onclick="logout()">
+                        <span>Sair</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- TÍTULO -->
+        <div class="page-header">
+            <h1 id="page-title">Propostas de Vendas</h1>
+            <div class="header-actions">
+                <button class="btn-add" onclick="openModal('add')">Nova Proposta</button>
+            </div>
+        </div>
+
+        <!-- KPI CARDS - TEMPORARIAMENTE DESATIVADOS -->
+        <div class="kpi-grid" style="display: none;">
+            <div class="kpi-card">
+                <div class="kpi-label">Propostas Ativas</div>
+                <div class="kpi-value green" id="kpi-total">0</div>
+                <div class="kpi-subtitle">em negociação</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Valor em Negociação</div>
+                <div class="kpi-value money" id="kpi-negociacao">R$ 0</div>
+                <div class="kpi-subtitle">propostas ativas</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Fechadas (30 dias)</div>
+                <div class="kpi-value blue" id="kpi-fechadas-30d">0</div>
+                <div class="kpi-subtitle">últimos 30 dias</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Taxa de Conversão</div>
+                <div class="kpi-value purple" id="kpi-conversao">0%</div>
+                <div class="kpi-subtitle">últimos 90 dias</div>
+            </div>
+        </div>
+
+        <!-- PIPELINE -->
+        <div class="pipeline-section">
+            <div class="section-badge verde">Pipeline de Propostas</div>
+            <div class="pipeline-grid">
+                <!-- NOVA -->
+                <div class="pipeline-column nova">
+                    <div class="pipeline-column-header">
+                        <div class="pipeline-column-title">Nova</div>
+                        <div class="pipeline-column-count" id="count-nova">0</div>
+                    </div>
+                    <div class="pipeline-cards" id="pipeline-nova">
+                        <div class="loading">Nenhuma proposta nova</div>
+                    </div>
+                </div>
+
+                <!-- EM ANÁLISE -->
+                <div class="pipeline-column analise">
+                    <div class="pipeline-column-header">
+                        <div class="pipeline-column-title">Em Análise</div>
+                        <div class="pipeline-column-count" id="count-analise">0</div>
+                    </div>
+                    <div class="pipeline-cards" id="pipeline-analise">
+                        <div class="loading">Nenhuma em análise</div>
+                    </div>
+                </div>
+
+                <!-- CONTRA PROPOSTA -->
+                <div class="pipeline-column contra">
+                    <div class="pipeline-column-header">
+                        <div class="pipeline-column-title">Contra Proposta</div>
+                        <div class="pipeline-column-count" id="count-contra">0</div>
+                    </div>
+                    <div class="pipeline-cards" id="pipeline-contra">
+                        <div class="loading">Nenhuma contra proposta</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROPOSTAS ACEITAS -->
+        <div class="inativas-section" id="aceitasSection">
+            <div class="section-badge azul">Propostas Aceitas</div>
+            <div class="inativas-toggle" onclick="toggleAceitas()">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span class="inativas-toggle-title">Propostas Aceitas</span>
+                    <span class="inativas-toggle-count" id="count-aceitas">0</span>
+                </div>
+                <span class="inativas-toggle-icon">▼</span>
+            </div>
+            <div class="inativas-content">
+                <div class="inativas-table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ordem</th>
+                                <th>Imóvel</th>
+                                <th>Cliente</th>
+                                <th>Corretor</th>
+                                <th>Valor Final</th>
+                                <th>Data/Hora</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="aceitas-body">
+                            <tr>
+                                <td colspan="7" style="text-align:center; padding:40px; color:#9e9e9e;">
+                                    Nenhuma proposta aceita
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROPOSTAS RECUSADAS -->
+        <div class="inativas-section" id="inativasSection">
+            <div class="section-badge cinza">Propostas Recusadas</div>
+            <div class="inativas-toggle" onclick="toggleInativas()">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span class="inativas-toggle-title">Propostas Recusadas</span>
+                    <span class="inativas-toggle-count" id="count-inativas">0</span>
+                </div>
+                <span class="inativas-toggle-icon">▼</span>
+            </div>
+            <div class="inativas-content">
+                <div class="inativas-table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ordem</th>
+                                <th>Imóvel</th>
+                                <th>Cliente</th>
+                                <th>Corretor</th>
+                                <th>Valor Proposto</th>
+                                <th>Data/Hora</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inativas-body">
+                            <tr>
+                                <td colspan="7" style="text-align:center; padding:40px; color:#9e9e9e;">
+                                    Nenhuma proposta inativa
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABELA COMPLETA -->
+        <div class="inativas-section" id="todasSection">
+            <div class="section-badge cinza-claro">Todas as Propostas</div>
+            <div class="inativas-toggle" onclick="toggleTodas()">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span class="inativas-toggle-title">Todas as Propostas</span>
+                    <span class="inativas-toggle-count" id="count-todas">0</span>
+                </div>
+                <span class="inativas-toggle-icon">▼</span>
+            </div>
+            <div class="inativas-content">
+                <div class="inativas-table-wrapper">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #e0e0e0; margin-bottom: 16px;">
+                        <div style="display: flex; gap: 12px;">
+                            <select class="filter-select" id="filterStatus" onchange="applyFilters()">
+                                <option value="">Todos os Status</option>
+                                <option value="nova">Nova</option>
+                                <option value="em_analise">Em Análise</option>
+                                <option value="contra_proposta">Contra Proposta</option>
+                                <option value="aceita">Aceita</option>
+                                <option value="fechada">Negócio Fechado</option>
+                                <option value="recusada">Recusada</option>
+                                <option value="aguardando">Aguardando (Em Análise)</option>
+                            </select>
+                            <select class="filter-select" id="filterCorretor" onchange="applyFilters()">
+                                <option value="">Todos os Corretores</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-container" style="border: none; box-shadow: none;">
+                <table id="mainTable">
+                    <thead>
+                        <tr>
+                            <th>Ordem</th>
+                            <th>Carimbo</th>
+                            <th>Imóvel / Cliente</th>
+                            <th>Valores</th>
+                            <th>Corretor</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="main-table-body">
+                        <tr>
+                            <td colspan="7" style="text-align:center; padding:40px; color:#9e9e9e;">
+                                Nenhuma proposta cadastrada ainda
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NOVA PROPOSTA -->
+    <div id="propostaModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-title">Nova Proposta</h2>
+            
+            <div id="warning-multiplas" style="display:none;" class="form-warning">
+                <div class="form-warning-title">Atenção - Múltiplas Propostas</div>
+                <div class="form-warning-text" id="warning-text"></div>
+            </div>
+            
+            <div id="info-imovel" style="display:none;" class="form-info">
+                <div class="form-info-title">Informações do Imóvel</div>
+                <div class="form-info-text" id="info-text"></div>
+            </div>
+
+            <div class="form-grid">
+                <!-- DADOS DO IMÓVEL -->
+                <div class="form-group full-width" style="background:#fafafa; padding:16px; border-radius:8px; margin-bottom:16px;">
+                    <h3 style="font-size:14px; font-weight:700; color:#212121; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">Dados do Imóvel</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Código do Imóvel</label>
+                            <input type="text" id="propCodigoImovel" placeholder="Ex: AC3896" oninput="buscarImovel()">
+                        </div>
+                        <div class="form-group">
+                            <label>Captador do Imóvel</label>
+                            <input type="text" id="propCaptador" readonly>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Endereço</label>
+                            <input type="text" id="propEndereco" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Valor de Anúncio</label>
+                            <input type="text" id="propValorAnuncio" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Status do Imóvel</label>
+                            <input type="text" id="propStatusImovel" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DADOS DA PROPOSTA -->
+                <div class="form-group full-width" style="background:#fafafa; padding:16px; border-radius:8px; margin-bottom:16px;">
+                    <h3 style="font-size:14px; font-weight:700; color:#212121; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">Dados da Proposta</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Corretor Responsável</label>
+                            <select id="propCorretor" required>
+                                <option value="">Selecione...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Valor Proposto (R$)</label>
+                            <input type="number" id="propValorProposto" step="0.01" placeholder="850000" oninput="calcularDiferenca()">
+                        </div>
+                        <div class="form-group" id="status-group" style="display:none;">
+                            <label>Status da Proposta</label>
+                            <select id="propStatus">
+                                <option value="nova">Nova</option>
+                                <option value="em_analise">Em Análise</option>
+                                <option value="contra_proposta">Contra Proposta</option>
+                                <option value="aceita">Aceita</option>
+                                <option value="fechada">Negócio Fechado</option>
+                                <option value="recusada">Recusada</option>
+                                <option value="aguardando">Aguardando (Em Análise)</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width" id="diferenca-info" style="display:none; background:#e3f2fd; padding:12px; border-radius:6px; border-left:3px solid #1976d2;">
+                            <div style="font-size:12px; color:#1976d2; font-weight:700; margin-bottom:4px;">ANÁLISE DA PROPOSTA</div>
+                            <div id="diferenca-text" style="font-size:13px; color:#424242;"></div>
+                        </div>
+                        <div class="form-group full-width" id="status-info" style="display:none; background:#fff3e0; padding:12px; border-radius:6px; border-left:3px solid #f57c00;">
+                            <div style="font-size:12px; color:#f57c00; font-weight:700; margin-bottom:4px;">INFORMAÇÃO SOBRE STATUS</div>
+                            <div id="status-info-text" style="font-size:13px; color:#424242;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DADOS DO CLIENTE -->
+                <div class="form-group full-width" style="background:#fafafa; padding:16px; border-radius:8px; margin-bottom:16px;">
+                    <h3 style="font-size:14px; font-weight:700; color:#212121; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">Dados do Cliente</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nome do Cliente</label>
+                            <input type="text" id="propClienteNome" required placeholder="João Silva">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone</label>
+                            <input type="text" id="propClienteTelefone" placeholder="(61) 99999-9999">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Email</label>
+                            <input type="email" id="propClienteEmail" placeholder="cliente@email.com">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OBSERVAÇÕES -->
+                <div class="form-group full-width">
+                    <label>Observações</label>
+                    <textarea id="propObservacoes" placeholder="Informações adicionais sobre a proposta..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-buttons">
+                <button class="btn btn-delete" id="delete-btn" onclick="deleteProposta()" style="display:none;">Apagar</button>
+                <button class="btn btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-save" onclick="saveProposta()">Salvar Proposta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONTRA PROPOSTA -->
+    <div id="contraPropostaModal" class="modal">
+        <div class="modal-content">
+            <h2 id="contra-modal-title">Contra Proposta</h2>
+            
+            <div class="form-info">
+                <div class="form-info-title">Resumo da Proposta Atual</div>
+                <div class="form-info-text" id="contra-resumo"></div>
+            </div>
+
+            <div class="form-group">
+                <label style="font-size:14px; font-weight:700; color:#212121;">Resposta do Proprietário</label>
+                <select id="contraResposta" onchange="toggleContraValor()" style="padding:12px; font-size:14px;">
+                    <option value="">Selecione uma opção...</option>
+                    <option value="aceitar">Aceitar proposta do cliente</option>
+                    <option value="contra">Fazer contra proposta</option>
+                    <option value="recusar">Recusar negociação</option>
+                </select>
+            </div>
+
+            <div id="contraValorGroup" style="display:none;">
+                <div class="form-group">
+                    <label>Valor da Contra Proposta (R$)</label>
+                    <input type="number" id="contraValor" step="0.01" oninput="calcularDiferencaContra()">
+                </div>
+                
+                <div id="contra-diferenca-info" style="display:none; background:#efebe9; padding:12px; border-radius:6px; border-left:3px solid #795548; margin-bottom:16px;">
+                    <div style="font-size:12px; color:#795548; font-weight:700; margin-bottom:4px;">ANÁLISE DA CONTRA PROPOSTA</div>
+                    <div id="contra-diferenca-text" style="font-size:13px; color:#424242;"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Observações da Resposta</label>
+                <textarea id="contraObservacoes" placeholder="Motivo da decisão..."></textarea>
+            </div>
+
+            <div class="form-buttons">
+                <button class="btn btn-cancel" onclick="closeContraModal()">Cancelar</button>
+                <button class="btn btn-save" onclick="saveContraProposta()">Registrar Resposta</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="db-supabase.js"></script>
+    <script>
+        // CONFIGURAÇÕES
+        const STORAGE_KEY = 'dashboard_propostas_global';
+        const DASHBOARD_KEY = 'dashboard_acontece_v5';
+        const CONFIG_KEYS = {
+            CORRETORES: 'dashboard_corretores'
+        };
+
+        // VARIÁVEIS GLOBAIS
+        let propostasData = [];
+        let editingId = null;
+        let currentContraPropostaId = null;
+        let currentRespostaClienteId = null;
+
+        // INICIALIZAÇÃO (sem período)
+
+        // FUNÇÕES UTILITÁRIAS
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', { 
+                style: 'currency', 
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        function formatDateTime(isoString) {
+            const date = new Date(isoString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${day}/${month}/${year} às ${hours}:${minutes}:${seconds}`;
+        }
+
+        function getTimeAgo(isoString) {
+            const now = new Date();
+            const date = new Date(isoString);
+            const diff = now - date;
+            
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            
+            if (days > 0) return `Há ${days} dia${days > 1 ? 's' : ''}`;
+            if (hours > 0) return `Há ${hours} hora${hours > 1 ? 's' : ''}`;
+            if (minutes > 0) return `Há ${minutes} minuto${minutes > 1 ? 's' : ''}`;
+            return 'Agora mesmo';
+        }
+
+        function getTempoEspera(isoString) {
+            const now = new Date();
+            const date = new Date(isoString);
+            const diff = now - date;
+            
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            
+            if (days > 0) return `${days} dia${days > 1 ? 's' : ''}`;
+            if (hours > 0) return `${hours} hora${hours > 1 ? 's' : ''}`;
+            if (minutes > 0) return `${minutes} minuto${minutes > 1 ? 's' : ''}`;
+            return 'agora';
+        }
+
+        // GESTÃO DE DADOS (sem filtro de período)
+        // Hidrata imóveis e corretores (para buscar-imóvel e dropdowns)
+        async function hydrateBase() {
+            const [imoveis, vendas, corretores] = await Promise.all([
+                DB.listImoveis(), DB.listVendas(), DB.listCorretores()
+            ]);
+            const v5 = {};
+            const ensure = m => (v5[m] = v5[m] || { sales: [], capted: [] });
+            imoveis.forEach(i => { if (i.mes) ensure(i.mes).capted.push({ code:i.code, address:i.address, captador:i.captador, date:i.date, price:i.price, status:i.status }); });
+            vendas.forEach(sv => { if (sv.mes) ensure(sv.mes).sales.push({ code:sv.code, address:sv.address, captador:sv.captador, corretor:sv.corretor, date:sv.date, value:sv.value, commission:sv.commission }); });
+            localStorage.setItem('dashboard_acontece_v5', JSON.stringify(v5));
+            localStorage.setItem('dashboard_corretores', JSON.stringify(corretores.map(c => ({ id:c.id, name:c.name, type:c.type, email:c.email, phone:c.phone }))));
+        }
+
+        function logout() { if (confirm('Tem certeza que deseja sair?')) DB.signOut(); }
+
+        // GESTÃO DE DADOS (Supabase)
+        async function loadData() {
+            const r1 = await DB.client.from('propostas').select('*').order('data_hora_registro');
+            const r2 = await DB.client.from('negociacoes').select('*').order('seq');
+            if (r1.error || r2.error) { console.error(r1.error||r2.error); propostasData = []; render(); return; }
+            const negsBy = {};
+            (r2.data||[]).forEach(n => { (negsBy[n.proposta_id] = negsBy[n.proposta_id] || []).push(n); });
+            propostasData = (r1.data||[]).map(p => ({
+                id: p.id, protocolo: p.protocolo, codigo_imovel: p.codigo_imovel,
+                numero_ordem: p.numero_ordem, data_hora_registro: p.data_hora_registro,
+                corretor_id: p.corretor_id, corretor_nome: p.corretor_nome,
+                imovel: { codigo: p.codigo_imovel, endereco: p.imovel_endereco, valor_anuncio: Number(p.imovel_valor_anuncio)||0, captador: p.imovel_captador, status: p.imovel_status },
+                cliente: { nome: p.cliente_nome, telefone: p.cliente_telefone, email: p.cliente_email },
+                valor_proposto: Number(p.valor_proposto)||0,
+                desconto_percentual: p.desconto_percentual,
+                comissao_estimada: Number(p.comissao_estimada)||0,
+                status: p.status, tem_prioridade: p.tem_prioridade, observacoes: p.observacoes,
+                negociacoes: (negsBy[p.id]||[]).map(n => ({
+                    id: n.id, tipo: n.tipo, quem: n.quem, valor: n.valor, valor_anterior: n.valor_anterior,
+                    data: n.data, observacoes: n.observacoes, motivo_personalizado: n.motivo_personalizado,
+                    usuario: n.usuario, aguardando_resposta: n.aguardando_resposta, acionamento: n.acionamento
+                }))
+            }));
+            render();
+        }
+
+        // Persiste todo o array no Supabase (otimista: a tela usa a memória; o banco sincroniza)
+        function saveData() {
+            _syncPropostas().catch(e => alert('Erro ao salvar no banco: ' + (e.message||e)));
+        }
+        async function _syncPropostas() {
+            const propRows = propostasData.map(p => ({
+                id: p.id, protocolo: p.protocolo, numero_ordem: p.numero_ordem,
+                data_hora_registro: p.data_hora_registro, codigo_imovel: p.codigo_imovel,
+                corretor_id: p.corretor_id, corretor_nome: p.corretor_nome,
+                imovel_endereco: p.imovel ? p.imovel.endereco : null,
+                imovel_valor_anuncio: p.imovel ? p.imovel.valor_anuncio : null,
+                imovel_captador: p.imovel ? p.imovel.captador : null,
+                imovel_status: p.imovel ? p.imovel.status : null,
+                cliente_nome: p.cliente ? p.cliente.nome : null,
+                cliente_telefone: p.cliente ? p.cliente.telefone : null,
+                cliente_email: p.cliente ? p.cliente.email : null,
+                valor_proposto: p.valor_proposto,
+                desconto_percentual: (p.desconto_percentual===''||p.desconto_percentual==null) ? null : parseFloat(p.desconto_percentual),
+                comissao_estimada: p.comissao_estimada, status: p.status,
+                tem_prioridade: !!p.tem_prioridade, observacoes: p.observacoes
+            }));
+            const negRows = [];
+            propostasData.forEach(p => (p.negociacoes||[]).forEach((n, i) => negRows.push({
+                id: n.id || (p.id + '_neg_' + i), proposta_id: p.id, seq: i,
+                tipo: n.tipo, quem: n.quem, valor: n.valor, valor_anterior: n.valor_anterior,
+                data: n.data, observacoes: n.observacoes, motivo_personalizado: n.motivo_personalizado,
+                usuario: n.usuario, aguardando_resposta: n.aguardando_resposta,
+                acionamento: n.acionamento || null
+            })));
+            // apaga propostas removidas (cascade apaga negociações)
+            const keep = new Set(propostasData.map(p => p.id));
+            const existing = await DB.client.from('propostas').select('id');
+            if (!existing.error) {
+                const del = (existing.data||[]).map(r=>r.id).filter(id => !keep.has(id));
+                if (del.length) await DB.client.from('propostas').delete().in('id', del);
+            }
+            if (propRows.length) { const {error} = await DB.client.from('propostas').upsert(propRows); if (error) throw error; }
+            if (negRows.length) { const {error} = await DB.client.from('negociacoes').upsert(negRows); if (error) throw error; }
+        }
+
+        // BUSCAR IMÓVEL
+        function buscarImovel() {
+            const codigo = document.getElementById('propCodigoImovel').value.trim().toUpperCase();
+            
+            if (!codigo) {
+                limparDadosImovel();
+                return;
+            }
+
+            // Buscar em todos os meses
+            const dashData = JSON.parse(localStorage.getItem(DASHBOARD_KEY) || '{}');
+            let imovelEncontrado = null;
+
+            for (const monthKey in dashData) {
+                const capted = dashData[monthKey].capted || [];
+                const found = capted.find(item => item.code === codigo);
+                if (found) {
+                    imovelEncontrado = found;
+                    break;
+                }
+            }
+
+            if (imovelEncontrado) {
+                document.getElementById('propEndereco').value = imovelEncontrado.address;
+                document.getElementById('propValorAnuncio').value = formatCurrency(imovelEncontrado.price);
+                document.getElementById('propCaptador').value = imovelEncontrado.captador;
+                document.getElementById('propStatusImovel').value = imovelEncontrado.status || 'Disponível';
+
+                // Mostrar info
+                document.getElementById('info-imovel').style.display = 'block';
+                document.getElementById('info-text').innerHTML = `
+                    <strong>Imóvel encontrado!</strong><br>
+                    Endereço: ${imovelEncontrado.address}<br>
+                    Valor de Anúncio: ${formatCurrency(imovelEncontrado.price)}<br>
+                    Captador: ${imovelEncontrado.captador}
+                `;
+
+                // Verificar se já existem propostas para este imóvel
+                verificarPropostasExistentes(codigo);
+            } else {
+                limparDadosImovel();
+                document.getElementById('info-imovel').style.display = 'block';
+                document.getElementById('info-text').innerHTML = `
+                    <strong>Código não encontrado.</strong><br>
+                    Você pode continuar, mas os dados do imóvel não serão preenchidos automaticamente.
+                `;
+                document.getElementById('warning-multiplas').style.display = 'none';
+            }
+        }
+
+        function limparDadosImovel() {
+            document.getElementById('propEndereco').value = '';
+            document.getElementById('propValorAnuncio').value = '';
+            document.getElementById('propCaptador').value = '';
+            document.getElementById('propStatusImovel').value = '';
+            document.getElementById('info-imovel').style.display = 'none';
+            document.getElementById('warning-multiplas').style.display = 'none';
+        }
+
+        function verificarPropostasExistentes(codigo) {
+            const existentes = propostasData.filter(p => p.codigo_imovel === codigo);
+            
+            if (existentes.length > 0) {
+                const primeira = existentes[0];
+                document.getElementById('warning-multiplas').style.display = 'block';
+                document.getElementById('warning-text').innerHTML = `
+                    Já existe <strong>${existentes.length} proposta(s)</strong> para este imóvel.<br><br>
+                    <strong>1ª Proposta (Prioridade):</strong><br>
+                    Corretor: ${primeira.corretor_nome}<br>
+                    Cliente: ${primeira.cliente_nome}<br>
+                    Valor: ${formatCurrency(primeira.valor_proposto)}<br>
+                    Data: ${formatDateTime(primeira.data_hora_registro)}<br><br>
+                    Esta nova proposta será registrada como <strong>#${existentes.length + 1}</strong> e ficará em espera.
+                `;
+            } else {
+                document.getElementById('warning-multiplas').style.display = 'none';
+            }
+        }
+
+        function calcularDiferenca() {
+            const valorAnuncioStr = document.getElementById('propValorAnuncio').value;
+            const valorProposto = parseFloat(document.getElementById('propValorProposto').value);
+
+            if (!valorAnuncioStr || !valorProposto) {
+                document.getElementById('diferenca-info').style.display = 'none';
+                return;
+            }
+
+            const valorAnuncio = parseFloat(valorAnuncioStr.replace(/[^0-9,]/g, '').replace(',', '.'));
+            const diferenca = valorProposto - valorAnuncio;
+            const percentual = ((diferenca / valorAnuncio) * 100).toFixed(2);
+
+            document.getElementById('diferenca-info').style.display = 'block';
+            
+            let texto = '';
+            if (diferenca < 0) {
+                texto = `Desconto de <strong>${formatCurrency(Math.abs(diferenca))}</strong> (${Math.abs(percentual)}% abaixo do anúncio)`;
+            } else if (diferenca > 0) {
+                texto = `Valor <strong>${formatCurrency(diferenca)}</strong> acima do anúncio (+${percentual}%)`;
+            } else {
+                texto = 'Valor igual ao anúncio';
+            }
+
+            const comissao = valorProposto * 0.05;
+            texto += `<br>Comissão Estimada (5%): <strong>${formatCurrency(comissao)}</strong>`;
+
+            document.getElementById('diferenca-text').innerHTML = texto;
+        }
+
+        // MODAL
+        function openModal(mode, id = null) {
+            editingId = id;
+            const modal = document.getElementById('propostaModal');
+            const title = document.getElementById('modal-title');
+            const deleteBtn = document.getElementById('delete-btn');
+            const statusGroup = document.getElementById('status-group');
+
+            loadCorretoresDropdown();
+
+            if (mode === 'add') {
+                title.textContent = 'Nova Proposta';
+                deleteBtn.style.display = 'none';
+                statusGroup.style.display = 'none';
+                limparFormulario();
+            } else if (mode === 'edit') {
+                title.textContent = 'Editar Proposta';
+                deleteBtn.style.display = 'block';
+                statusGroup.style.display = 'block';
+                carregarPropostaParaEdicao(id);
+                
+                // Adicionar listener para mostrar info do status
+                document.getElementById('propStatus').addEventListener('change', mostrarInfoStatus);
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('propostaModal').style.display = 'none';
+            editingId = null;
+            limparFormulario();
+        }
+
+        function limparFormulario() {
+            document.getElementById('propCodigoImovel').value = '';
+            document.getElementById('propEndereco').value = '';
+            document.getElementById('propValorAnuncio').value = '';
+            document.getElementById('propCaptador').value = '';
+            document.getElementById('propStatusImovel').value = '';
+            document.getElementById('propCorretor').value = '';
+            document.getElementById('propValorProposto').value = '';
+            document.getElementById('propClienteNome').value = '';
+            document.getElementById('propClienteTelefone').value = '';
+            document.getElementById('propClienteEmail').value = '';
+            document.getElementById('propObservacoes').value = '';
+            document.getElementById('info-imovel').style.display = 'none';
+            document.getElementById('warning-multiplas').style.display = 'none';
+            document.getElementById('diferenca-info').style.display = 'none';
+        }
+
+        function carregarPropostaParaEdicao(id) {
+            const proposta = propostasData.find(p => p.id === id);
+            if (!proposta) return;
+
+            document.getElementById('propCodigoImovel').value = proposta.codigo_imovel;
+            document.getElementById('propEndereco').value = proposta.imovel.endereco;
+            document.getElementById('propValorAnuncio').value = formatCurrency(proposta.imovel.valor_anuncio);
+            document.getElementById('propCaptador').value = proposta.imovel.captador;
+            document.getElementById('propStatusImovel').value = proposta.imovel.status;
+            document.getElementById('propCorretor').value = proposta.corretor_id;
+            document.getElementById('propValorProposto').value = proposta.valor_proposto;
+            document.getElementById('propClienteNome').value = proposta.cliente.nome;
+            document.getElementById('propClienteTelefone').value = proposta.cliente.telefone || '';
+            document.getElementById('propClienteEmail').value = proposta.cliente.email || '';
+            document.getElementById('propObservacoes').value = proposta.observacoes || '';
+            document.getElementById('propStatus').value = proposta.status;
+            
+            mostrarInfoStatus();
+        }
+
+        function mostrarInfoStatus() {
+            const status = document.getElementById('propStatus').value;
+            const infoDiv = document.getElementById('status-info');
+            const infoText = document.getElementById('status-info-text');
+            
+            const statusInfo = {
+                'nova': {
+                    texto: '<strong>Nova:</strong> Proposta recém registrada, aguardando análise do proprietário.',
+                    cor: '#1976d2'
+                },
+                'em_analise': {
+                    texto: '<strong>Em Análise:</strong> Proprietário está analisando a proposta.',
+                    cor: '#f57c00'
+                },
+                'contra_proposta': {
+                    texto: '<strong>Contra Proposta:</strong> Proprietário fez contra oferta. Aguardando resposta do cliente.',
+                    cor: '#795548'
+                },
+                'aceita': {
+                    texto: '<strong>Aceita:</strong> Proposta aceita! Pronta para ser convertida em venda.',
+                    cor: '#2c6e2e'
+                },
+                'fechada': {
+                    texto: '<strong>Negócio Fechado:</strong> Venda concluída! Documentação assinada e negócio fechado.',
+                    cor: '#2c6e2e'
+                },
+                'recusada': {
+                    texto: '<strong>Recusada:</strong> Negociação não deu certo. Proposta encerrada sem sucesso.',
+                    cor: '#c62828'
+                },
+                'aguardando': {
+                    texto: '<strong>Aguardando (Em Análise):</strong> Proposta aguardando resposta ou ação. Permanece ativa no pipeline.',
+                    cor: '#f57c00'
+                }
+            };
+            
+            if (statusInfo[status]) {
+                infoDiv.style.display = 'block';
+                infoDiv.style.borderLeftColor = statusInfo[status].cor;
+                infoText.innerHTML = statusInfo[status].texto;
+            } else {
+                infoDiv.style.display = 'none';
+            }
+        }
+
+        function loadCorretoresDropdown() {
+            const corretores = JSON.parse(localStorage.getItem(CONFIG_KEYS.CORRETORES) || '[]');
+            const select = document.getElementById('propCorretor');
+            
+            select.innerHTML = '<option value="">Selecione...</option>';
+            
+            corretores.forEach(corretor => {
+                if (corretor.type === 'Corretor' || corretor.type === 'Ambos') {
+                    const option = document.createElement('option');
+                    option.value = corretor.id;
+                    option.textContent = corretor.name;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        function saveProposta() {
+            const codigoImovel = document.getElementById('propCodigoImovel').value.trim();
+            const corretorId = document.getElementById('propCorretor').value;
+            const valorProposto = parseFloat(document.getElementById('propValorProposto').value);
+            const clienteNome = document.getElementById('propClienteNome').value.trim();
+
+            if (!codigoImovel || !corretorId || !valorProposto || !clienteNome) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+
+            const corretores = JSON.parse(localStorage.getItem(CONFIG_KEYS.CORRETORES) || '[]');
+            const corretor = corretores.find(c => c.id === corretorId);
+
+            const valorAnuncioStr = document.getElementById('propValorAnuncio').value;
+            const valorAnuncio = valorAnuncioStr ? parseFloat(valorAnuncioStr.replace(/[^0-9,]/g, '').replace(',', '.')) : 0;
+
+            const now = new Date();
+            const protocolo = 'P' + now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(propostasData.length + 1).padStart(3, '0');
+            
+            // Preparar array de negociações
+            let negociacoes;
+            if (editingId) {
+                const propostaOriginal = propostasData.find(p => p.id === editingId);
+                negociacoes = [...propostaOriginal.negociacoes];
+                
+                // Verificar se o valor foi alterado
+                if (propostaOriginal.valor_proposto !== valorProposto) {
+                    // Adicionar registro de alteração de valor no histórico
+                    negociacoes.push({
+                        id: 'neg_' + String(negociacoes.length + 1).padStart(3, '0'),
+                        tipo: 'ajuste_valor',
+                        quem: 'sistema',
+                        valor: valorProposto,
+                        valor_anterior: propostaOriginal.valor_proposto,
+                        data: new Date().toISOString(),
+                        observacoes: `Valor ajustado de ${formatCurrency(propostaOriginal.valor_proposto)} para ${formatCurrency(valorProposto)}`,
+                        usuario: 'Usuário'
+                    });
+                }
+            } else {
+                negociacoes = [
+                    {
+                        id: 'neg_001',
+                        tipo: 'proposta_inicial',
+                        quem: 'cliente',
+                        valor: valorProposto,
+                        data: new Date().toISOString(),
+                        observacoes: document.getElementById('propObservacoes').value,
+                        usuario: 'Sistema',
+                        aguardando_resposta: 'proprietario'
+                    }
+                ];
+            }
+            
+            const proposta = {
+                id: editingId || 'prop_' + Date.now(),
+                protocolo: protocolo,
+                codigo_imovel: codigoImovel.toUpperCase(),
+                
+                // Ordem de chegada
+                numero_ordem: calcularOrdem(codigoImovel),
+                data_hora_registro: editingId ? propostasData.find(p => p.id === editingId).data_hora_registro : new Date().toISOString(),
+                
+                // Corretor
+                corretor_id: corretorId,
+                corretor_nome: corretor ? corretor.name : 'Desconhecido',
+                
+                // Imóvel
+                imovel: {
+                    codigo: codigoImovel.toUpperCase(),
+                    endereco: document.getElementById('propEndereco').value,
+                    valor_anuncio: valorAnuncio,
+                    captador: document.getElementById('propCaptador').value,
+                    status: document.getElementById('propStatusImovel').value
+                },
+                
+                // Cliente
+                cliente: {
+                    nome: clienteNome,
+                    telefone: document.getElementById('propClienteTelefone').value,
+                    email: document.getElementById('propClienteEmail').value
+                },
+                
+                // Valores
+                valor_proposto: valorProposto,
+                desconto_percentual: valorAnuncio ? (((valorProposto - valorAnuncio) / valorAnuncio) * 100).toFixed(2) : 0,
+                comissao_estimada: valorProposto * 0.05,
+                
+                // Status
+                status: editingId ? document.getElementById('propStatus').value : 'nova',
+                tem_prioridade: calcularOrdem(codigoImovel) === 1,
+                
+                observacoes: document.getElementById('propObservacoes').value,
+                
+                // Timeline de negociação
+                negociacoes: negociacoes
+            };
+
+            if (editingId) {
+                const index = propostasData.findIndex(p => p.id === editingId);
+                propostasData[index] = proposta;
+            } else {
+                propostasData.push(proposta);
+            }
+
+            saveData();
+            render();
+            closeModal();
+        }
+
+        function calcularOrdem(codigoImovel) {
+            const existentes = propostasData.filter(p => p.codigo_imovel === codigoImovel);
+            return existentes.length + 1;
+        }
+
+        function deleteProposta() {
+            if (!confirm('Tem certeza que deseja apagar esta proposta?')) return;
+            
+            propostasData = propostasData.filter(p => p.id !== editingId);
+            saveData();
+            render();
+            closeModal();
+        }
+
+        // MUDANÇA RÁPIDA DE STATUS
+        function mudarStatusRapido(id) {
+            const proposta = propostasData.find(p => p.id === id);
+            if (!proposta) return;
+
+            // Criar container do diálogo
+            const dialogContainer = document.createElement('div');
+            dialogContainer.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:10000; padding:20px; overflow-y:auto;';
+            
+            const dialogBox = document.createElement('div');
+            dialogBox.style.cssText = 'background:white; padding:24px; border-radius:12px; max-width:550px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:90vh; overflow-y:auto;';
+            
+            const dialogTitle = document.createElement('h3');
+            dialogTitle.textContent = 'Alterar Status da Proposta';
+            dialogTitle.style.cssText = 'margin:0 0 16px 0; color:#212121; font-size:20px;';
+            
+            // Informações da proposta
+            const infoDiv = document.createElement('div');
+            infoDiv.style.cssText = 'margin-bottom:20px; padding:12px; background:#f5f5f5; border-radius:6px;';
+            infoDiv.innerHTML = `
+                <strong>Proposta:</strong> ${proposta.codigo_imovel}<br>
+                <strong>Cliente:</strong> ${proposta.cliente.nome}<br>
+                <strong>Status Atual:</strong> <span style="color:#2c6e2e;">${getStatusLabel(proposta.status)}</span>
+            `;
+            
+            // Select de status
+            const statusLabel = document.createElement('div');
+            statusLabel.style.cssText = 'font-weight:600; margin-bottom:8px; font-size:14px;';
+            statusLabel.textContent = 'Novo Status:';
+            
+            const statusSelect = document.createElement('select');
+            statusSelect.id = 'modalStatusSelect';
+            statusSelect.style.cssText = 'padding:10px; font-size:14px; border-radius:6px; border:1.5px solid #e0e0e0; width:100%; margin-bottom:16px;';
+            statusSelect.innerHTML = `
+                <option value="">-- Escolha o novo status --</option>
+                <option value="nova">Nova</option>
+                <option value="em_analise">Em Análise</option>
+                <option value="contra_proposta">Contra Proposta</option>
+                <option value="aceita">Aceita</option>
+                <option value="fechada">Negócio Fechado</option>
+                <option value="recusada">Recusada</option>
+                <option value="aguardando">Aguardando (Em Análise)</option>
+            `;
+            
+            // Div para campos dinâmicos
+            const camposDinamicos = document.createElement('div');
+            camposDinamicos.id = 'camposDinamicos';
+            
+            // Listener para mostrar campos específicos
+            statusSelect.addEventListener('change', function() {
+                const novoStatus = this.value;
+                camposDinamicos.innerHTML = '';
+                
+                // Campo de valor para Contra Proposta
+                if (novoStatus === 'contra_proposta') {
+                    camposDinamicos.innerHTML = `
+                        <div style="margin-bottom:16px;">
+                            <label style="display:block; font-weight:600; margin-bottom:8px; font-size:13px;">Valor da Contra Proposta (R$):</label>
+                            <input type="number" id="contraPropostaValor" step="0.01" placeholder="920000" 
+                                   style="width:100%; padding:10px; border:1.5px solid #e0e0e0; border-radius:6px; font-size:14px;">
+                        </div>
+                    `;
+                }
+                
+                // Motivos para Recusada
+                if (novoStatus === 'recusada') {
+                    camposDinamicos.innerHTML = `
+                        <div style="margin-bottom:16px;">
+                            <label style="display:block; font-weight:600; margin-bottom:8px; font-size:13px;">Motivo da Recusa:</label>
+                            <select id="motivoRecusa" style="width:100%; padding:10px; border:1.5px solid #e0e0e0; border-radius:6px; font-size:14px; margin-bottom:12px;">
+                                <option value="">Selecione o motivo...</option>
+                                <option value="Cliente desistiu">Cliente desistiu</option>
+                                <option value="Proposta muito baixa">Proposta muito baixa</option>
+                                <option value="Cliente não qualificado">Cliente não qualificado</option>
+                                <option value="Imóvel vendido para outro">Imóvel vendido para outro</option>
+                                <option value="Proprietário não negociou">Proprietário não negociou</option>
+                                <option value="Prazo vencido">Prazo vencido</option>
+                                <option value="Outro motivo">Outro motivo</option>
+                            </select>
+                        </div>
+                    `;
+                }
+                
+                // Motivos para Aguardando
+                if (novoStatus === 'aguardando') {
+                    camposDinamicos.innerHTML = `
+                        <div style="margin-bottom:16px;">
+                            <label style="display:block; font-weight:600; margin-bottom:8px; font-size:13px;">Motivo:</label>
+                            <select id="motivoAguardando" style="width:100%; padding:10px; border:1.5px solid #e0e0e0; border-radius:6px; font-size:14px; margin-bottom:12px;">
+                                <option value="">Selecione o motivo...</option>
+                                <option value="2ª posição - aguardando 1ª proposta">2ª posição - aguardando 1ª proposta</option>
+                                <option value="Cliente pediu tempo para decidir">Cliente pediu tempo para decidir</option>
+                                <option value="Aguardando documentação">Aguardando documentação</option>
+                                <option value="Congelada temporariamente">Congelada temporariamente</option>
+                                <option value="Outro motivo">Outro motivo</option>
+                            </select>
+                        </div>
+                    `;
+                }
+                
+                // Motivos para Aceita
+                if (novoStatus === 'aceita') {
+                    camposDinamicos.innerHTML = `
+                        <div style="margin-bottom:16px;">
+                            <label style="display:block; font-weight:600; margin-bottom:8px; font-size:13px;">Como foi aceita:</label>
+                            <select id="motivoAceita" style="width:100%; padding:10px; border:1.5px solid #e0e0e0; border-radius:6px; font-size:14px; margin-bottom:12px;">
+                                <option value="">Selecione...</option>
+                                <option value="Cliente aceitou proposta">Cliente aceitou proposta</option>
+                                <option value="Proprietário aceitou">Proprietário aceitou</option>
+                                <option value="Acordo verbal fechado">Acordo verbal fechado</option>
+                                <option value="Aguardando documentos para fechar">Aguardando documentos para fechar</option>
+                            </select>
+                        </div>
+                    `;
+                }
+                
+                // Campo de observações sempre visível se houver status selecionado
+                if (novoStatus) {
+                    camposDinamicos.innerHTML += `
+                        <div style="margin-bottom:16px;">
+                            <label style="display:block; font-weight:600; margin-bottom:8px; font-size:13px;">Observações:</label>
+                            <textarea id="observacoesStatus" rows="3" placeholder="Detalhes adicionais..." 
+                                      style="width:100%; padding:10px; border:1.5px solid #e0e0e0; border-radius:6px; font-size:14px; resize:vertical;"></textarea>
+                        </div>
+                    `;
+                }
+            });
+            
+            // Botões
+            const dialogButtons = document.createElement('div');
+            dialogButtons.style.cssText = 'display:flex; gap:12px; justify-content:flex-end; margin-top:20px; padding-top:20px; border-top:1px solid #f0f0f0;';
+            
+            const btnCancel = document.createElement('button');
+            btnCancel.textContent = 'Cancelar';
+            btnCancel.className = 'btn btn-cancel';
+            btnCancel.onclick = () => document.body.removeChild(dialogContainer);
+            
+            const btnConfirm = document.createElement('button');
+            btnConfirm.textContent = 'Alterar Status';
+            btnConfirm.className = 'btn btn-save';
+            btnConfirm.onclick = () => {
+                const novoStatus = statusSelect.value;
+                if (!novoStatus) {
+                    alert('Selecione um status.');
+                    return;
+                }
+                
+                if (novoStatus === proposta.status) {
+                    alert('O status selecionado é o mesmo que o atual.');
+                    return;
+                }
+                
+                // Coletar dados específicos
+                let motivoPersonalizado = null;
+                let valorContra = null;
+                let observacoes = document.getElementById('observacoesStatus')?.value || '';
+                
+                // Contra Proposta - pegar valor
+                if (novoStatus === 'contra_proposta') {
+                    valorContra = parseFloat(document.getElementById('contraPropostaValor')?.value);
+                    if (!valorContra) {
+                        alert('Informe o valor da contra proposta.');
+                        return;
+                    }
+                    motivoPersonalizado = 'Contra Proposta';
+                }
+                
+                // Recusada - pegar motivo
+                if (novoStatus === 'recusada') {
+                    const motivoSelect = document.getElementById('motivoRecusa');
+                    motivoPersonalizado = motivoSelect?.value;
+                    if (!motivoPersonalizado) {
+                        alert('Selecione o motivo da recusa.');
+                        return;
+                    }
+                }
+                
+                // Aguardando - pegar motivo
+                if (novoStatus === 'aguardando') {
+                    const motivoSelect = document.getElementById('motivoAguardando');
+                    motivoPersonalizado = motivoSelect?.value;
+                    if (!motivoPersonalizado) {
+                        alert('Selecione o motivo.');
+                        return;
+                    }
+                }
+                
+                // Aceita - pegar motivo
+                if (novoStatus === 'aceita') {
+                    const motivoSelect = document.getElementById('motivoAceita');
+                    motivoPersonalizado = motivoSelect?.value;
+                    if (!motivoPersonalizado) {
+                        alert('Selecione como foi aceita.');
+                        return;
+                    }
+                }
+                
+                // Atualizar status
+                proposta.status = novoStatus;
+                
+                // Adicionar registro no histórico
+                proposta.negociacoes.push({
+                    id: 'neg_' + String(proposta.negociacoes.length + 1).padStart(3, '0'),
+                    tipo: 'mudanca_status',
+                    quem: 'sistema',
+                    valor: valorContra,
+                    data: new Date().toISOString(),
+                    observacoes: observacoes,
+                    motivo_personalizado: motivoPersonalizado,
+                    usuario: 'Usuário'
+                });
+                
+                saveData();
+                render();
+                document.body.removeChild(dialogContainer);
+            };
+            
+            dialogButtons.appendChild(btnCancel);
+            dialogButtons.appendChild(btnConfirm);
+            
+            dialogBox.appendChild(dialogTitle);
+            dialogBox.appendChild(infoDiv);
+            dialogBox.appendChild(statusLabel);
+            dialogBox.appendChild(statusSelect);
+            dialogBox.appendChild(camposDinamicos);
+            dialogBox.appendChild(dialogButtons);
+            
+            dialogContainer.appendChild(dialogBox);
+            document.body.appendChild(dialogContainer);
+        }
+
+        // CONTRA PROPOSTA
+        function openContraModal(id) {
+            currentContraPropostaId = id;
+            const proposta = propostasData.find(p => p.id === id);
+            if (!proposta) return;
+
+            const modal = document.getElementById('contraPropostaModal');
+            document.getElementById('contra-modal-title').textContent = `Contra Proposta - ${proposta.codigo_imovel}`;
+            
+            const ultimaNegociacao = proposta.negociacoes[proposta.negociacoes.length - 1];
+            
+            document.getElementById('contra-resumo').innerHTML = `
+                <strong>Cliente:</strong> ${proposta.cliente.nome}<br>
+                <strong>Imóvel:</strong> ${proposta.codigo_imovel} - ${proposta.imovel.endereco}<br>
+                <strong>Valor Anúncio:</strong> ${formatCurrency(proposta.imovel.valor_anuncio)}<br>
+                <strong>Proposta Cliente:</strong> ${formatCurrency(ultimaNegociacao.valor)}<br>
+                <strong>Diferença:</strong> ${proposta.desconto_percentual}%
+            `;
+
+            document.getElementById('contraResposta').value = '';
+            document.getElementById('contraValor').value = '';
+            document.getElementById('contraObservacoes').value = '';
+            document.getElementById('contraValorGroup').style.display = 'none';
+            document.getElementById('contra-diferenca-info').style.display = 'none';
+
+            modal.style.display = 'flex';
+        }
+
+        function closeContraModal() {
+            document.getElementById('contraPropostaModal').style.display = 'none';
+            currentContraPropostaId = null;
+            currentRespostaClienteId = null;
+        }
+
+        function toggleContraValor() {
+            const resposta = document.getElementById('contraResposta').value;
+            const group = document.getElementById('contraValorGroup');
+            
+            if (resposta === 'contra' || resposta === 'nova_proposta') {
+                group.style.display = 'block';
+                
+                // Atualizar label
+                const label = group.querySelector('label');
+                if (label) {
+                    if (resposta === 'contra') {
+                        label.textContent = 'Valor da Contra Proposta (R$)';
+                    } else {
+                        label.textContent = 'Novo Valor Proposto pelo Cliente (R$)';
+                    }
+                }
+            } else {
+                group.style.display = 'none';
+            }
+        }
+
+        function calcularDiferencaContra() {
+            const proposta = propostasData.find(p => p.id === currentContraPropostaId);
+            if (!proposta) return;
+
+            const contraValor = parseFloat(document.getElementById('contraValor').value);
+            if (!contraValor) {
+                document.getElementById('contra-diferenca-info').style.display = 'none';
+                return;
+            }
+
+            const valorAnuncio = proposta.imovel.valor_anuncio;
+            const ultimaProposta = proposta.negociacoes[proposta.negociacoes.length - 1].valor;
+            
+            const diferencaAnuncio = contraValor - valorAnuncio;
+            const percentualAnuncio = ((diferencaAnuncio / valorAnuncio) * 100).toFixed(2);
+            
+            const diferencaProposta = contraValor - ultimaProposta;
+
+            document.getElementById('contra-diferenca-info').style.display = 'block';
+            
+            let texto = `<strong>Comparado ao anúncio:</strong> `;
+            if (diferencaAnuncio < 0) {
+                texto += `${formatCurrency(Math.abs(diferencaAnuncio))} abaixo (${Math.abs(percentualAnuncio)}%)`;
+            } else {
+                texto += `${formatCurrency(diferencaAnuncio)} acima (+${percentualAnuncio}%)`;
+            }
+            
+            texto += `<br><strong>Diferença para proposta do cliente:</strong> `;
+            if (diferencaProposta > 0) {
+                texto += `${formatCurrency(diferencaProposta)} a mais`;
+            } else {
+                texto += `${formatCurrency(Math.abs(diferencaProposta))} a menos`;
+            }
+
+            document.getElementById('contra-diferenca-text').innerHTML = texto;
+        }
+
+        function saveContraProposta() {
+            // Se é resposta do cliente, chamar função específica
+            if (currentRespostaClienteId) {
+                saveRespostaCliente();
+                return;
+            }
+
+            // Lógica do proprietário
+            const resposta = document.getElementById('contraResposta').value;
+            const observacoes = document.getElementById('contraObservacoes').value;
+
+            if (!resposta) {
+                alert('Selecione uma resposta.');
+                return;
+            }
+
+            const proposta = propostasData.find(p => p.id === currentContraPropostaId);
+            if (!proposta) return;
+
+            let novoStatus = proposta.status;
+            let novaNegociacao = null;
+
+            if (resposta === 'aceitar') {
+                novoStatus = 'aceita';
+                const ultimaNegociacao = proposta.negociacoes[proposta.negociacoes.length - 1];
+                novaNegociacao = {
+                    id: 'neg_' + String(proposta.negociacoes.length + 1).padStart(3, '0'),
+                    tipo: 'aceite',
+                    quem: 'proprietario',
+                    valor: ultimaNegociacao.valor,
+                    data: new Date().toISOString(),
+                    observacoes: observacoes,
+                    motivo_personalizado: 'Proprietário aceitou',
+                    usuario: 'Sistema'
+                };
+            } else if (resposta === 'contra') {
+                const contraValor = parseFloat(document.getElementById('contraValor').value);
+                if (!contraValor) {
+                    alert('Informe o valor da contra proposta.');
+                    return;
+                }
+                
+                novoStatus = 'contra_proposta';
+                novaNegociacao = {
+                    id: 'neg_' + String(proposta.negociacoes.length + 1).padStart(3, '0'),
+                    tipo: 'contra_proposta',
+                    quem: 'proprietario',
+                    valor: contraValor,
+                    data: new Date().toISOString(),
+                    observacoes: observacoes,
+                    motivo_personalizado: 'Proprietário fez contra proposta',
+                    usuario: 'Sistema',
+                    aguardando_resposta: 'cliente'
+                };
+            } else if (resposta === 'recusar') {
+                novoStatus = 'recusada';
+                novaNegociacao = {
+                    id: 'neg_' + String(proposta.negociacoes.length + 1).padStart(3, '0'),
+                    tipo: 'recusa',
+                    quem: 'proprietario',
+                    valor: null,
+                    data: new Date().toISOString(),
+                    observacoes: observacoes,
+                    motivo_personalizado: 'Proprietário recusou',
+                    usuario: 'Sistema'
+                };
+            }
+
+            if (novaNegociacao) {
+                proposta.negociacoes.push(novaNegociacao);
+            }
+            
+            proposta.status = novoStatus;
+
+            saveData();
+            render();
+            closeContraModal();
+        }
+
+        // RENDERIZAÇÃO
+        function render() {
+            renderKPIs();
+            renderPipeline();
+            renderAceitas();
+            renderInativas();
+            renderMainTable();
+            updateFilters();
+        }
+
+        function renderKPIs() {
+            // Propostas ativas (incluindo aguardando - que está em análise)
+            const ativas = propostasData.filter(p => ['nova', 'em_analise', 'contra_proposta', 'aguardando'].includes(p.status));
+            const valorNegociacao = ativas.reduce((sum, p) => sum + p.valor_proposto, 0);
+
+            // Fechadas nos últimos 30 dias
+            const hoje = new Date();
+            const dias30Atras = new Date(hoje.getTime() - (30 * 24 * 60 * 60 * 1000));
+            const fechadas30d = propostasData.filter(p => {
+                if (p.status !== 'fechada' && p.status !== 'aceita') return false;
+                const dataRegistro = new Date(p.data_hora_registro);
+                return dataRegistro >= dias30Atras;
+            });
+
+            // Taxa de conversão últimos 90 dias
+            const dias90Atras = new Date(hoje.getTime() - (90 * 24 * 60 * 60 * 1000));
+            const propostas90d = propostasData.filter(p => {
+                const dataRegistro = new Date(p.data_hora_registro);
+                return dataRegistro >= dias90Atras;
+            });
+            const fechadas90d = propostas90d.filter(p => p.status === 'fechada' || p.status === 'aceita');
+            const conversao = propostas90d.length > 0 ? ((fechadas90d.length / propostas90d.length) * 100).toFixed(1) : 0;
+
+            document.getElementById('kpi-total').textContent = ativas.length;
+            document.getElementById('kpi-negociacao').textContent = formatCurrency(valorNegociacao);
+            document.getElementById('kpi-fechadas-30d').textContent = fechadas30d.length;
+            document.getElementById('kpi-conversao').textContent = conversao + '%';
+        }
+
+        function renderPipeline() {
+            const novas = propostasData.filter(p => p.status === 'nova');
+            const analise = propostasData.filter(p => p.status === 'em_analise' || p.status === 'aguardando');
+            const contras = propostasData.filter(p => p.status === 'contra_proposta');
+
+            document.getElementById('count-nova').textContent = novas.length;
+            document.getElementById('count-analise').textContent = analise.length;
+            document.getElementById('count-contra').textContent = contras.length;
+
+            renderPipelineColumn('pipeline-nova', novas);
+            renderPipelineColumn('pipeline-analise', analise);
+            renderPipelineColumn('pipeline-contra', contras);
+        }
+
+        function renderPipelineColumn(elementId, propostas) {
+            const container = document.getElementById(elementId);
+            
+            if (propostas.length === 0) {
+                container.innerHTML = '<div class="loading">Nenhuma proposta</div>';
+                return;
+            }
+
+            container.innerHTML = propostas.map(p => {
+                // Pegar o valor da última negociação (mais atual)
+                const ultimaNegociacao = p.negociacoes[p.negociacoes.length - 1];
+                const valorAtual = ultimaNegociacao.valor || p.valor_proposto;
+                
+                // Verificar se está aguardando resposta
+                let alertHtml = '';
+                let quemAguarda = ultimaNegociacao.aguardando_resposta;
+                
+                // Se não tiver definido, inferir pelo status
+                if (!quemAguarda) {
+                    if (p.status === 'nova' || p.status === 'em_analise') {
+                        quemAguarda = 'proprietario';
+                    } else if (p.status === 'contra_proposta') {
+                        quemAguarda = 'cliente';
+                    }
+                }
+                
+                if (quemAguarda) {
+                    const tempo = getTempoEspera(ultimaNegociacao.data);
+                    const textoQuem = quemAguarda === 'cliente' ? 'CLIENTE' : 'PROPRIETÁRIO';
+                    const textoQuemMin = quemAguarda === 'cliente' ? 'cliente' : 'proprietário';
+                    
+                    // Verificar se já foi acionado
+                    const acionamento = ultimaNegociacao.acionamento;
+                    
+                    if (acionamento && acionamento.foi_acionado) {
+                        // Já foi acionado
+                        const tempoAcionamento = getTempoEspera(acionamento.data_acionamento);
+                        alertHtml = `
+                            <div class="pipeline-card-alert acionado">
+                                ✓ ${textoQuem} ACIONADO
+                                <div class="pipeline-card-waiting">Aguardando decisão há ${tempoAcionamento}</div>
+                                ${acionamento.observacao ? `<div class="acionamento-obs">"${acionamento.observacao}"</div>` : ''}
+                                <button class="btn-acionar" onclick="event.stopPropagation(); marcarComoAcionado('${p.id}')">Re-acionar</button>
+                            </div>
+                        `;
+                    } else {
+                        // Ainda não foi acionado
+                        const classeQuem = quemAguarda === 'cliente' ? 'cliente' : 'proprietario';
+                        alertHtml = `
+                            <div class="pipeline-card-alert ${classeQuem}">
+                                🔔 ACIONAR ${textoQuem}
+                                <div class="pipeline-card-waiting">Aguardando há ${tempo}</div>
+                                <button class="btn-acionar" onclick="event.stopPropagation(); marcarComoAcionado('${p.id}')">Marcar como Acionado</button>
+                            </div>
+                        `;
+                    }
+                }
+                
+                // Definir botões de ação baseado no status
+                let actionButtonsHtml = '';
+                const buttons = [];
+                
+                // Botão para resposta do proprietário ou cliente
+                if (p.status === 'nova' || p.status === 'em_analise') {
+                    buttons.push(`<button class="pipeline-action-btn proprietario" onclick="event.stopPropagation(); openContraModal('${p.id}')">Proprietário Respondeu?</button>`);
+                } else if (p.status === 'contra_proposta') {
+                    buttons.push(`<button class="pipeline-action-btn cliente" onclick="event.stopPropagation(); openRespostaClienteModal('${p.id}')">Cliente Respondeu?</button>`);
+                }
+                
+                // Botão Status (sempre, exceto fechada)
+                if (p.status !== 'fechada') {
+                    buttons.push(`<button class="pipeline-action-btn status" onclick="event.stopPropagation(); mudarStatusRapido('${p.id}')">Status</button>`);
+                }
+                
+                // Botão Histórico (sempre)
+                buttons.push(`<button class="pipeline-action-btn status" onclick="event.stopPropagation(); openTimelineModal('${p.id}')">Histórico</button>`);
+                
+                if (buttons.length > 0) {
+                    actionButtonsHtml = `<div class="pipeline-action-buttons">${buttons.join('')}</div>`;
+                }
+                
+                return `
+                <div class="pipeline-card" onclick="viewTimeline('${p.id}')">
+                    <div class="pipeline-card-header">
+                        <div class="pipeline-card-codigo">${p.codigo_imovel}</div>
+                        <div class="pipeline-card-order ${p.numero_ordem === 1 ? 'primeira' : ''}">#${p.numero_ordem}</div>
+                    </div>
+                    <div class="pipeline-card-endereco">${p.imovel.endereco}</div>
+                    <div class="pipeline-card-info">
+                        <strong>Cliente:</strong> ${p.cliente.nome}
+                    </div>
+                    <div class="pipeline-card-info">
+                        <strong>Corretor:</strong> ${p.corretor_nome}
+                    </div>
+                    <div class="pipeline-card-value">
+                        Valor da proposta:
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <div class="pipeline-card-value-number">${formatCurrency(valorAtual)}</div>
+                            ${(() => {
+                                const valorAnuncio = p.imovel.valor_anuncio;
+                                if (!valorAnuncio || valorAnuncio === 0) return '';
+                                const diferenca = ((valorAtual - valorAnuncio) / valorAnuncio) * 100;
+                                const sinal = diferenca > 0 ? '+' : '';
+                                const cor = diferenca < 0 ? '#d32f2f' : (diferenca > 0 ? '#1976d2' : '#616161');
+                                return `<span style="font-size:11px; font-weight:700; color:${cor}; white-space:nowrap;">${sinal}${diferenca.toFixed(1)}% do Anúncio</span>`;
+                            })()}
+                        </div>
+                    </div>
+                    ${alertHtml}
+                    ${actionButtonsHtml}
+                    <div class="pipeline-card-timestamp">
+                        ${formatDateTime(p.data_hora_registro)}<br>
+                        ${getTimeAgo(p.data_hora_registro)}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderAceitas() {
+            // Apenas aceitas (propostas fechadas não aparecem aqui)
+            const aceitas = propostasData
+                .filter(p => p.status === 'aceita')
+                .sort((a, b) => new Date(b.data_hora_registro) - new Date(a.data_hora_registro));
+            
+            document.getElementById('count-aceitas').textContent = aceitas.length;
+            
+            const tbody = document.getElementById('aceitas-body');
+            
+            if (aceitas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:40px; color:#9e9e9e;">Nenhuma proposta aceita</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = aceitas.map(p => `
+                <tr>
+                    <td>
+                        <span class="order-badge ${p.numero_ordem === 1 ? 'primeira' : ''}">#${p.numero_ordem}</span>
+                    </td>
+                    <td>
+                        <strong>${p.codigo_imovel}</strong><br>
+                        <span style="font-size:11px; color:#9e9e9e;">${p.imovel.endereco}</span>
+                    </td>
+                    <td>${p.cliente.nome}</td>
+                    <td>${p.corretor_nome}</td>
+                    <td class="money">${formatCurrency(p.negociacoes[p.negociacoes.length - 1].valor || p.valor_proposto)}</td>
+                    <td>
+                        ${formatDateTime(p.data_hora_registro)}<br>
+                        <span style="font-size:11px; color:#9e9e9e;">${getTimeAgo(p.data_hora_registro)}</span>
+                    </td>
+                    <td><span class="status-badge status-${p.status}">${getStatusLabel(p.status)}</span></td>
+                    <td>
+                        <button class="action-btn" onclick="event.stopPropagation(); openTimelineModal('${p.id}')">Histórico</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderInativas() {
+            // Apenas recusadas, ordenadas por data (mais recente primeiro)
+            const inativas = propostasData
+                .filter(p => p.status === 'recusada')
+                .sort((a, b) => new Date(b.data_hora_registro) - new Date(a.data_hora_registro));
+            
+            document.getElementById('count-inativas').textContent = inativas.length;
+            
+            const tbody = document.getElementById('inativas-body');
+            
+            if (inativas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:40px; color:#9e9e9e;">Nenhuma proposta inativa</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = inativas.map(p => `
+                <tr>
+                    <td>
+                        <span class="order-badge ${p.numero_ordem === 1 ? 'primeira' : ''}">#${p.numero_ordem}</span>
+                    </td>
+                    <td>
+                        <strong>${p.codigo_imovel}</strong><br>
+                        <span style="font-size:11px; color:#9e9e9e;">${p.imovel.endereco}</span>
+                    </td>
+                    <td>${p.cliente.nome}</td>
+                    <td>${p.corretor_nome}</td>
+                    <td class="money">${formatCurrency(p.negociacoes[p.negociacoes.length - 1].valor || p.valor_proposto)}</td>
+                    <td>
+                        ${formatDateTime(p.data_hora_registro)}<br>
+                        <span style="font-size:11px; color:#9e9e9e;">${getTimeAgo(p.data_hora_registro)}</span>
+                    </td>
+                    <td><span class="status-badge status-${p.status}">${getStatusLabel(p.status)}</span></td>
+                    <td>
+                        <button class="action-btn" onclick="event.stopPropagation(); openTimelineModal('${p.id}')">Histórico</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderMainTable() {
+            const tbody = document.getElementById('main-table-body');
+            
+            // Obter valores dos filtros
+            const statusFilter = document.getElementById('filterStatus').value;
+            const corretorFilter = document.getElementById('filterCorretor').value;
+            
+            // Aplicar filtros
+            let filtered = [...propostasData];
+            
+            if (statusFilter) {
+                filtered = filtered.filter(p => p.status === statusFilter);
+            }
+            
+            if (corretorFilter) {
+                filtered = filtered.filter(p => p.corretor_id === corretorFilter);
+            }
+            
+            // Atualizar contador com o total filtrado
+            document.getElementById('count-todas').textContent = filtered.length;
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:40px; color:#9e9e9e;">Nenhuma proposta encontrada com os filtros selecionados</td></tr>';
+                return;
+            }
+
+            // Ordenar por data (mais recente primeiro - Z-A)
+            const sorted = filtered.sort((a, b) => 
+                new Date(b.data_hora_registro) - new Date(a.data_hora_registro)
+            );
+
+            tbody.innerHTML = sorted.map(p => `
+                <tr onclick="viewTimeline('${p.id}')">
+                    <td>
+                        <span class="order-badge ${p.numero_ordem === 1 ? 'primeira' : ''}">#${p.numero_ordem}</span>
+                        ${p.tem_prioridade ? '<br><span style="font-size:10px; color:#2c6e2e; font-weight:700;">PRIORIDADE</span>' : ''}
+                    </td>
+                    <td>
+                        <strong>${formatDateTime(p.data_hora_registro)}</strong><br>
+                        <span style="font-size:11px; color:#9e9e9e;">${getTimeAgo(p.data_hora_registro)}</span>
+                    </td>
+                    <td>
+                        <strong style="color:#2c6e2e;">${p.codigo_imovel}</strong><br>
+                        <span style="font-size:11px; color:#9e9e9e;">${p.imovel.endereco.substring(0, 40)}...</span><br>
+                        <strong style="font-size:12px;">Cliente:</strong> ${p.cliente.nome}
+                    </td>
+                    <td>
+                        <strong style="font-size:12px;">Proposta:</strong><br>
+                        <span class="money">${formatCurrency(p.valor_proposto)}</span><br>
+                        <strong style="font-size:12px;">Anúncio:</strong><br>
+                        ${formatCurrency(p.imovel.valor_anuncio)}
+                    </td>
+                    <td>
+                        <strong>${p.corretor_nome}</strong><br>
+                        <span style="font-size:11px; color:#9e9e9e;">Captador: ${p.imovel.captador}</span>
+                    </td>
+                    <td><span class="status-badge status-${p.status}">${getStatusLabel(p.status)}</span></td>
+                    <td>
+                        <button class="action-btn" onclick="event.stopPropagation(); openModal('edit', '${p.id}')">Editar</button>
+                        ${p.status === 'nova' || p.status === 'em_analise' ? 
+                            `<button class="action-btn" onclick="event.stopPropagation(); openContraModal('${p.id}')" style="margin-top:4px; background:#efebe9; color:#795548;">Proprietário</button>` 
+                            : ''}
+                        ${p.status === 'contra_proposta' ? 
+                            `<button class="action-btn" onclick="event.stopPropagation(); openRespostaClienteModal('${p.id}')" style="margin-top:4px; background:#e3f2fd; color:#1976d2;">Cliente</button>` 
+                            : ''}
+                        ${p.status !== 'fechada' ? 
+                            `<button class="action-btn" onclick="event.stopPropagation(); mudarStatusRapido('${p.id}')" style="margin-top:4px;">Status</button>` 
+                            : ''}
+                    </td>
+                </tr>
+                <tr class="timeline-row" id="timeline-${p.id}">
+                    <td colspan="7">
+                        <div class="timeline-content">
+                            <div class="timeline-header">Histórico de Negociação</div>
+                            ${renderTimelineItems(p.negociacoes)}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderTimelineItems(negociacoes) {
+            return negociacoes.map(neg => {
+                let classe = 'cliente';
+                let badgeLabel = 'CLIENTE';
+                
+                if (neg.quem === 'proprietario') {
+                    classe = 'proprietario';
+                    badgeLabel = 'PROPRIETÁRIO';
+                } else if (neg.quem === 'sistema') {
+                    classe = 'sistema';
+                    badgeLabel = 'SISTEMA';
+                }
+                
+                if (neg.tipo === 'aceite') {
+                    classe = 'fechado';
+                }
+
+                // Usar o motivo personalizado se existir, senão o label padrão
+                const tituloExibir = neg.motivo_personalizado || getTipoLabel(neg.tipo);
+
+                return `
+                    <div class="timeline-item ${classe}">
+                        <div class="timeline-details">
+                            <div class="timeline-title">
+                                <span class="timeline-badge ${classe}">${badgeLabel}</span>
+                                <span>${tituloExibir}</span>
+                            </div>
+                            ${neg.valor ? `<div class="timeline-value">${formatCurrency(neg.valor)}</div>` : ''}
+                            <div class="timeline-meta">
+                                ${formatDateTime(neg.data)}
+                                ${neg.aguardando_resposta ? ` - <strong>Aguardando resposta do ${neg.aguardando_resposta}</strong>` : ''}
+                            </div>
+                            ${neg.observacoes ? `<div class="timeline-obs">"${neg.observacoes}"</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function viewTimeline(id) {
+            const timelineRow = document.getElementById(`timeline-${id}`);
+            if (!timelineRow) return;
+
+            const isVisible = timelineRow.classList.contains('show');
+            
+            // Fechar todas as timelines
+            document.querySelectorAll('.timeline-row').forEach(row => {
+                row.classList.remove('show');
+            });
+
+            // Toggle da timeline clicada
+            if (!isVisible) {
+                timelineRow.classList.add('show');
+            }
+        }
+
+        function openTimelineModal(id) {
+            const proposta = propostasData.find(p => p.id === id);
+            if (!proposta) return;
+
+            // Criar modal
+            const dialogContainer = document.createElement('div');
+            dialogContainer.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:10000; padding:20px; overflow-y:auto;';
+            
+            const dialogBox = document.createElement('div');
+            dialogBox.style.cssText = 'background:white; padding:30px; border-radius:12px; max-width:700px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3);';
+            
+            dialogBox.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:20px;">
+                    <div>
+                        <h2 style="margin:0 0 8px 0; color:#212121; font-size:22px;">Histórico de Negociação</h2>
+                        <p style="margin:0; color:#616161; font-size:14px;">
+                            <strong>${proposta.codigo_imovel}</strong> - ${proposta.cliente.nome}
+                        </p>
+                    </div>
+                    <button id="btnFecharTimeline" style="background:none; border:none; font-size:24px; cursor:pointer; color:#9e9e9e; padding:0; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:4px; transition:all 0.2s;">×</button>
+                </div>
+                
+                <!-- DADOS DO IMÓVEL -->
+                <div style="background:#e8f5e9; padding:16px; border-radius:8px; margin-bottom:16px; border-left:4px solid #2c6e2e;">
+                    <div style="font-size:11px; font-weight:700; color:#2c6e2e; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">📍 Dados do Imóvel</div>
+                    <div style="margin-bottom:10px;">
+                        <strong style="color:#616161; font-size:12px;">Endereço:</strong><br>
+                        <span style="color:#212121; font-size:14px; font-weight:600;">${proposta.imovel.endereco}</span>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:13px;">
+                        <div>
+                            <strong style="color:#616161; font-size:12px;">Preço de Anúncio:</strong><br>
+                            <span style="color:#2c6e2e; font-weight:700; font-size:15px;">${formatCurrency(proposta.imovel.valor_anuncio)}</span>
+                        </div>
+                        <div>
+                            <strong style="color:#616161; font-size:12px;">Captador:</strong><br>
+                            <span style="color:#212121; font-weight:600;">${proposta.imovel.captador}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DADOS DA PROPOSTA -->
+                <div style="background:#fafafa; padding:16px; border-radius:8px; margin-bottom:20px;">
+                    <div style="font-size:11px; font-weight:700; color:#616161; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">📄 Dados da Proposta</div>
+                    <div style="margin-bottom:10px;">
+                        <strong style="color:#616161; font-size:12px;">Cliente:</strong><br>
+                        <span style="color:#212121; font-size:14px; font-weight:600;">${proposta.cliente.nome}</span>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:13px;">
+                        <div>
+                            <strong style="color:#616161; font-size:12px;">Valor da Proposta:</strong><br>
+                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                <span style="color:#2c6e2e; font-weight:700; font-size:16px;">${formatCurrency(proposta.negociacoes[proposta.negociacoes.length - 1].valor || proposta.valor_proposto)}</span>
+                                ${(() => {
+                                    const valorProposta = proposta.negociacoes[proposta.negociacoes.length - 1].valor || proposta.valor_proposto;
+                                    const valorAnuncio = proposta.imovel.valor_anuncio;
+                                    if (!valorAnuncio || valorAnuncio === 0) return '';
+                                    const diferenca = ((valorProposta - valorAnuncio) / valorAnuncio) * 100;
+                                    const sinal = diferenca > 0 ? '+' : '';
+                                    const cor = diferenca < 0 ? '#d32f2f' : (diferenca > 0 ? '#1976d2' : '#616161');
+                                    return `<span style="font-size:12px; font-weight:700; color:${cor}; white-space:nowrap;">(${sinal}${diferenca.toFixed(1)}% do Anúncio)</span>`;
+                                })()}
+                            </div>
+                        </div>
+                        <div>
+                            <strong style="color:#616161; font-size:12px;">Status:</strong><br>
+                            <span class="status-badge status-${proposta.status}">${getStatusLabel(proposta.status)}</span>
+                        </div>
+                        <div>
+                            <strong style="color:#616161; font-size:12px;">Corretor:</strong><br>
+                            <span style="color:#212121; font-weight:600;">${proposta.corretor_nome}</span>
+                        </div>
+                        <div>
+                            <strong style="color:#616161; font-size:12px;">Registrada em:</strong><br>
+                            <span style="color:#212121;">${formatDateTime(proposta.data_hora_registro)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TIMELINE -->
+                <div style="border-top:2px solid #e0e0e0; padding-top:16px;">
+                    <div style="font-size:11px; font-weight:700; color:#616161; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">🔄 Timeline de Negociação</div>
+                    <div style="max-height:400px; overflow-y:auto;">
+                        ${renderTimelineItems(proposta.negociacoes)}
+                    </div>
+                </div>
+            `;
+            
+            dialogContainer.appendChild(dialogBox);
+            document.body.appendChild(dialogContainer);
+
+            // Evento para fechar
+            document.getElementById('btnFecharTimeline').onclick = () => {
+                document.body.removeChild(dialogContainer);
+            };
+
+            // Fechar ao clicar fora
+            dialogContainer.onclick = (e) => {
+                if (e.target === dialogContainer) {
+                    document.body.removeChild(dialogContainer);
+                }
+            };
+
+            // Hover no botão de fechar
+            const btnFechar = document.getElementById('btnFecharTimeline');
+            btnFechar.onmouseover = () => {
+                btnFechar.style.background = '#f5f5f5';
+                btnFechar.style.color = '#212121';
+            };
+            btnFechar.onmouseout = () => {
+                btnFechar.style.background = 'none';
+                btnFechar.style.color = '#9e9e9e';
+            };
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                'nova': 'Nova',
+                'em_analise': 'Em Análise',
+                'contra_proposta': 'Contra Proposta',
+                'aceita': 'Aceita',
+                'fechada': 'Negócio Fechado',
+                'recusada': 'Recusada',
+                'aguardando': 'Aguardando (Em Análise)'
+            };
+            return labels[status] || status;
+        }
+
+        function getTipoLabel(tipo) {
+            const labels = {
+                'proposta_inicial': 'Proposta Inicial',
+                'contra_proposta': 'Contra Proposta',
+                'nova_proposta_cliente': 'Cliente evoluiu proposta',
+                'aceite': 'ACORDO FECHADO',
+                'aceite_cliente': 'ACORDO FECHADO',
+                'recusa': 'Recusada',
+                'recusa_cliente': 'Cliente desistiu',
+                'ajuste_valor': 'Valor Ajustado',
+                'mudanca_status': 'Mudança de Status'
+            };
+            return labels[tipo] || tipo;
+        }
+
+        // FILTROS
+        function updateFilters() {
+            const corretores = JSON.parse(localStorage.getItem(CONFIG_KEYS.CORRETORES) || '[]');
+            const select = document.getElementById('filterCorretor');
+            
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">Todos os Corretores</option>';
+            
+            corretores.forEach(corretor => {
+                if (corretor.type === 'Corretor' || corretor.type === 'Ambos') {
+                    const option = document.createElement('option');
+                    option.value = corretor.id;
+                    option.textContent = corretor.name;
+                    select.appendChild(option);
+                }
+            });
+            
+            select.value = currentValue;
+        }
+
+        function applyFilters() {
+            renderMainTable();
+        }
+
+        // TOGGLE SEÇÕES
+        function toggleAceitas() {
+            const section = document.getElementById('aceitasSection');
+            section.classList.toggle('expanded');
+        }
+
+        function toggleInativas() {
+            const section = document.getElementById('inativasSection');
+            section.classList.toggle('expanded');
+        }
+
+        function toggleTodas() {
+            const section = document.getElementById('todasSection');
+            section.classList.toggle('expanded');
+        }
+
+        // Toggle menu do usuário
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Fechar dropdown ao clicar fora
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // MARCAR COMO ACIONADO
+        function marcarComoAcionado(id) {
+            const proposta = propostasData.find(p => p.id === id);
+            if (!proposta) return;
+
+            const ultimaNegociacao = proposta.negociacoes[proposta.negociacoes.length - 1];
+            const quem = ultimaNegociacao.aguardando_resposta || (proposta.status === 'contra_proposta' ? 'cliente' : 'proprietario');
+            const textoQuem = quem === 'cliente' ? 'cliente' : 'proprietário';
+
+            // Criar modal simples
+            const dialogContainer = document.createElement('div');
+            dialogContainer.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:10000; padding:20px;';
+            
+            const dialogBox = document.createElement('div');
+            dialogBox.style.cssText = 'background:white; padding:24px; border-radius:12px; max-width:500px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.3);';
+            
+            dialogBox.innerHTML = `
+                <h3 style="margin:0 0 16px 0; color:#212121; font-size:18px;">Marcar como Acionado</h3>
+                <p style="margin-bottom:16px; color:#616161; font-size:14px;">
+                    Registre que o <strong>${textoQuem}</strong> foi acionado para responder a proposta <strong>${proposta.codigo_imovel}</strong>.
+                </p>
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; font-weight:600; margin-bottom:8px; font-size:13px; color:#616161;">
+                        Como foi o acionamento? (opcional)
+                    </label>
+                    <textarea id="obsAcionamento" rows="3" placeholder="Ex: Acionado por WhatsApp, disse que vai responder até amanhã..." 
+                              style="width:100%; padding:10px; border:1.5px solid #e0e0e0; border-radius:6px; font-size:14px; resize:vertical; font-family:inherit;"></textarea>
+                </div>
+                <div style="display:flex; gap:12px; justify-content:flex-end;">
+                    <button id="btnCancelarAcionamento" style="padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600; font-size:14px; background:#f5f5f5; color:#616161;">
+                        Cancelar
+                    </button>
+                    <button id="btnConfirmarAcionamento" style="padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600; font-size:14px; background:#2c6e2e; color:white;">
+                        Confirmar Acionamento
+                    </button>
+                </div>
+            `;
+            
+            dialogContainer.appendChild(dialogBox);
+            document.body.appendChild(dialogContainer);
+
+            // Eventos
+            document.getElementById('btnCancelarAcionamento').onclick = () => {
+                document.body.removeChild(dialogContainer);
+            };
+
+            document.getElementById('btnConfirmarAcionamento').onclick = () => {
+                const obs = document.getElementById('obsAcionamento').value;
+                
+                // Atualizar a última negociação com dados do acionamento
+                ultimaNegociacao.acionamento = {
+                    foi_acionado: true,
+                    data_acionamento: new Date().toISOString(),
+                    observacao: obs
+                };
+
+                saveData();
+                render();
+                document.body.removeChild(dialogContainer);
+            };
+        }
+
+        // RESPOSTA DO CLIENTE
+        function openRespostaClienteModal(id) {
+            currentRespostaClienteId = id;
+            const proposta = propostasData.find(p => p.id === id);
+            if (!proposta) return;
+
+            const modal = document.getElementById('contraPropostaModal');
+            document.getElementById('contra-modal-title').textContent = `Resposta do Cliente - ${proposta.codigo_imovel}`;
+            
+            const ultimaNegociacao = proposta.negociacoes[proposta.negociacoes.length - 1];
+            
+            document.getElementById('contra-resumo').innerHTML = `
+                <strong>Cliente:</strong> ${proposta.cliente.nome}<br>
+                <strong>Imóvel:</strong> ${proposta.codigo_imovel} - ${proposta.imovel.endereco}<br>
+                <strong>Valor Anúncio:</strong> ${formatCurrency(proposta.imovel.valor_anuncio)}<br>
+                <strong>Contra Proposta do Proprietário:</strong> ${formatCurrency(ultimaNegociacao.valor)}<br>
+                <strong>Proposta Original do Cliente:</strong> ${formatCurrency(proposta.negociacoes[0].valor)}
+            `;
+
+            const select = document.getElementById('contraResposta');
+            select.innerHTML = `
+                <option value="">Selecione uma opção...</option>
+                <option value="aceitar">Cliente aceita a contra proposta</option>
+                <option value="nova_proposta">Cliente faz nova proposta</option>
+                <option value="recusar">Cliente desiste da negociação</option>
+            `;
+
+            document.getElementById('contraValor').value = '';
+            document.getElementById('contraObservacoes').value = '';
+            document.getElementById('contraValorGroup').style.display = 'none';
+            document.getElementById('contra-diferenca-info').style.display = 'none';
+
+            modal.style.display = 'flex';
+        }
+
+        function saveRespostaCliente() {
+            const resposta = document.getElementById('contraResposta').value;
+            const observacoes = document.getElementById('contraObservacoes').value;
+
+            if (!resposta) {
+                alert('Selecione uma resposta.');
+                return;
+            }
+
+            const proposta = propostasData.find(p => p.id === currentRespostaClienteId);
+            if (!proposta) return;
+
+            let novoStatus = proposta.status;
+            let novaNegociacao = null;
+
+            if (resposta === 'aceitar') {
+                novoStatus = 'aceita';
+                const ultimaNegociacao = proposta.negociacoes[proposta.negociacoes.length - 1];
+                novaNegociacao = {
+                    id: 'neg_' + String(proposta.negociacoes.length + 1).padStart(3, '0'),
+                    tipo: 'aceite_cliente',
+                    quem: 'cliente',
+                    valor: ultimaNegociacao.valor,
+                    data: new Date().toISOString(),
+                    observacoes: observacoes,
+                    motivo_personalizado: 'Cliente aceitou contra proposta',
+                    usuario: 'Sistema'
+                };
+            } else if (resposta === 'nova_proposta') {
+                const novoValor = parseFloat(document.getElementById('contraValor').value);
+                if (!novoValor) {
+                    alert('Informe o novo valor proposto pelo cliente.');
+                    return;
+                }
+                
+                novoStatus = 'em_analise';
+                novaNegociacao = {
+                    id: 'neg_' + String(proposta.negociacoes.length + 1).padStart(3, '0'),
+                    tipo: 'nova_proposta_cliente',
+                    quem: 'cliente',
+                    valor: novoValor,
+                    data: new Date().toISOString(),
+                    observacoes: observacoes,
+                    motivo_personalizado: 'Cliente evoluiu proposta',
+                    usuario: 'Sistema',
+                    aguardando_resposta: 'proprietario'
+                };
+            } else if (resposta === 'recusar') {
+                novoStatus = 'recusada';
+                novaNegociacao = {
+                    id: 'neg_' + String(proposta.negociacoes.length + 1).padStart(3, '0'),
+                    tipo: 'recusa_cliente',
+                    quem: 'cliente',
+                    valor: null,
+                    data: new Date().toISOString(),
+                    observacoes: observacoes,
+                    motivo_personalizado: 'Cliente desistiu',
+                    usuario: 'Sistema'
+                };
+            }
+
+            if (novaNegociacao) {
+                proposta.negociacoes.push(novaNegociacao);
+            }
+            
+            proposta.status = novoStatus;
+
+            saveData();
+            render();
+            closeContraModal();
+        }
+
+        // Atualizar toggleContraValor para nova_proposta também
+        function toggleContraValor() {
+            const resposta = document.getElementById('contraResposta').value;
+            const group = document.getElementById('contraValorGroup');
+            
+            if (resposta === 'contra' || resposta === 'nova_proposta') {
+                group.style.display = 'block';
+                
+                // Atualizar label
+                const label = group.querySelector('label');
+                if (resposta === 'contra') {
+                    label.textContent = 'Valor da Contra Proposta (R$)';
+                } else {
+                    label.textContent = 'Novo Valor Proposto pelo Cliente (R$)';
+                }
+            } else {
+                group.style.display = 'none';
+            }
+        }
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            const modal1 = document.getElementById('propostaModal');
+            const modal2 = document.getElementById('contraPropostaModal');
+            if (event.target == modal1) closeModal();
+            if (event.target == modal2) closeContraModal();
+        }
+
+        // INICIALIZAÇÃO
+        window.addEventListener('load', async function() {
+            await DB.requireAuth();
+            const user = await DB.getUser();
+            const nameEl = document.getElementById('currentUserName');
+            if (user && nameEl) nameEl.textContent = user.email;
+            await hydrateBase();
+            await loadData();
+        });
+    </script>
+</body>
+</html>
