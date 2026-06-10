@@ -510,23 +510,128 @@
             }
         }
     
-/* ===== Responsivo / Mobile ===== */
-@media (max-width: 768px) {
-  .container { padding: 12px !important; }
-  .top-header, .page-header, .page-header-row, .header-actions { flex-wrap: wrap !important; gap: 10px; }
-  .header-nav, .nav-links, .nav, .tabs { flex-wrap: wrap !important; }
-  .kpi-grid, .kpis-annual-grid { grid-template-columns: 1fr 1fr !important; }
-  .charts-grid, .form-grid, .tables-section, .form-row { grid-template-columns: 1fr !important; }
-  .modal-content { max-width: 94% !important; width: 94% !important; }
-  /* tabelas roláveis na horizontal, colunas legíveis */
-  table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; max-width: 100%; }
-  h1 { font-size: 20px !important; }
-}
-@media (max-width: 480px) {
-  .kpi-grid, .kpis-annual-grid { grid-template-columns: 1fr !important; }
-  body { padding: 10px !important; }
-}
+        /* Navegação Bottom Bar Mobile */
+        .mobile-bottom-nav {
+            display: none;
+        }
 
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 80px;
+            }
+            
+            .container {
+                padding: 16px !important;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr !important;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+            
+            .tab-btn {
+                white-space: nowrap;
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .nav-links {
+                display: none !important;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .modal-content {
+                max-width: 95% !important;
+                width: 95% !important;
+                padding: 24px;
+            }
+            
+            .btn-small {
+                font-size: 11px;
+                padding: 5px 10px;
+            }
+            
+            .page-title {
+                font-size: 24px;
+            }
+            
+            .header-nav {
+                padding: 0 20px;
+            }
+            
+            /* Bottom Nav PILL */
+            .mobile-bottom-nav {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                position: fixed;
+                bottom: 16px;
+                left: 16px;
+                right: 16px;
+                background: #1a4d1b;
+                border-radius: 24px;
+                padding: 12px 8px;
+                gap: 8px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+                z-index: 1000;
+            }
+            
+            .nav-item {
+                text-align: center;
+                padding: 10px 8px;
+                color: rgba(255,255,255,0.7);
+                text-decoration: none;
+                font-size: 12px;
+                font-weight: 600;
+                border-radius: 16px;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .nav-item.active {
+                background: rgba(255,255,255,0.2);
+                color: white;
+            }
+            
+            .nav-item .icon {
+                display: none;
+            }
+            
+            .nav-item .label {
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 12px !important;
+            }
+            
+            .page-title {
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -801,6 +906,22 @@
             </div>
         </div>
     </div>
+
+    <!-- Navegação Bottom Mobile (4 itens) -->
+    <nav class="mobile-bottom-nav">
+        <a href="Dash5.html" class="nav-item">
+            <span class="label">Dashboard</span>
+        </a>
+        <a href="Relatorios.html" class="nav-item">
+            <span class="label">Relatórios</span>
+        </a>
+        <a href="Propostas.html" class="nav-item">
+            <span class="label">Propostas</span>
+        </a>
+        <a href="Configuracoes.html" class="nav-item active">
+            <span class="label">Config</span>
+        </a>
+    </nav>
 
     <!-- MODAL USUÁRIO -->
     <div id="userModal" class="modal">

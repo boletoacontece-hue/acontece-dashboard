@@ -560,23 +560,166 @@
             }
         }
     
-/* ===== Responsivo / Mobile ===== */
-@media (max-width: 768px) {
-  .container { padding: 12px !important; }
-  .top-header, .page-header, .page-header-row, .header-actions { flex-wrap: wrap !important; gap: 10px; }
-  .header-nav, .nav-links, .nav, .tabs { flex-wrap: wrap !important; }
-  .kpi-grid, .kpis-annual-grid { grid-template-columns: 1fr 1fr !important; }
-  .charts-grid, .form-grid, .tables-section, .form-row { grid-template-columns: 1fr !important; }
-  .modal-content { max-width: 94% !important; width: 94% !important; }
-  /* tabelas roláveis na horizontal, colunas legíveis */
-  table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; max-width: 100%; }
-  h1 { font-size: 20px !important; }
-}
-@media (max-width: 480px) {
-  .kpi-grid, .kpis-annual-grid { grid-template-columns: 1fr !important; }
-  body { padding: 10px !important; }
-}
+        /* Navegação Bottom Bar Mobile */
+        .mobile-bottom-nav {
+            display: none;
+        }
 
+        /* RESPONSIVIDADE */
+        @media (max-width: 1400px) {
+            .kpis-annual-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ranking-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ranking-chart-container {
+                height: 350px;
+            }
+
+            .kpis-annual-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .kpi-annual-card {
+                padding: 20px;
+            }
+
+            .kpi-annual-value {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 80px;
+            }
+            
+            .container {
+                padding: 16px !important;
+            }
+            
+            .nav-links {
+                display: none !important;
+            }
+
+            .ranking-table th,
+            .ranking-table td {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+
+            .rank-number {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+
+            .page-title {
+                font-size: 22px !important;
+            }
+
+            .summary-header h2,
+            .charts-header h2,
+            .ranking-header h2 {
+                font-size: 18px;
+            }
+
+            .kpi-annual-label {
+                font-size: 12px;
+            }
+
+            .kpi-annual-value {
+                font-size: 24px;
+            }
+
+            .kpi-annual-subtitle {
+                font-size: 13px;
+            }
+            
+            .kpis-annual-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .page-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            /* Bottom Nav PILL */
+            .mobile-bottom-nav {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                position: fixed;
+                bottom: 16px;
+                left: 16px;
+                right: 16px;
+                background: #1a4d1b;
+                border-radius: 24px;
+                padding: 12px 8px;
+                gap: 8px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+                z-index: 1000;
+            }
+            
+            .nav-item {
+                text-align: center;
+                padding: 10px 8px;
+                color: rgba(255,255,255,0.7);
+                text-decoration: none;
+                font-size: 12px;
+                font-weight: 600;
+                border-radius: 16px;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .nav-item.active {
+                background: rgba(255,255,255,0.2);
+                color: white;
+            }
+            
+            .nav-item .icon {
+                display: none;
+            }
+            
+            .nav-item .label {
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .kpis-annual-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 12px !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -787,6 +930,22 @@
             </div>
         </div>
     </div>
+
+    <!-- Navegação Bottom Mobile (4 itens) -->
+    <nav class="mobile-bottom-nav">
+        <a href="Dash5.html" class="nav-item">
+            <span class="label">Dashboard</span>
+        </a>
+        <a href="Relatorios.html" class="nav-item active">
+            <span class="label">Relatórios</span>
+        </a>
+        <a href="Propostas.html" class="nav-item">
+            <span class="label">Propostas</span>
+        </a>
+        <a href="Configuracoes.html" class="nav-item">
+            <span class="label">Config</span>
+        </a>
+    </nav>
 
     <script>
         const STORAGE_KEY = 'dashboard_acontece_v5';

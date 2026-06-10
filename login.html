@@ -48,7 +48,19 @@
         }
         @keyframes spin{0%{transform:rotate(0);}100%{transform:rotate(360deg);}}
         .btn-login.loading{pointer-events:none;opacity:.7;}
-        @media(max-width:480px){.login-container{padding:40px 30px;}.login-title{font-size:24px;}}
+        @media(max-width:480px){
+            .login-container{padding:40px 30px;}
+            .login-title{font-size:24px;}
+            .logo{max-width:140px;}
+        }
+        
+        /* Mobile Extra Small */
+        @media(max-width:360px){
+            .login-container{padding:30px 20px;}
+            .login-title{font-size:20px;}
+            .form-input{padding:12px 14px;font-size:14px;}
+            .btn-login{padding:14px;font-size:15px;}
+        }
     </style>
 </head>
 <body>
