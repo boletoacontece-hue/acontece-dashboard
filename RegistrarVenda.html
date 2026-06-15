@@ -129,6 +129,187 @@
 }
 
     </style>
+    <style>
+        /* ========== AUTOCOMPLETE DROPDOWN ========== */
+        .autocomplete-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #2c6e2e;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            max-height: 320px;
+            overflow-y: auto;
+            z-index: 1000;
+            animation: slideDown 0.2s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .autocomplete-results {
+            padding: 4px;
+        }
+        
+        .autocomplete-item {
+            padding: 12px 14px;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-bottom: 2px;
+            transition: all 0.15s;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+        
+        .autocomplete-item:hover {
+            background: #e8f5e9;
+            transform: translateX(4px);
+        }
+        
+        .autocomplete-item-code {
+            font-weight: 700;
+            color: #2c6e2e;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .autocomplete-item-address {
+            font-size: 13px;
+            color: #616161;
+            line-height: 1.4;
+        }
+        
+        .autocomplete-item-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
+        .autocomplete-item-status.disponivel {
+            background: #e8f5e9;
+            color: #2c6e2e;
+        }
+        
+        .autocomplete-item-status.vendido {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .autocomplete-item-status.suspenso {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .autocomplete-group {
+            padding: 8px 14px;
+            background: #fafafa;
+            font-size: 11px;
+            font-weight: 700;
+            color: #2c6e2e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        
+        .autocomplete-empty {
+            padding: 20px;
+            text-align: center;
+            color: #9e9e9e;
+            font-size: 14px;
+        }
+        
+        .autocomplete-loading {
+            padding: 20px;
+            text-align: center;
+            color: #2c6e2e;
+            font-size: 14px;
+        }
+        
+        /* Highlight do termo buscado */
+        .highlight {
+            background: #fff59d;
+            font-weight: 700;
+            padding: 0 2px;
+        }
+        
+        /* Scroll customizado */
+        .autocomplete-dropdown::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .autocomplete-dropdown::-webkit-scrollbar-track {
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        
+        .autocomplete-dropdown::-webkit-scrollbar-thumb {
+            background: #2c6e2e;
+            border-radius: 4px;
+        }
+        
+        .autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
+            background: #1a4d1b;
+        }
+        
+        /* Estilo para Select de múltiplas linhas (backup, caso necessário) */
+        select[size] {
+            padding: 8px !important;
+        }
+        
+        select[size] option {
+            padding: 10px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+        }
+        
+        select[size] option:hover {
+            background: #e8f5e9 !important;
+        }
+        
+        select[size] option:checked {
+            background: #2c6e2e !important;
+            color: white !important;
+        }
+        
+        select[size] optgroup {
+            font-weight: 700;
+            color: #2c6e2e;
+            padding: 8px;
+            background: #fafafa;
+            font-size: 11px;
+        }
+        
+        /* Destaque no campo de busca quando ativo */
+        #searchInput:focus, #autocompleteInput:focus {
+            border-color: #2c6e2e !important;
+            box-shadow: 0 0 0 3px rgba(44, 110, 46, 0.15) !important;
+        }
+        
+        /* Contador de resultados */
+        #countResults {
+            color: #2c6e2e;
+            font-weight: 700;
+        }
+    </style>
 </head>
 <body>
 <div class="wrap">
@@ -153,32 +334,92 @@
         <div id="alerta" class="alerta"></div>
 
         <form id="formVenda" autocomplete="off">
-            <div class="section-title">Dados da Venda</div>
+            <div class="section-title">Buscar e Selecionar Imóvel</div>
 
-            <div class="form-group">
-                <label class="form-label">Imóvel (código) <span class="req">*</span></label>
-                <select id="imovel" class="form-input" required>
-                    <option value="">Carregando imóveis...</option>
-                </select>
-                <span class="hint">Selecione o imóvel vendido. Endereço e captador são preenchidos automaticamente.</span>
+            <!-- AUTOCOMPLETE MODERNO -->
+            <div class="form-group" style="position: relative;">
+                <label class="form-label">Digite o código ou endereço do imóvel <span class="req">*</span></label>
+                <div style="position: relative;">
+                    <input 
+                        type="text" 
+                        id="autocompleteInput" 
+                        class="form-input" 
+                        placeholder="🔍 Digite pelo menos 2 letras para buscar (ex: AC3938 ou SQSW 305)"
+                        style="text-transform: uppercase; padding-right: 40px;"
+                        autocomplete="off"
+                        oninput="handleAutocompleteInput()"
+                        onfocus="handleAutocompleteFocus()"
+                    >
+                    <div id="clearBtn" style="display: none; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #9e9e9e; font-size: 20px; padding: 4px;" onclick="limparAutocomplete()">
+                        ×
+                    </div>
+                </div>
+                <span class="hint">
+                    <span id="autocompleteHint">Digite para buscar imóveis</span>
+                </span>
+                
+                <!-- DROPDOWN DE RESULTADOS (OCULTO POR PADRÃO) -->
+                <div id="autocompleteDropdown" class="autocomplete-dropdown" style="display: none;">
+                    <div id="autocompleteResults" class="autocomplete-results">
+                        <div class="autocomplete-empty">Digite pelo menos 2 caracteres para buscar</div>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
+            <!-- CARD COM INFORMAÇÕES DO IMÓVEL -->
+            <div id="imovelInfo" style="display: none; background: #f0f7f0; border-left: 4px solid var(--verde); padding: 20px; border-radius: 10px; margin: 24px 0;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                    <div>
+                        <div style="font-size: 13px; color: #2c6e2e; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+                            ✅ Imóvel Encontrado
+                        </div>
+                        <div style="font-size: 18px; font-weight: 700; color: #1a4d1b; margin-bottom: 4px;" id="infoCode"></div>
+                        <div style="font-size: 13px; color: #616161; line-height: 1.5;" id="infoAddress"></div>
+                    </div>
+                    <div id="infoStatus" style="padding: 6px 14px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase;"></div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-top: 16px;">
+                    <div>
+                        <div style="font-size: 11px; color: #757575; margin-bottom: 4px;">Captador</div>
+                        <div style="font-size: 14px; font-weight: 600; color: #212121;" id="infoCaptador"></div>
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; color: #757575; margin-bottom: 4px;">Valor de Anúncio</div>
+                        <div style="font-size: 14px; font-weight: 600; color: #2c6e2e;" id="infoPreco"></div>
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; color: #757575; margin-bottom: 4px;">Data de Captação</div>
+                        <div style="font-size: 14px; font-weight: 600; color: #212121;" id="infoData"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="avisoVendido" style="display: none; background: #fff3e0; border-left: 4px solid #f57c00; padding: 16px; border-radius: 10px; margin: 24px 0;">
+                <div style="font-size: 13px; color: #e65100; font-weight: 700; margin-bottom: 6px;">
+                    ⚠️ ATENÇÃO
+                </div>
+                <div style="font-size: 14px; color: #616161; line-height: 1.5;">
+                    Este imóvel já possui uma venda registrada no sistema. Não é possível registrar uma nova venda.
+                </div>
+            </div>
+
+            <div class="section-title">Dados da Venda</div>
+
+            <div class="form-group" style="display: none;">
                 <label class="form-label">Endereço</label>
                 <input type="text" id="endereco" class="form-input" disabled>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Captador</label>
-                    <input type="text" id="captador" class="form-input" disabled>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Corretor (vendedor) <span class="req">*</span></label>
-                    <select id="corretor" class="form-input" required>
-                        <option value="">Selecione o corretor</option>
-                    </select>
-                </div>
+            <div class="form-group" style="display: none;">
+                <label class="form-label">Captador</label>
+                <input type="text" id="captador" class="form-input" disabled>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Corretor (vendedor) <span class="req">*</span></label>
+                <select id="corretor" class="form-input" required>
+                    <option value="">Selecione o corretor</option>
+                </select>
+                <span class="hint">Quem realizou a venda deste imóvel</span>
             </div>
 
             <div class="form-row">
@@ -235,50 +476,195 @@
 <script src="db-supabase.js"></script>
 <script>
 let imoveisCache = [];
+let imovelSelecionado = null;
 
+// ============ FORMATAÇÃO ============
 function formatBRL(v){ return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+
 function moedaInput(displayEl, hiddenId){
-    let v=displayEl.value.replace(/\D/g,''); const num=v?parseInt(v,10)/100:0;
+    let v=displayEl.value.replace(/\D/g,''); 
+    const num=v?parseInt(v,10)/100:0;
     document.getElementById(hiddenId).value=num;
     displayEl.value=num.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
+
 function alerta(msg,tipo){
     const a=document.getElementById('alerta');
-    a.textContent=msg; a.className='alerta show '+(tipo==='ok'?'ok':'err');
+    a.textContent=msg; 
+    a.className='alerta show '+(tipo==='ok'?'ok':'err');
     if(tipo==='ok') setTimeout(()=>a.classList.remove('show'),4000);
     a.scrollIntoView({behavior:'smooth',block:'center'});
 }
-function limpar(){
-    document.getElementById('formVenda').reset();
-    document.getElementById('valor').value='';
-    document.getElementById('comissao').value='';
-    document.getElementById('endereco').value='';
-    document.getElementById('captador').value='';
-    document.getElementById('date').valueAsDate=new Date();
-}
+
 function isoParaBR(iso){ if(!iso) return ''; const [a,m,d]=iso.split('-'); return `${d}/${m}/${a}`; }
+function brParaIso(br)  { if(!br)  return null; const [d,m,a]=br.split('/'); return `${a}-${m}-${d}`; }
 function mesRef(iso){ if(!iso) return null; const [a,m]=iso.split('-'); return `${a}-${m}`; }
 
+// ============ CARREGAR DADOS ============
 async function carregarImoveis(){
-    const sel=document.getElementById('imovel');
     try{
         imoveisCache = await DB.listImoveis();
-        sel.innerHTML='<option value="">Selecione o imóvel</option>';
-        imoveisCache
-            .filter(i => i.status !== 'Vendido')   // prioriza os ainda não vendidos
-            .forEach(i => sel.add(new Option(`${i.code} — ${i.address.substring(0,45)}`, i.code)));
-        if(sel.options.length===1){
-            imoveisCache.forEach(i => sel.add(new Option(`${i.code} — ${i.address.substring(0,45)}`, i.code)));
-        }
-    }catch(e){ sel.innerHTML='<option value="">Erro ao carregar imóveis</option>'; }
+        console.log(`${imoveisCache.length} imóveis carregados`);
+    }catch(e){ 
+        console.error('Erro ao carregar imóveis:', e);
+        alerta('Erro ao carregar lista de imóveis.', 'err');
+    }
 }
 
-function aoSelecionarImovel(){
-    const code=document.getElementById('imovel').value;
-    const imo=imoveisCache.find(i=>i.code===code);
-    document.getElementById('endereco').value = imo ? imo.address : '';
-    document.getElementById('captador').value = imo ? (imo.captador||'') : '';
+// ============ AUTOCOMPLETE ============
+let autocompleteTimeout = null;
+
+function handleAutocompleteInput() {
+    const input = document.getElementById('autocompleteInput');
+    const clearBtn = document.getElementById('clearBtn');
+    const searchTerm = input.value.trim();
+    
+    // Mostrar/ocultar botão de limpar
+    clearBtn.style.display = searchTerm ? 'block' : 'none';
+    
+    // Debounce: aguarda 300ms após parar de digitar
+    clearTimeout(autocompleteTimeout);
+    
+    if(searchTerm.length < 2) {
+        fecharDropdown();
+        atualizarHint('Digite pelo menos 2 caracteres para buscar');
+        return;
+    }
+    
+    atualizarHint('Buscando...');
+    
+    autocompleteTimeout = setTimeout(() => {
+        buscarEMostrarResultados(searchTerm);
+    }, 300);
 }
+
+function handleAutocompleteFocus() {
+    const searchTerm = document.getElementById('autocompleteInput').value.trim();
+    if(searchTerm.length >= 2) {
+        buscarEMostrarResultados(searchTerm);
+    }
+}
+
+function buscarEMostrarResultados(searchTerm) {
+    const termUpper = searchTerm.toUpperCase();
+    
+    // Filtrar por código OU endereço
+    const filtered = imoveisCache.filter(i => {
+        const codigo = i.code.toUpperCase();
+        const endereco = i.address.toUpperCase();
+        return codigo.includes(termUpper) || endereco.includes(termUpper);
+    });
+    
+    renderizarResultados(filtered, searchTerm);
+}
+
+function renderizarResultados(imoveis, searchTerm) {
+    const dropdown = document.getElementById('autocompleteDropdown');
+    const results = document.getElementById('autocompleteResults');
+    
+    if(imoveis.length === 0) {
+        results.innerHTML = `
+            <div class="autocomplete-empty">
+                😕 Nenhum imóvel encontrado para "${searchTerm}"<br>
+                <small style="color: #9e9e9e;">Tente buscar por código (ex: AC3938) ou endereço</small>
+            </div>
+        `;
+        dropdown.style.display = 'block';
+        atualizarHint('Nenhum resultado encontrado');
+        return;
+    }
+    
+    // Separar por status
+    const disponiveis = imoveis.filter(i => i.status === 'Disponível');
+    const outros = imoveis.filter(i => i.status !== 'Disponível');
+    
+    let html = '';
+    
+    // Disponíveis
+    if(disponiveis.length > 0) {
+        html += `<div class="autocomplete-group">✓ Disponíveis (${disponiveis.length})</div>`;
+        disponiveis.forEach(i => {
+            html += criarItemHTML(i, searchTerm);
+        });
+    }
+    
+    // Outros
+    if(outros.length > 0) {
+        html += `<div class="autocomplete-group">⚠ Outros Status (${outros.length})</div>`;
+        outros.forEach(i => {
+            html += criarItemHTML(i, searchTerm);
+        });
+    }
+    
+    results.innerHTML = html;
+    dropdown.style.display = 'block';
+    atualizarHint(`${imoveis.length} imóvel(is) encontrado(s)`);
+}
+
+function criarItemHTML(imovel, searchTerm) {
+    const statusClass = imovel.status.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    
+    // Destacar termo buscado
+    const codigoHighlighted = destacarTermo(imovel.code, searchTerm);
+    const enderecoHighlighted = destacarTermo(imovel.address, searchTerm);
+    
+    return `
+        <div class="autocomplete-item" onclick='selecionarImovel(${JSON.stringify(imovel).replace(/'/g, "&apos;")})'>
+            <div class="autocomplete-item-code">${codigoHighlighted}</div>
+            <div class="autocomplete-item-address">${enderecoHighlighted}</div>
+            <span class="autocomplete-item-status ${statusClass}">${imovel.status}</span>
+        </div>
+    `;
+}
+
+function destacarTermo(texto, termo) {
+    if(!termo) return texto;
+    const regex = new RegExp(`(${termo})`, 'gi');
+    return texto.replace(regex, '<span class="highlight">$1</span>');
+}
+
+async function selecionarImovel(imovel) {
+    imovelSelecionado = imovel;
+    
+    // Preencher campo com o código selecionado
+    document.getElementById('autocompleteInput').value = `${imovel.code} — ${imovel.address.substring(0, 50)}${imovel.address.length > 50 ? '...' : ''}`;
+    
+    // Fechar dropdown
+    fecharDropdown();
+    
+    // Exibir informações do imóvel
+    await exibirImovel(imovel);
+    
+    // Focar no próximo campo (corretor)
+    document.getElementById('corretor').focus();
+}
+
+function limparAutocomplete() {
+    document.getElementById('autocompleteInput').value = '';
+    document.getElementById('clearBtn').style.display = 'none';
+    fecharDropdown();
+    limparSelecao();
+    atualizarHint('Digite para buscar imóveis');
+    document.getElementById('autocompleteInput').focus();
+}
+
+function fecharDropdown() {
+    document.getElementById('autocompleteDropdown').style.display = 'none';
+}
+
+function atualizarHint(texto) {
+    document.getElementById('autocompleteHint').textContent = texto;
+}
+
+// Fechar dropdown ao clicar fora
+document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('autocompleteDropdown');
+    const input = document.getElementById('autocompleteInput');
+    
+    if(dropdown && input && !dropdown.contains(e.target) && e.target !== input) {
+        fecharDropdown();
+    }
+});
 
 async function carregarCorretores(){
     const sel=document.getElementById('corretor');
@@ -287,14 +673,91 @@ async function carregarCorretores(){
         sel.innerHTML='<option value="">Selecione o corretor</option>';
         corretores.filter(c=>c.type==='Corretor'||c.type==='Ambos')
             .forEach(c=>sel.add(new Option(c.name,c.name)));
-    }catch(e){ /* mantém opção padrão */ }
+    }catch(e){ 
+        console.error('Erro ao carregar corretores:', e);
+    }
 }
 
+// ============ EXIBIR IMÓVEL SELECIONADO ============
+
+async function exibirImovel(imovel) {
+    imovelSelecionado = imovel;
+    
+    // Preencher campos ocultos
+    document.getElementById('endereco').value = imovel.address;
+    document.getElementById('captador').value = imovel.captador || '';
+    
+    // Verificar se já foi vendido
+    const jaVendido = await DB.imovelJaVendido(imovel.code);
+    
+    // Mostrar card de informações
+    document.getElementById('imovelInfo').style.display = 'block';
+    document.getElementById('infoCode').textContent = imovel.code;
+    document.getElementById('infoAddress').textContent = imovel.address;
+    document.getElementById('infoCaptador').textContent = imovel.captador || 'Não informado';
+    document.getElementById('infoPreco').textContent = formatBRL(imovel.price);
+    document.getElementById('infoData').textContent = imovel.date || '-';
+    
+    // Badge de status
+    const statusBadge = document.getElementById('infoStatus');
+    if(imovel.status === 'Disponível') {
+        statusBadge.textContent = 'Disponível';
+        statusBadge.style.background = '#e8f5e9';
+        statusBadge.style.color = '#2c6e2e';
+    } else if(imovel.status === 'Vendido') {
+        statusBadge.textContent = 'Vendido';
+        statusBadge.style.background = '#e3f2fd';
+        statusBadge.style.color = '#1976d2';
+    } else {
+        statusBadge.textContent = imovel.status;
+        statusBadge.style.background = '#fff3e0';
+        statusBadge.style.color = '#f57c00';
+    }
+    
+    // Mostrar aviso se já vendido
+    const avisoVendido = document.getElementById('avisoVendido');
+    const btnSalvar = document.getElementById('btnSalvar');
+    
+    if(jaVendido) {
+        avisoVendido.style.display = 'block';
+        btnSalvar.disabled = true;
+        btnSalvar.textContent = '❌ Imóvel Já Vendido';
+    } else {
+        avisoVendido.style.display = 'none';
+        btnSalvar.disabled = false;
+        btnSalvar.textContent = 'Registrar Venda';
+    }
+}
+
+function limparSelecao() {
+    imovelSelecionado = null;
+    document.getElementById('imovelInfo').style.display = 'none';
+    document.getElementById('avisoVendido').style.display = 'none';
+    document.getElementById('endereco').value = '';
+    document.getElementById('captador').value = '';
+    document.getElementById('btnSalvar').disabled = false;
+    document.getElementById('btnSalvar').textContent = 'Registrar Venda';
+}
+
+function limpar(){
+    document.getElementById('formVenda').reset();
+    document.getElementById('autocompleteInput').value = '';
+    document.getElementById('valor').value='';
+    document.getElementById('comissao').value='';
+    document.getElementById('date').valueAsDate=new Date();
+    limparSelecao();
+    limparAutocomplete();
+}
+
+// ============ VENDAS RECENTES ============
 async function renderRecentes(){
     const tb=document.getElementById('tbodyRecentes');
     try{
         const lista=(await DB.listVendas()).slice(0,8);
-        if(lista.length===0){ tb.innerHTML='<tr><td colspan="6" class="vazio">Nenhuma venda registrada ainda.</td></tr>'; return; }
+        if(lista.length===0){ 
+            tb.innerHTML='<tr><td colspan="6" class="vazio">Nenhuma venda registrada ainda.</td></tr>'; 
+            return; 
+        }
         tb.innerHTML=lista.map(v=>`
             <tr>
                 <td><span class="cod">${v.code}</span></td>
@@ -304,53 +767,87 @@ async function renderRecentes(){
                 <td>${formatBRL(v.value)}</td>
                 <td>${formatBRL(v.commission)}</td>
             </tr>`).join('');
-    }catch(e){ tb.innerHTML='<tr><td colspan="6" class="vazio">Erro ao carregar vendas.</td></tr>'; }
+    }catch(e){ 
+        tb.innerHTML='<tr><td colspan="6" class="vazio">Erro ao carregar vendas.</td></tr>'; 
+        console.error('Erro ao carregar vendas:', e);
+    }
 }
 
+// ============ SALVAR VENDA ============
 async function salvar(e){
     e.preventDefault();
+    
+    if(!imovelSelecionado) {
+        alerta('Selecione um imóvel antes de registrar a venda.','err');
+        return;
+    }
+    
     const btn=document.getElementById('btnSalvar');
-    const code=document.getElementById('imovel').value;
-    const endereco=document.getElementById('endereco').value;
-    const captador=document.getElementById('captador').value;
     const corretor=document.getElementById('corretor').value;
     const dateIso=document.getElementById('date').value;
     const valor=parseFloat(document.getElementById('valor').value);
     const comissao=parseFloat(document.getElementById('comissao').value);
 
-    if(!code||!corretor||!dateIso||!(valor>0)){
-        alerta('Preencha imóvel, corretor, data e valor (maior que zero).','err'); return;
+    if(!corretor||!dateIso||!(valor>0)){
+        alerta('Preencha corretor, data e valor da venda (maior que zero).','err'); 
+        return;
     }
+    
+    // Confirmar venda
+    const confirmar = confirm(
+        `Confirmar registro de venda?\n\n` +
+        `Imóvel: ${imovelSelecionado.code}\n` +
+        `Corretor: ${corretor}\n` +
+        `Valor: ${formatBRL(valor)}\n` +
+        `Comissão: ${formatBRL(comissao)}\n\n` +
+        `O status do imóvel será alterado para "Vendido".`
+    );
+    
+    if(!confirmar) return;
+    
     btn.disabled=true;
+    const textoOriginal = btn.textContent;
+    btn.textContent = '⏳ Salvando...';
+    
     try{
-        const { error } = await DB.client.from('vendas').insert({
-            imovel_codigo: code, endereco: endereco, captador: captador,
-            corretor: corretor, data_venda: dateIso,
-            valor: valor, comissao: comissao || 0, mes_ref: mesRef(dateIso)
+        // Usar a nova função addVenda que faz tudo automaticamente
+        await DB.addVenda({
+            code: imovelSelecionado.code,
+            address: imovelSelecionado.address,
+            captador: imovelSelecionado.captador,
+            corretor: corretor,
+            dateIso: dateIso,
+            value: valor,
+            commission: comissao
         });
-        if(error) throw error;
 
-        // marca o imóvel como Vendido
-        await DB.client.from('imoveis').update({ status:'Vendido' }).eq('codigo', code);
-
-        alerta(`Venda do imóvel ${code} registrada com sucesso!`,'ok');
+        alerta(`✅ Venda do imóvel ${imovelSelecionado.code} registrada com sucesso!`,'ok');
         limpar();
-        await carregarImoveis();
-        await renderRecentes();
+        await Promise.all([carregarImoveis(), renderRecentes()]);
+        
+        // Scroll para o topo
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
     }catch(err){
-        alerta('Erro ao registrar: '+(err.message||err),'err');
-    }finally{ btn.disabled=false; }
+        alerta('❌ Erro ao registrar: '+(err.message||err),'err');
+        console.error('Erro completo:', err);
+    }finally{ 
+        btn.disabled=false; 
+        btn.textContent = textoOriginal;
+    }
 }
 
+// ============ INICIALIZAÇÃO ============
 document.addEventListener('DOMContentLoaded', async function(){
     await DB.requireAuth();
     const user=await DB.getUser();
     if(user) document.getElementById('userInfo').textContent=user.email;
+    
     document.getElementById('date').valueAsDate=new Date();
     document.getElementById('valorDisplay').addEventListener('input',function(){moedaInput(this,'valor');});
     document.getElementById('comissaoDisplay').addEventListener('input',function(){moedaInput(this,'comissao');});
-    document.getElementById('imovel').addEventListener('change', aoSelecionarImovel);
     document.getElementById('formVenda').addEventListener('submit', salvar);
+    
     await Promise.all([carregarImoveis(), carregarCorretores(), renderRecentes()]);
 });
 </script>

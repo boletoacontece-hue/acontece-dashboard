@@ -1060,7 +1060,7 @@
                     </div>
                     <div class="form-group">
                         <label>Data Venda</label>
-                        <input type="text" id="saleDate" placeholder="DD/MM/AAAA">
+                        <input type="date" id="saleDate" required>
                     </div>
                     <div class="form-group full-width">
                         <label>Endereço Completo</label>
@@ -1098,7 +1098,7 @@
                     </div>
                     <div class="form-group">
                         <label>Data Captação</label>
-                        <input type="text" id="captedDate" placeholder="DD/MM/AAAA">
+                        <input type="date" id="captedDate" required>
                     </div>
                     <div class="form-group full-width">
                         <label>Endereço Completo</label>
@@ -1711,6 +1711,18 @@
         function closeModal() {
             document.getElementById('actionModal').style.display = 'none';
             editingIndex = null;
+            
+            // Resetar campos de código (remover readonly e background cinza)
+            const saleCode = document.getElementById('saleCode');
+            const captedCode = document.getElementById('captedCode');
+            if(saleCode) {
+                saleCode.readOnly = false;
+                saleCode.style.background = '';
+            }
+            if(captedCode) {
+                captedCode.readOnly = false;
+                captedCode.style.background = '';
+            }
         }
 
         function editSale(index) {
@@ -1727,10 +1739,19 @@
             document.getElementById('delete-btn').style.display = 'block';
             
             document.getElementById('saleCode').value = sale.code;
+            document.getElementById('saleCode').readOnly = true; // Código não pode ser alterado
+            document.getElementById('saleCode').style.background = '#e0e0e0';
+            
             document.getElementById('saleAddress').value = sale.address;
             document.getElementById('saleCaptador').value = sale.captador;
             document.getElementById('saleCorretor').value = sale.corretor;
-            document.getElementById('saleDate').value = sale.date;
+            
+            // Converter data DD/MM/AAAA para YYYY-MM-DD para o input date
+            const dateISO = sale.date && sale.date.includes('/') 
+                ? sale.date.split('/').reverse().join('-') 
+                : sale.date;
+            document.getElementById('saleDate').value = dateISO;
+            
             document.getElementById('saleValue').value = sale.value;
             document.getElementById('saleCommission').value = sale.commission;
             
@@ -1751,77 +1772,167 @@
             document.getElementById('delete-btn').style.display = 'block';
             
             document.getElementById('captedCode').value = item.code;
+            document.getElementById('captedCode').readOnly = true; // Código não pode ser alterado
+            document.getElementById('captedCode').style.background = '#e0e0e0';
+            
             document.getElementById('captedAddress').value = item.address;
             document.getElementById('captedCaptador').value = item.captador;
-            document.getElementById('captedDate').value = item.date;
+            
+            // Converter data DD/MM/AAAA para YYYY-MM-DD para o input date
+            const dateISO = item.date && item.date.includes('/') 
+                ? item.date.split('/').reverse().join('-') 
+                : item.date;
+            document.getElementById('captedDate').value = dateISO;
+            
             document.getElementById('captedPrice').value = item.price;
             document.getElementById('captedStatus').value = item.status;
             
             document.getElementById('actionModal').style.display = 'flex';
         }
 
-        function saveData() {
+        async function saveData() {
             if (currentMode === 'sale') {
                 const saleData = {
-                    code: document.getElementById('saleCode').value,
-                    address: document.getElementById('saleAddress').value,
+                    code: document.getElementById('saleCode').value.trim().toUpperCase(),
+                    address: document.getElementById('saleAddress').value.trim(),
                     captador: document.getElementById('saleCaptador').value,
                     corretor: document.getElementById('saleCorretor').value,
-                    date: document.getElementById('saleDate').value,
+                    date: document.getElementById('saleDate').value, // DD/MM/AAAA
                     value: Number(document.getElementById('saleValue').value),
                     commission: Number(document.getElementById('saleCommission').value)
                 };
 
-                if (!saleData.value || !saleData.address) {
-                    alert('Preencha pelo menos o Endereço e o Valor Venda.');
+                if (!saleData.value || !saleData.address || !saleData.corretor) {
+                    alert('Preencha pelo menos o Endereço, Corretor e Valor da Venda.');
                     return;
                 }
 
-                if (editingIndex !== null) salesData[editingIndex] = saleData;
-                else salesData.push(saleData);
+                // Converter data DD/MM/AAAA para YYYY-MM-DD
+                const dateIso = saleData.date.includes('/') 
+                    ? saleData.date.split('/').reverse().join('-') 
+                    : saleData.date;
+
+                try {
+                    if (editingIndex !== null) {
+                        // EDITANDO venda existente
+                        await DB.updateVenda(saleData.code, {
+                            address: saleData.address,
+                            captador: saleData.captador,
+                            corretor: saleData.corretor,
+                            dateIso: dateIso,
+                            value: saleData.value,
+                            commission: saleData.commission
+                        });
+                    } else {
+                        // NOVA venda (não deve acontecer aqui, mas mantém compatibilidade)
+                        await DB.addVenda({
+                            code: saleData.code,
+                            address: saleData.address,
+                            captador: saleData.captador,
+                            corretor: saleData.corretor,
+                            dateIso: dateIso,
+                            value: saleData.value,
+                            commission: saleData.commission
+                        });
+                    }
+
+                    // Recarregar dados do Supabase
+                    await hydrateFromSupabase();
+                    loadData();
+                    closeModal();
+                    alert('✅ Venda atualizada com sucesso!');
+
+                } catch(err) {
+                    alert('❌ Erro ao salvar venda: ' + (err.message || err));
+                    console.error('Erro ao salvar venda:', err);
+                }
 
             } else if (currentMode === 'capted') {
                 const captedDataItem = {
-                    code: document.getElementById('captedCode').value,
-                    address: document.getElementById('captedAddress').value,
+                    code: document.getElementById('captedCode').value.trim().toUpperCase(),
+                    address: document.getElementById('captedAddress').value.trim(),
                     captador: document.getElementById('captedCaptador').value,
-                    date: document.getElementById('captedDate').value,
+                    date: document.getElementById('captedDate').value, // DD/MM/AAAA
                     price: Number(document.getElementById('captedPrice').value),
                     status: document.getElementById('captedStatus').value
                 };
 
-                if (!captedDataItem.price || !captedDataItem.address) {
-                    alert('Preencha pelo menos o Endereço e o Preço.');
+                if (!captedDataItem.price || !captedDataItem.address || !captedDataItem.captador) {
+                    alert('Preencha pelo menos o Endereço, Captador e Preço.');
                     return;
                 }
 
-                if (editingIndex !== null) captedData[editingIndex] = captedDataItem;
-                else captedData.push(captedDataItem);
-            }
+                // Converter data DD/MM/AAAA para YYYY-MM-DD
+                const dateIso = captedDataItem.date.includes('/') 
+                    ? captedDataItem.date.split('/').reverse().join('-') 
+                    : captedDataItem.date;
 
-            saveDataToStorage();
-            render();
-            closeModal();
+                try {
+                    await DB.updateImovel(captedDataItem.code, {
+                        address: captedDataItem.address,
+                        captador: captedDataItem.captador,
+                        dateIso: dateIso,
+                        price: captedDataItem.price,
+                        status: captedDataItem.status
+                    });
+
+                    // Recarregar dados do Supabase
+                    await hydrateFromSupabase();
+                    loadData();
+                    closeModal();
+                    alert('✅ Imóvel atualizado com sucesso!');
+
+                } catch(err) {
+                    alert('❌ Erro ao salvar imóvel: ' + (err.message || err));
+                    console.error('Erro ao salvar imóvel:', err);
+                }
+            }
         }
 
-        function deleteData() {
+        async function deleteData() {
             if (editingIndex === null) return;
             
             const confirmMsg = currentMode === 'sale' 
-                ? 'Tem certeza que deseja apagar esta venda?' 
-                : 'Tem certeza que deseja apagar este imóvel captado?';
+                ? 'Tem certeza que deseja apagar esta venda?\n\n⚠️ Esta ação não pode ser desfeita!' 
+                : 'Tem certeza que deseja apagar este imóvel captado?\n\n⚠️ Esta ação não pode ser desfeita!';
             
             if (!confirm(confirmMsg)) return;
             
-            if (currentMode === 'sale') {
-                salesData.splice(editingIndex, 1);
-            } else if (currentMode === 'capted') {
-                captedData.splice(editingIndex, 1);
+            try {
+                if (currentMode === 'sale') {
+                    const codigo = salesData[editingIndex].code;
+                    await DB.deleteVenda(codigo);
+                    
+                    // Opcional: reverter status do imóvel para Disponível
+                    const reverterStatus = confirm('Deseja reverter o status do imóvel para "Disponível"?');
+                    if (reverterStatus) {
+                        const imovel = await DB.getImovelByCodigo(codigo);
+                        if (imovel) {
+                            await DB.updateImovel(codigo, {
+                                address: imovel.address,
+                                captador: imovel.captador,
+                                dateIso: imovel.date.split('/').reverse().join('-'),
+                                price: imovel.price,
+                                status: 'Disponível'
+                            });
+                        }
+                    }
+                    
+                } else if (currentMode === 'capted') {
+                    const codigo = captedData[editingIndex].code;
+                    await DB.deleteImovel(codigo);
+                }
+                
+                // Recarregar dados do Supabase
+                await hydrateFromSupabase();
+                loadData();
+                closeModal();
+                alert('✅ Registro deletado com sucesso!');
+                
+            } catch(err) {
+                alert('❌ Erro ao deletar: ' + (err.message || err));
+                console.error('Erro ao deletar:', err);
             }
-            
-            saveDataToStorage();
-            render();
-            closeModal();
         }
 
         window.onclick = function(event) {
@@ -1845,10 +1956,10 @@
             const nameEl = document.getElementById('currentUserName');
             if (user && nameEl) nameEl.textContent = user.email;
 
-            // modo somente-leitura: esconde os botões "Editar" da tabela
-            const ro = document.createElement('style');
-            ro.textContent = '.action-btn{display:none!important;}';
-            document.head.appendChild(ro);
+            // ✅ Botões de editar HABILITADOS (comentado o modo somente-leitura)
+            // const ro = document.createElement('style');
+            // ro.textContent = '.action-btn{display:none!important;}';
+            // document.head.appendChild(ro);
 
             await hydrateFromSupabase();                  // carrega dados do banco
             syncPeriodSelectors();

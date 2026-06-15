@@ -68,7 +68,7 @@ const DB = {
         const { data, error } = await supaClient
             .from('imoveis')
             .select('codigo,endereco,captador,data_captacao,preco,status,mes_ref')
-            .order('data_captacao', { ascending: false });
+            .order('data_captacao', { ascending: true }); // Ordem crescente: mais antigos primeiro
         if (error) throw error;
         return (data || []).map(r => ({
             code: r.codigo, address: r.endereco, captador: r.captador,
@@ -120,6 +120,34 @@ const DB = {
         if (error) throw error;
     },
 
+    /* Busca um imóvel específico pelo código */
+    async getImovelByCodigo(codigo) {
+        const { data, error } = await supaClient
+            .from('imoveis')
+            .select('codigo,endereco,captador,data_captacao,preco,status,mes_ref')
+            .eq('codigo', codigo.toUpperCase())
+            .single();
+        if (error) {
+            if (error.code === 'PGRST116') return null; // não encontrado
+            throw error;
+        }
+        return data ? {
+            code: data.codigo, address: data.endereco, captador: data.captador,
+            date: _isoParaBR(data.data_captacao), price: Number(data.preco) || 0,
+            status: data.status, mes: data.mes_ref
+        } : null;
+    },
+
+    /* Verifica se um imóvel já foi vendido */
+    async imovelJaVendido(codigo) {
+        const { count, error } = await supaClient
+            .from('vendas')
+            .select('imovel_codigo', { count: 'exact', head: true })
+            .eq('imovel_codigo', codigo.toUpperCase());
+        if (error) throw error;
+        return (count || 0) > 0;
+    },
+
     /* ---------------- CORRETORES / CAPTADORES ---------------- */
     async listCorretores() {
         const { data, error } = await supaClient
@@ -138,13 +166,79 @@ const DB = {
         const { data, error } = await supaClient
             .from('vendas')
             .select('imovel_codigo,endereco,captador,corretor,data_venda,valor,comissao,mes_ref')
-            .order('data_venda', { ascending: false });
+            .order('data_venda', { ascending: true }); // Ordem crescente: mais antigas primeiro
         if (error) throw error;
         return (data || []).map(r => ({
             code: r.imovel_codigo, address: r.endereco, captador: r.captador,
             corretor: r.corretor, date: _isoParaBR(r.data_venda),
             value: Number(r.valor) || 0, commission: Number(r.comissao) || 0, mes: r.mes_ref
         }));
+    },
+
+    /* Adiciona uma nova venda E atualiza o status do imóvel automaticamente */
+    async addVenda(obj) {
+        const dateIso = obj.dateIso || _brParaIso(obj.date);
+        
+        // 1. Verificar se o imóvel existe
+        const imovel = await this.getImovelByCodigo(obj.code);
+        if (!imovel) {
+            throw new Error(`Imóvel ${obj.code} não encontrado na base de captações.`);
+        }
+        
+        // 2. Verificar se já foi vendido
+        const jaVendido = await this.imovelJaVendido(obj.code);
+        if (jaVendido) {
+            throw new Error(`Imóvel ${obj.code} já possui uma venda registrada.`);
+        }
+        
+        // 3. Inserir a venda
+        const { data, error } = await supaClient.from('vendas').insert({
+            imovel_codigo: obj.code.toUpperCase(),
+            endereco: obj.address,
+            captador: obj.captador,
+            corretor: obj.corretor,
+            data_venda: dateIso,
+            valor: obj.value,
+            comissao: obj.commission || 0,
+            mes_ref: _mesRef(dateIso)
+        }).select();
+        
+        if (error) throw error;
+        
+        // 4. Atualizar status do imóvel para "Vendido"
+        await this.updateImovel(obj.code, {
+            address: imovel.address,
+            captador: imovel.captador,
+            dateIso: _brParaIso(imovel.date),
+            price: imovel.price,
+            status: 'Vendido'
+        });
+        
+        return data;
+    },
+
+    /* Atualiza uma venda existente (pelo código do imóvel, que é unique na tabela vendas) */
+    async updateVenda(codigo, obj) {
+        const dateIso = obj.dateIso || _brParaIso(obj.date);
+        const patch = {
+            endereco: obj.address,
+            captador: obj.captador,
+            corretor: obj.corretor,
+            data_venda: dateIso,
+            valor: obj.value,
+            comissao: obj.commission || 0,
+            mes_ref: _mesRef(dateIso)
+        };
+        const { error } = await supaClient.from('vendas')
+            .update(patch).eq('imovel_codigo', codigo.toUpperCase());
+        if (error) throw error;
+    },
+
+    /* Deleta uma venda (pelo código do imóvel) */
+    async deleteVenda(codigo) {
+        const { error } = await supaClient.from('vendas')
+            .delete().eq('imovel_codigo', codigo.toUpperCase());
+        if (error) throw error;
     },
 
     /* ---------------- PROPOSTAS ---------------- */
