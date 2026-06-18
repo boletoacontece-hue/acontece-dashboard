@@ -131,7 +131,7 @@ function loadCorretores() {
     tbody.innerHTML = '';
     
     if (corretores.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px; color:#9e9e9e;">Nenhum corretor/captador cadastrado</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:#9e9e9e;">Nenhum corretor/captador cadastrado</td></tr>';
         return;
     }
     
@@ -143,9 +143,22 @@ function loadCorretores() {
             'Ambos': '<span class="badge badge-warning">Corretor & Captador</span>'
         };
         
+        // Verifica se tem campo role (migration 003 executada)
+        const temRole = corretor.role !== undefined;
+        const role = corretor.role || 'corretor';
+        
+        const roleLabels = {
+            'admin': '<span class="badge" style="background:#f44336; color:white;">Admin</span>',
+            'corretor': '<span class="badge" style="background:#757575; color:white;">Corretor</span>'
+        };
+        
+        // Se não tem role ainda (migration não executada), mostra "-"
+        const roleCell = temRole ? roleLabels[role] : '<span style="color:#999;">-</span>';
+        
         tr.innerHTML = `
             <td><strong>${corretor.name}</strong></td>
             <td>${typeLabels[corretor.type]}</td>
+            <td>${roleCell}</td>
             <td>${corretor.email || '-'}</td>
             <td>${corretor.phone || '-'}</td>
             <td>
@@ -162,6 +175,13 @@ function openCorretorModal() {
     document.getElementById('corretorModalTitle').textContent = 'Adicionar Pessoa';
     document.getElementById('corretorForm').reset();
     document.getElementById('corretorId').value = '';
+    
+    // Só seta role se o campo existir (migration 003 executada)
+    const roleField = document.getElementById('corretorRole');
+    if (roleField) {
+        roleField.value = 'corretor'; // Default
+    }
+    
     document.getElementById('corretorModal').classList.add('show');
 }
 
@@ -173,6 +193,13 @@ function editCorretor(corretor) {
     document.getElementById('corretorType').value = corretor.type;
     document.getElementById('corretorEmail').value = corretor.email || '';
     document.getElementById('corretorPhone').value = corretor.phone || '';
+    
+    // Só seta role se o campo existir (migration 003 executada)
+    const roleField = document.getElementById('corretorRole');
+    if (roleField) {
+        roleField.value = corretor.role || 'corretor';
+    }
+    
     document.getElementById('corretorModal').classList.add('show');
 }
 
@@ -196,11 +223,19 @@ document.getElementById('corretorForm').addEventListener('submit', async functio
     const type = document.getElementById('corretorType').value;
     const email = document.getElementById('corretorEmail').value.trim();
     const phone = document.getElementById('corretorPhone').value.trim();
+    
+    // Só inclui role se o campo existir no formulário (migration 003 executada)
+    const roleField = document.getElementById('corretorRole');
+    const payload = { nome:name, tipo:type, email, telefone:phone };
+    if (roleField && roleField.value) {
+        payload.role = roleField.value;
+    }
+    
     let error;
     if (corretorId) {
-        ({ error } = await DB.client.from('corretores').update({ nome:name, tipo:type, email, telefone:phone }).eq('id', corretorId));
+        ({ error } = await DB.client.from('corretores').update(payload).eq('id', corretorId));
     } else {
-        ({ error } = await DB.client.from('corretores').insert({ id:'corretor_'+Date.now(), nome:name, tipo:type, email, telefone:phone }));
+        ({ error } = await DB.client.from('corretores').insert({ id:'corretor_'+Date.now(), ...payload }));
     }
     if (error) { alert('Erro ao salvar: ' + error.message); return; }
     await hydrateFromSupabase(); closeCorretorModal(); loadCorretores();

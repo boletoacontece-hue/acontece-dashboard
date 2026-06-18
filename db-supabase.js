@@ -161,6 +161,75 @@ const DB = {
         }));
     },
 
+    /* Listar corretores COM role (usar APENAS após executar migration 003) */
+    async listCorretoresComRole() {
+        const { data, error } = await supaClient
+            .from('corretores')
+            .select('id,nome,tipo,email,telefone,ativo,role')
+            .order('nome');
+        if (error) throw error;
+        return (data || []).map(c => ({
+            id: c.id, name: c.nome, type: c.tipo,
+            email: c.email, phone: c.telefone, ativo: c.ativo,
+            role: c.role || 'corretor'
+        }));
+    },
+
+    /* Obter informações do corretor pelo email (incluindo role) */
+    async getCorretorByEmail(email) {
+        const { data, error } = await supaClient
+            .from('corretores')
+            .select('id,nome,tipo,email,telefone,ativo,role')
+            .eq('email', email)
+            .single();
+        if (error) {
+            if (error.code === 'PGRST116') return null;
+            throw error;
+        }
+        return data ? {
+            id: data.id, name: data.nome, type: data.tipo,
+            email: data.email, phone: data.telefone, ativo: data.ativo,
+            role: data.role || 'corretor'
+        } : null;
+    },
+
+    /* Verificar se o usuário logado é admin */
+    async isAdmin() {
+        try {
+            const session = await this.getSession();
+            if (!session?.user?.email) return false;
+            
+            const corretor = await this.getCorretorByEmail(session.user.email);
+            return corretor?.role === 'admin';
+        } catch (error) {
+            console.error('Erro ao verificar role de admin:', error);
+            return false;
+        }
+    },
+
+    /* Obter role e informações completas do usuário atual */
+    async getCurrentUserRole() {
+        try {
+            const session = await this.getSession();
+            if (!session?.user?.email) return null;
+            
+            const corretor = await this.getCorretorByEmail(session.user.email);
+            if (!corretor) return null;
+            
+            return {
+                id: corretor.id,
+                name: corretor.name,
+                email: corretor.email,
+                type: corretor.type,
+                role: corretor.role,
+                isAdmin: corretor.role === 'admin'
+            };
+        } catch (error) {
+            console.error('Erro ao buscar role do usuário:', error);
+            return null;
+        }
+    },
+
     /* ---------------- VENDAS ---------------- */
     async listVendas() {
         const { data, error } = await supaClient
@@ -256,6 +325,249 @@ const DB = {
             .from('metas').select('*').order('data_inicio');
         if (error) throw error;
         return data || [];
+    },
+
+    /* ---------------- VISITAS ---------------- */
+    
+    /**
+     * Lista todas as visitas
+     * @param {Object} filtros - Filtros opcionais { corretor_id, imovel_codigo, status, data_inicio, data_fim }
+     * @returns {Promise<Array>}
+     */
+    async listVisitas(filtros = {}) {
+        let query = supaClient
+            .from('visitas')
+            .select('*')
+            .order('data_visita', { ascending: false })
+            .order('horario_visita', { ascending: false });
+        
+        // Aplicar filtros
+        if (filtros.corretor_id) {
+            query = query.eq('corretor_id', filtros.corretor_id);
+        }
+        if (filtros.imovel_codigo) {
+            query = query.eq('imovel_codigo', filtros.imovel_codigo.toUpperCase());
+        }
+        if (filtros.status) {
+            query = query.eq('status', filtros.status);
+        }
+        if (filtros.data_inicio) {
+            query = query.gte('data_visita', filtros.data_inicio);
+        }
+        if (filtros.data_fim) {
+            query = query.lte('data_visita', filtros.data_fim);
+        }
+        
+        const { data, error } = await query;
+        if (error) throw error;
+        return data || [];
+    },
+
+    /**
+     * Adiciona uma nova visita
+     * @param {Object} obj - Dados da visita
+     * @returns {Promise<Object>}
+     */
+    async addVisita(obj) {
+        // Validações
+        if (!obj.corretor_nome || !obj.cliente_nome || !obj.imovel_codigo) {
+            throw new Error('Campos obrigatórios: corretor_nome, cliente_nome, imovel_codigo');
+        }
+        if (!obj.data_visita || !obj.horario_visita) {
+            throw new Error('Data e horário da visita são obrigatórios');
+        }
+
+        // Buscar informações do imóvel
+        const imovel = await this.getImovelByCodigo(obj.imovel_codigo);
+        if (!imovel) {
+            throw new Error(`Imóvel ${obj.imovel_codigo} não encontrado`);
+        }
+
+        // Buscar ID do corretor pelo nome (se não vier)
+        let corretor_id = obj.corretor_id;
+        if (!corretor_id && obj.corretor_nome) {
+            const corretores = await this.listCorretores();
+            const corretor = corretores.find(c => c.name === obj.corretor_nome);
+            corretor_id = corretor?.id || null;
+        }
+
+        // Montar payload
+        const payload = {
+            corretor_id: corretor_id,
+            corretor_nome: obj.corretor_nome,
+            cliente_nome: obj.cliente_nome,
+            cliente_telefone: obj.cliente_telefone || null,
+            imovel_codigo: obj.imovel_codigo.toUpperCase(),
+            imovel_endereco: imovel.address,
+            imovel_valor: parseFloat(imovel.price) || null,
+            imovel_captador: imovel.captador || null,
+            data_visita: obj.data_visita,
+            horario_visita: obj.horario_visita,
+            status: obj.status || 'pendente',
+            observacoes: obj.observacoes || null,
+            created_by: obj.created_by || 'sistema'
+        };
+
+        const { data, error } = await supaClient
+            .from('visitas')
+            .insert([payload])
+            .select()
+            .single();
+        
+        if (error) throw error;
+        return data;
+    },
+
+    /**
+     * Atualiza uma visita existente
+     * @param {string} id - UUID da visita
+     * @param {Object} obj - Campos a atualizar
+     * @returns {Promise<void>}
+     */
+    async updateVisita(id, obj) {
+        const patch = {};
+        
+        // Campos permitidos para atualização
+        if (obj.cliente_nome !== undefined) patch.cliente_nome = obj.cliente_nome;
+        if (obj.cliente_telefone !== undefined) patch.cliente_telefone = obj.cliente_telefone;
+        if (obj.data_visita !== undefined) patch.data_visita = obj.data_visita;
+        if (obj.horario_visita !== undefined) patch.horario_visita = obj.horario_visita;
+        if (obj.status !== undefined) patch.status = obj.status;
+        if (obj.observacoes !== undefined) patch.observacoes = obj.observacoes;
+        if (obj.mensagem_enviada !== undefined) {
+            patch.mensagem_enviada = obj.mensagem_enviada;
+            if (obj.mensagem_enviada === true) {
+                patch.mensagem_enviada_em = new Date().toISOString();
+                patch.numero_destino = obj.numero_destino || null;
+            }
+        }
+
+        const { error } = await supaClient
+            .from('visitas')
+            .update(patch)
+            .eq('id', id);
+        
+        if (error) throw error;
+    },
+
+    /**
+     * Deleta uma visita
+     * @param {string} id - UUID da visita
+     * @returns {Promise<void>}
+     */
+    async deleteVisita(id) {
+        const { error } = await supaClient
+            .from('visitas')
+            .delete()
+            .eq('id', id);
+        
+        if (error) throw error;
+    },
+
+    /**
+     * Obtém estatísticas de visitas por imóvel
+     * @param {string} codigo - Código do imóvel
+     * @returns {Promise<Object>}
+     */
+    async getEstatisticasVisitasImovel(codigo) {
+        const { data, error } = await supaClient
+            .rpc('get_estatisticas_visitas_imovel', { 
+                p_codigo_imovel: codigo.toUpperCase() 
+            });
+        
+        if (error) throw error;
+        return data && data.length > 0 ? data[0] : null;
+    },
+
+    /**
+     * Obtém ranking de corretores por visitas
+     * @param {string} dataInicio - Data inicial (formato YYYY-MM-DD)
+     * @param {string} dataFim - Data final (formato YYYY-MM-DD)
+     * @returns {Promise<Array>}
+     */
+    async getRankingCorretoresVisitas(dataInicio = null, dataFim = null) {
+        const params = {};
+        if (dataInicio) params.p_data_inicio = dataInicio;
+        if (dataFim) params.p_data_fim = dataFim;
+        
+        const { data, error } = await supaClient
+            .rpc('get_ranking_corretores_visitas', params);
+        
+        if (error) throw error;
+        return data || [];
+    },
+
+    /* ---------------- CONFIGURAÇÕES ---------------- */
+    
+    /**
+     * Obtém todas as configurações
+     * @returns {Promise<Array>}
+     */
+    async listConfig() {
+        const { data, error } = await supaClient
+            .from('config')
+            .select('*')
+            .order('categoria')
+            .order('chave');
+        
+        if (error) throw error;
+        return data || [];
+    },
+
+    /**
+     * Obtém uma configuração específica
+     * @param {string} chave - Chave da configuração
+     * @returns {Promise<any>} - Valor da configuração (já parseado do JSONB)
+     */
+    async getConfig(chave) {
+        const { data, error } = await supaClient
+            .from('config')
+            .select('valor')
+            .eq('chave', chave)
+            .single();
+        
+        if (error) {
+            if (error.code === 'PGRST116') return null; // Não encontrado
+            throw error;
+        }
+        
+        return data?.valor || null;
+    },
+
+    /**
+     * Define/atualiza uma configuração
+     * @param {string} chave - Chave da configuração
+     * @param {any} valor - Valor (será convertido para JSONB)
+     * @param {Object} opcoes - Opções adicionais { descricao, tipo, categoria }
+     * @returns {Promise<void>}
+     */
+    async setConfig(chave, valor, opcoes = {}) {
+        const payload = {
+            chave: chave,
+            valor: valor,
+            descricao: opcoes.descricao || null,
+            tipo: opcoes.tipo || 'json',
+            categoria: opcoes.categoria || 'geral'
+        };
+
+        const { error } = await supaClient
+            .from('config')
+            .upsert([payload], { onConflict: 'chave' });
+        
+        if (error) throw error;
+    },
+
+    /**
+     * Obtém o número do WhatsApp do gerente
+     * @returns {Promise<string>}
+     */
+    async getWhatsAppGerente() {
+        const numero = await this.getConfig('whatsapp_gerente_numero');
+        const nome = await this.getConfig('whatsapp_gerente_nome');
+        return {
+            numero: numero || '5561999999999',
+            nome: nome || 'Gerente'
+        };
     }
 };
 
