@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#3498db">
+    <meta name="theme-color" content="#2B5C2B">
     <title>Registrar Visita | Acontece Imóveis</title>
     
     <!-- PWA -->
@@ -366,7 +366,7 @@
         .actions {
             display: flex;
             gap: 12px;
-            justify-content: flex-end;
+            justify-content: center;
             margin-top: 8px;
             border-top: 1px solid #f0f0f0;
             padding-top: 22px;
@@ -535,10 +535,13 @@
 
             .actions {
                 flex-direction: column;
+                align-items: center;
             }
 
             .btn {
                 width: 100%;
+                max-width: 320px;
+                justify-content: center;
             }
         }
 
@@ -561,6 +564,7 @@
             }
         }
     </style>
+    <script src="pwa-register.js" defer></script>
 </head>
 <body>
     <!-- LOADING -->
@@ -578,7 +582,7 @@
     <div class="wrap">
         <div class="topbar">
             <div>
-                <h1>📋 Registrar Visita</h1>
+                <h1>Registrar Visita</h1>
                 <p>Sistema de Solicitação de Visitas</p>
             </div>
             <a href="Visitas.html" class="btn-historico">
@@ -705,6 +709,7 @@
         let imovelSelecionado = null;
         let visitaSalva = null;
         let currentUser = null;
+        let currentCorretor = null; // Dados completos do corretor
 
         // ===== INICIALIZAÇÃO =====
         document.addEventListener('DOMContentLoaded', async () => {
@@ -713,18 +718,9 @@
                 const user = await DB.getUser();
                 if (user) {
                     currentUser = user;
-                    // Resolve o corretor real (nome + id TEXT) pelo email do usuário logado.
-                    // DB.getUser() devolve o usuário do Auth, que NÃO tem .name e cujo .id
-                    // é o UUID do Auth (não casa com vendas.corretores.id, que é TEXT).
-                    try {
-                        const corretor = await DB.getCorretorByEmail(user.email);
-                        if (corretor) {
-                            currentUser.nomeCorretor = corretor.name;
-                            currentUser.corretorId   = corretor.id;
-                        }
-                    } catch (e) { /* sem corretor cadastrado: usa fallback abaixo */ }
-                    if (!currentUser.nomeCorretor) currentUser.nomeCorretor = user.email;
-                    console.log('✅ Usuário autenticado:', currentUser.nomeCorretor || user.email);
+                    // Buscar dados completos do corretor
+                    currentCorretor = await DB.getCorretorByEmail(user.email);
+                    console.log('✅ Usuário autenticado:', currentCorretor?.nome || user.email);
                 }
             } catch (error) {
                 console.warn('⚠️ Erro na autenticação:', error);
@@ -971,13 +967,26 @@
                 return;
             }
 
+            // Validar campos obrigatórios
+            const clienteNome = document.getElementById('clienteNome').value.trim();
+            if (!clienteNome) {
+                showToast('Preencha o nome do cliente', 'error');
+                document.getElementById('clienteNome').focus();
+                return;
+            }
+
+            if (!currentCorretor || !currentCorretor.nome) {
+                showToast('Erro: Corretor não identificado. Faça login novamente.', 'error');
+                return;
+            }
+
             try {
                 showLoading(true);
 
                 const payload = {
-                    corretor_nome: currentUser.nomeCorretor || currentUser.email,
-                    corretor_id: currentUser.corretorId || null,
-                    cliente_nome: document.getElementById('clienteNome').value.trim(),
+                    corretor_nome: currentCorretor.nome,
+                    corretor_id: currentCorretor.id || null,
+                    cliente_nome: clienteNome,
                     cliente_telefone: null,
                     imovel_codigo: imovelSelecionado.code,
                     data_visita: document.getElementById('dataVisita').value,
@@ -1022,20 +1031,18 @@
                 const dataFormatada = formatarDataBR(visitaSalva.data_visita);
                 const horarioFormatado = formatarHorario(visitaSalva.horario_visita);
 
-                const mensagem = `🏠 *Nova Solicitação de Visita*
+                const mensagem = `*SOLICITAÇÃO DE VISITA*
 
-👤 *Corretor:* ${visitaSalva.corretor_nome}
-👥 *Cliente:* ${visitaSalva.cliente_nome}
+*Corretor:* ${visitaSalva.corretor_nome}
+*Cliente:* ${visitaSalva.cliente_nome}
 
-🏡 *Imóvel:* ${visitaSalva.imovel_codigo}
-📍 *Endereço:* ${visitaSalva.imovel_endereco}
-💰 *Valor:* ${formatarMoeda(visitaSalva.imovel_valor)}
+*Imóvel:* ${visitaSalva.imovel_codigo}
+*Endereço:* ${visitaSalva.imovel_endereco}
+*Valor:* ${formatarMoeda(visitaSalva.imovel_valor)}
 
-📅 *Data:* ${dataFormatada}
-🕐 *Horário:* ${horarioFormatado}
-
-${visitaSalva.observacoes ? `📝 *Observações:* ${visitaSalva.observacoes}` : ''}
-
+*Data:* ${dataFormatada}
+*Horário:* ${horarioFormatado}
+${visitaSalva.observacoes ? `\n*Observações:* ${visitaSalva.observacoes}\n` : ''}
 _Mensagem gerada automaticamente pelo Sistema de Visitas_`;
 
                 // Criar link do WhatsApp

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#2c6e2e">
+    <meta name="theme-color" content="#2B5C2B">
     <title>Gerenciar Visitas | Acontece Imóveis</title>
     
     <!-- PWA -->
@@ -45,19 +45,22 @@
             background: var(--light);
             min-height: 100vh;
             color: var(--dark);
-            padding: 24px;
+            padding: 0;
             padding-bottom: 80px;
+            margin: 0;
         }
 
         /* ===== HEADER ===== */
         .header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: var(--white);
-            padding: 20px;
+            background: var(--white);
+            color: var(--dark);
+            padding: 20px 24px;
             box-shadow: 0 2px 10px var(--shadow);
             position: sticky;
             top: 0;
             z-index: 100;
+            width: 100%;
+            margin: 0;
         }
 
         .header-content {
@@ -69,16 +72,23 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
         }
 
         .header-title {
             display: flex;
             align-items: center;
+            gap: 16px;
+        }
+
+        .header-logo {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
         }
 
         .header-title h1 {
             font-size: 24px;
+            color: var(--dark);
         }
 
         .header-actions {
@@ -87,8 +97,8 @@
         }
 
         .btn-header {
-            background: var(--white);
-            color: var(--primary);
+            background: var(--primary);
+            color: var(--white);
             border: none;
             padding: 10px 16px;
             border-radius: var(--radius);
@@ -103,8 +113,9 @@
         }
 
         .btn-header:hover {
+            background: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 10px rgba(44, 110, 46, 0.3);
         }
 
         /* ===== FILTROS ===== */
@@ -204,7 +215,7 @@
             font-size: 13px;
             color: var(--gray);
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-top: 8px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -212,14 +223,15 @@
         .kpi-card .kpi-value {
             font-size: 36px;
             font-weight: 700;
-            color: var(--dark);
+            color: var(--primary);
+            margin-bottom: 8px;
         }
 
         /* ===== CONTAINER ===== */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 20px 24px;
         }
 
         /* ===== LISTA DE VISITAS ===== */
@@ -386,19 +398,33 @@
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            flex-direction: row;
+        }
+
+        .btn-action-group {
+            display: contents;
+        }
+
+        .btn-full {
+            flex: 1;
+            min-width: 150px;
         }
 
         .btn-action {
-            padding: 8px 12px;
+            padding: 10px 16px;
             border: none;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 140px;
         }
 
         .btn-action-whatsapp {
@@ -437,30 +463,126 @@
             background: #229954;
         }
 
+        .btn-action-realizada {
+            background: #27ae60;
+            color: var(--white);
+        }
+
+        .btn-action-realizada:hover {
+            background: #1e8449;
+        }
+
+        .btn-action-nao-realizada {
+            background: #e67e22;
+            color: var(--white);
+        }
+
+        .btn-action-nao-realizada:hover {
+            background: #d35400;
+        }
+
+        .btn-action-excluir {
+            background: #7f8c8d;
+            color: var(--white);
+        }
+
+        .btn-action-excluir:hover {
+            background: #5d6d7e;
+        }
+
         /* ===== EMPTY STATE ===== */
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
-            background: var(--white);
+            padding: 80px 24px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
             border-radius: var(--radius);
+            box-shadow: 0 2px 8px var(--shadow);
         }
 
-        .empty-state i {
-            font-size: 64px;
-            color: var(--gray-light);
-            margin-bottom: 20px;
+        .empty-state-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        .empty-state-icon i {
+            font-size: 56px;
+            color: var(--primary);
         }
 
         .empty-state h3 {
-            font-size: 20px;
+            font-size: 22px;
             color: var(--dark);
             margin-bottom: 12px;
+            font-weight: 700;
         }
 
         .empty-state p {
-            font-size: 14px;
+            font-size: 15px;
             color: var(--gray);
-            margin-bottom: 24px;
+            margin-bottom: 32px;
+            line-height: 1.6;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .empty-state .btn-header {
+            display: inline-flex;
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(44, 110, 46, 0.3);
+            transition: all 0.3s;
+            max-width: 280px;
+            width: auto;
+            margin: 0 auto;
+        }
+
+        .empty-state .btn-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(44, 110, 46, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .empty-state {
+                padding: 60px 20px;
+            }
+
+            .empty-state-icon {
+                width: 100px;
+                height: 100px;
+            }
+
+            .empty-state-icon i {
+                font-size: 48px;
+            }
+
+            .empty-state h3 {
+                font-size: 20px;
+            }
+
+            .empty-state p {
+                font-size: 14px;
+            }
+
+            .empty-state .btn-header {
+                width: 100%;
+                max-width: 280px;
+                display: flex;
+                justify-content: center;
+            }
         }
 
         /* ===== LOADING ===== */
@@ -539,11 +661,12 @@
         /* ===== MOBILE ===== */
         @media (max-width: 768px) {
             .header-title h1 {
-                font-size: 18px;
+                font-size: 16px;
             }
 
-            .header-actions .btn-header span {
-                display: none;
+            .header-logo {
+                width: 40px;
+                height: 40px;
             }
 
             .kpis {
@@ -562,12 +685,27 @@
                 flex-direction: column;
             }
 
+            .btn-action-group {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .btn-full {
+                width: 100%;
+                min-width: 100%;
+            }
+
             .btn-action {
                 width: 100%;
+                min-width: 100%;
                 justify-content: center;
+                font-size: 14px;
+                padding: 12px 8px;
             }
         }
     </style>
+    <script src="pwa-register.js" defer></script>
 </head>
 <body>
     <!-- LOADING -->
@@ -586,14 +724,13 @@
         <div class="header-content">
             <div class="header-top">
                 <div class="header-title">
+                    <img src="Logo01.png" alt="Acontece Imóveis" class="header-logo">
                     <h1>Gerenciar Visitas</h1>
                 </div>
                 <div class="header-actions">
                     <a href="RegistrarVisita.html" class="btn-header">
-                        Nova Visita
-                    </a>
-                    <a href="Dash5.html" class="btn-header">
-                        Voltar
+                        <i class="fas fa-plus"></i>
+                        <span>Nova Visita</span>
                     </a>
                 </div>
             </div>
@@ -605,20 +742,20 @@
         <!-- KPIs -->
         <div class="kpis">
             <div class="kpi-card">
-                <h3>Total de Visitas</h3>
                 <div class="kpi-value" id="kpiTotal">0</div>
+                <h3>Total de Visitas</h3>
             </div>
             <div class="kpi-card">
-                <h3>Pendentes</h3>
                 <div class="kpi-value" id="kpiPendentes">0</div>
+                <h3>Pendentes</h3>
             </div>
             <div class="kpi-card">
-                <h3>Realizadas</h3>
                 <div class="kpi-value" id="kpiRealizadas">0</div>
+                <h3>Realizadas</h3>
             </div>
             <div class="kpi-card">
-                <h3>Hoje</h3>
                 <div class="kpi-value" id="kpiHoje">0</div>
+                <h3>Hoje</h3>
             </div>
         </div>
 
@@ -633,7 +770,7 @@
                         <option value="confirmada">Confirmada</option>
                         <option value="realizada">Realizada</option>
                         <option value="cancelada">Cancelada</option>
-                        <option value="nao_compareceu">Não Compareceu</option>
+                        <option value="nao_compareceu">Não Realizada</option>
                     </select>
                 </div>
                 <div class="filtro-group">
@@ -683,21 +820,45 @@
 
         // ===== INICIALIZAÇÃO =====
         window.addEventListener('DOMContentLoaded', async () => {
-            await verificarAutenticacao();
-            await verificarRole();
-            await carregarVisitas();
-            configurarDatasPadrao();
-            atualizarInterfacePorRole();
+            console.log('🚀 Iniciando sistema de visitas...');
+            console.log('📍 URL atual:', window.location.href);
+            
+            try {
+                await verificarAutenticacao();
+                console.log('✅ Autenticação verificada');
+                
+                await verificarRole();
+                console.log('✅ Role verificado');
+                
+                await carregarVisitas();
+                console.log('✅ Visitas carregadas');
+                
+                configurarDatasPadrao();
+                console.log('✅ Datas configuradas');
+                
+                atualizarInterfacePorRole();
+                console.log('✅ Interface atualizada');
+                
+                console.log('🎉 Sistema carregado com sucesso!');
+            } catch (error) {
+                console.error('❌ ERRO NA INICIALIZAÇÃO:', error);
+                showToast('Erro ao inicializar o sistema', 'error');
+            }
         });
 
         // ===== AUTENTICAÇÃO =====
         async function verificarAutenticacao() {
+            console.log('🔐 Verificando autenticação...');
             const user = await DB.getUser();
+            
             if (!user) {
-                window.location.href = 'index.html?redirect=Visitas.html';
+                console.warn('⚠️ Usuário não autenticado! Redirecionando para login...');
+                window.location.href = 'login.html?redirect=Visitas.html';
                 return;
             }
+            
             currentUser = user;
+            console.log('✅ Usuário autenticado:', user.email);
         }
 
         // ===== VERIFICAR ROLE DO USUÁRIO =====
@@ -748,14 +909,20 @@
         // ===== CARREGAR VISITAS =====
         async function carregarVisitas() {
             try {
+                console.log('📥 Buscando visitas do Supabase...');
                 showLoading(true);
+                
                 visitasCache = await DB.listVisitas();
                 visitasFiltradas = [...visitasCache];
+                
                 console.log(`✅ ${visitasCache.length} visitas carregadas`);
+                console.log('📊 Visitas:', visitasCache);
+                
                 renderizar();
             } catch (error) {
-                console.error('Erro ao carregar visitas:', error);
-                showToast('Erro ao carregar visitas', 'error');
+                console.error('❌ Erro ao carregar visitas:', error);
+                console.error('Detalhes do erro:', error.message);
+                showToast('Erro ao carregar visitas: ' + error.message, 'error');
             } finally {
                 showLoading(false);
             }
@@ -790,9 +957,11 @@
             if (visitasFiltradas.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <i class="fas fa-calendar-times"></i>
-                        <h3>Nenhuma visita encontrada</h3>
-                        <p>Não há visitas com os filtros aplicados.</p>
+                        <div class="empty-state-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3>Ainda não há visitas</h3>
+                        <p>Comece a organizar suas visitas e acompanhe todo o histórico por aqui!</p>
                         <a href="RegistrarVisita.html" class="btn-header">
                             <i class="fas fa-plus"></i>
                             Registrar Nova Visita
@@ -822,22 +991,44 @@
             // Ações disponíveis
             let acoesHTML = '';
             
-            // WhatsApp (sempre disponível)
-            acoesHTML += `<button class="btn-action btn-action-whatsapp" onclick='reenviarWhatsApp(${JSON.stringify(visita)})'>
+            // WhatsApp (sempre disponível, full width)
+            acoesHTML += `<button class="btn-action btn-action-whatsapp btn-full" onclick='reenviarWhatsApp(${JSON.stringify(visita)})'>
                 <i class="fab fa-whatsapp"></i> WhatsApp
             </button>`;
 
-            // Confirmar (se pendente)
+            // PENDENTE: Cancelar + Confirmar (lado a lado)
             if (visita.status === 'pendente') {
-                acoesHTML += `<button class="btn-action btn-action-confirmar" onclick="alterarStatus('${visita.id}', 'confirmada')">
-                    <i class="fas fa-check"></i> Confirmar
+                acoesHTML += `<div class="btn-action-group">
+                    <button class="btn-action btn-action-cancelar" onclick="alterarStatus('${visita.id}', 'cancelada')">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button class="btn-action btn-action-confirmar" onclick="alterarStatus('${visita.id}', 'confirmada')">
+                        <i class="fas fa-check"></i> Confirmar
+                    </button>
+                </div>`;
+            }
+
+            // CONFIRMADA: Não Realizada + Realizada (lado a lado)
+            if (visita.status === 'confirmada') {
+                acoesHTML += `<div class="btn-action-group">
+                    <button class="btn-action btn-action-nao-realizada" onclick="alterarStatus('${visita.id}', 'nao_compareceu')">
+                        <i class="fas fa-user-times"></i> Não Realizada
+                    </button>
+                    <button class="btn-action btn-action-realizada" onclick="alterarStatus('${visita.id}', 'realizada')">
+                        <i class="fas fa-check-circle"></i> Realizada
+                    </button>
+                </div>`;
+                
+                // Cancelar (full width)
+                acoesHTML += `<button class="btn-action btn-action-cancelar btn-full" onclick="alterarStatus('${visita.id}', 'cancelada')">
+                    <i class="fas fa-times"></i> Cancelar
                 </button>`;
             }
 
-            // Cancelar (se não for cancelada ou realizada)
-            if (visita.status !== 'cancelada' && visita.status !== 'realizada') {
-                acoesHTML += `<button class="btn-action btn-action-cancelar" onclick="alterarStatus('${visita.id}', 'cancelada')">
-                    <i class="fas fa-times"></i> Cancelar
+            // Excluir (APENAS ADMIN, full width)
+            if (isAdmin) {
+                acoesHTML += `<button class="btn-action btn-action-excluir btn-full" onclick="excluirVisita('${visita.id}')">
+                    <i class="fas fa-trash"></i> Excluir
                 </button>`;
             }
 
@@ -936,6 +1127,10 @@
         async function alterarStatus(id, novoStatus) {
             const confirmMsg = novoStatus === 'cancelada' 
                 ? 'Tem certeza que deseja cancelar esta visita?'
+                : novoStatus === 'realizada'
+                ? 'Confirmar que a visita foi realizada?'
+                : novoStatus === 'nao_compareceu'
+                ? 'Marcar que o cliente não compareceu?'
                 : 'Confirmar esta visita?';
             
             if (!confirm(confirmMsg)) return;
@@ -953,6 +1148,33 @@
             }
         }
 
+        async function excluirVisita(id) {
+            if (!isAdmin) {
+                showToast('Apenas administradores podem excluir visitas', 'error');
+                return;
+            }
+
+            const confirmMsg = '⚠️ ATENÇÃO!\n\nTem certeza que deseja EXCLUIR esta visita permanentemente?\n\nEsta ação NÃO pode ser desfeita!';
+            
+            if (!confirm(confirmMsg)) return;
+
+            // Segunda confirmação
+            const confirmaFinal = confirm('Confirma a exclusão? (última confirmação)');
+            if (!confirmaFinal) return;
+
+            try {
+                showLoading(true);
+                await DB.deleteVisita(id);
+                showToast('Visita excluída com sucesso!', 'success');
+                await carregarVisitas();
+            } catch (error) {
+                console.error('Erro ao excluir visita:', error);
+                showToast('Erro ao excluir visita', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
         async function reenviarWhatsApp(visita) {
             try {
                 showLoading(true);
@@ -963,22 +1185,19 @@
                 const dataFormatada = formatarDataBR(visita.data_visita);
                 const horarioFormatado = formatarHorario(visita.horario_visita);
 
-                const mensagem = `🏠 *Solicitação de Visita*
+                const mensagem = `*SOLICITAÇÃO DE VISITA*
 
-👤 *Corretor:* ${visita.corretor_nome}
+*Corretor:* ${visita.corretor_nome}
+*Cliente:* ${visita.cliente_nome}
+${visita.cliente_telefone ? `*Telefone:* ${visita.cliente_telefone}` : ''}
 
-👥 *Cliente:* ${visita.cliente_nome}
-${visita.cliente_telefone ? `📞 *Telefone:* ${visita.cliente_telefone}` : ''}
+*Imóvel:* ${visita.imovel_codigo}
+*Endereço:* ${visita.imovel_endereco}
+*Valor:* ${formatarMoeda(visita.imovel_valor)}
 
-🏡 *Imóvel:* ${visita.imovel_codigo}
-📍 *Endereço:* ${visita.imovel_endereco}
-💰 *Valor:* ${formatarMoeda(visita.imovel_valor)}
-
-📅 *Data:* ${dataFormatada}
-🕐 *Horário:* ${horarioFormatado}
-
-${visita.observacoes ? `📝 *Observações:* ${visita.observacoes}` : ''}
-
+*Data:* ${dataFormatada}
+*Horário:* ${horarioFormatado}
+${visita.observacoes ? `\n*Observações:* ${visita.observacoes}\n` : ''}
 _Mensagem enviada pelo Sistema de Visitas_`;
 
                 const mensagemEncoded = encodeURIComponent(mensagem);
@@ -1002,7 +1221,7 @@ _Mensagem enviada pelo Sistema de Visitas_`;
                 'confirmada': 'Confirmada',
                 'realizada': 'Realizada',
                 'cancelada': 'Cancelada',
-                'nao_compareceu': 'Não Compareceu'
+                'nao_compareceu': 'Não Realizada'
             };
             return traducoes[status] || status;
         }
