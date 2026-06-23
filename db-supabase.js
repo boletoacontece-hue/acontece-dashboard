@@ -67,13 +67,15 @@ const DB = {
     async listImoveis() {
         const { data, error } = await supaClient
             .from('imoveis')
-            .select('codigo,endereco,captador,data_captacao,preco,status,mes_ref')
+            .select('codigo,endereco,captador,data_captacao,preco,status,mes_ref,exclusividade,comissao_percentual')
             .order('data_captacao', { ascending: true }); // Ordem crescente: mais antigos primeiro
         if (error) throw error;
         return (data || []).map(r => ({
             code: r.codigo, address: r.endereco, captador: r.captador,
             date: _isoParaBR(r.data_captacao), price: Number(r.preco) || 0,
-            status: r.status, mes: r.mes_ref
+            status: r.status, mes: r.mes_ref,
+            exclusividade: r.exclusividade === true,
+            comissaoPercentual: (r.comissao_percentual != null ? Number(r.comissao_percentual) : null)
         }));
     },
 
@@ -96,7 +98,9 @@ const DB = {
             data_captacao: dateIso,
             preco: obj.price,
             status: obj.status,
-            mes_ref: _mesRef(dateIso)
+            mes_ref: _mesRef(dateIso),
+            exclusividade: obj.exclusividade === true,
+            comissao_percentual: (obj.comissaoPercentual != null && obj.comissaoPercentual !== '' ? Number(obj.comissaoPercentual) : null)
         }).select();
         if (error) throw error;
         return data;
@@ -109,6 +113,9 @@ const DB = {
             data_captacao: dateIso, preco: obj.price,
             status: obj.status, mes_ref: _mesRef(dateIso)
         };
+        if (obj.exclusividade !== undefined) patch.exclusividade = (obj.exclusividade === true);
+        if (obj.comissaoPercentual !== undefined)
+            patch.comissao_percentual = (obj.comissaoPercentual != null && obj.comissaoPercentual !== '' ? Number(obj.comissaoPercentual) : null);
         const { error } = await supaClient.from('imoveis')
             .update(patch).eq('codigo', codigo.toUpperCase());
         if (error) throw error;
@@ -124,7 +131,7 @@ const DB = {
     async getImovelByCodigo(codigo) {
         const { data, error } = await supaClient
             .from('imoveis')
-            .select('codigo,endereco,captador,data_captacao,preco,status,mes_ref')
+            .select('codigo,endereco,captador,data_captacao,preco,status,mes_ref,exclusividade,comissao_percentual')
             .eq('codigo', codigo.toUpperCase())
             .single();
         if (error) {
@@ -134,7 +141,9 @@ const DB = {
         return data ? {
             code: data.codigo, address: data.endereco, captador: data.captador,
             date: _isoParaBR(data.data_captacao), price: Number(data.preco) || 0,
-            status: data.status, mes: data.mes_ref
+            status: data.status, mes: data.mes_ref,
+            exclusividade: data.exclusividade === true,
+            comissaoPercentual: (data.comissao_percentual != null ? Number(data.comissao_percentual) : null)
         } : null;
     },
 

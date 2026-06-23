@@ -3,58 +3,57 @@
    --------------------------------------------------------------------
    ADMIN     → acesso total (ver + editar tudo)
    CORRETOR  → SÓ-LEITURA do sistema + solicitar visitas
-       • PODE ver:  Dashboard (vendas), Relatórios, imóveis captados
+       • PODE ver:  Dashboard, Relatórios, Análise de Vendas, imóveis captados
        • PODE usar: Visitas e Registrar Visita
        • NÃO acessa: Cadastrar Imóvel, Registrar Venda, Configurações, Propostas
        • NÃO edita:  botões de edição/cadastro ficam ocultos (e o banco recusa)
 
-   Instalar em TODAS as páginas, logo após o db-supabase.js:
+   Pode ser incluído em TODAS as páginas (login/index são ignorados com segurança),
+   logo após o db-supabase.js:
         <script src="controle-acesso.js"></script>
    ==================================================================== */
 (function () {
   'use strict';
 
-  // Páginas que o CORRETOR pode abrir. Todas as demais são exclusivas de admin.
+  // Páginas públicas: o porteiro NÃO age (não exige login aqui).
+  var PUBLICAS = ['login.html', 'index.html', ''];
+
+  // Páginas que o CORRETOR pode ver (só-leitura). As demais são só-admin.
   var LIBERADAS_CORRETOR = [
-    'dash5.html',          // Dashboard (ver vendas)
-    'relatorios.html',     // Relatórios (ver gráficos)
-    'visitas.html',        // Visitas
-    'registrarvisita.html',// Registrar visita
-    'login.html',
-    'index.html',
-    ''                     // raiz "/"
+    'dash5.html',
+    'relatorios.html',
+    'analisevendas.html',
+    'visitas.html',
+    'registrarvisita.html'
   ];
 
-  // Para onde mandar o corretor se ele tentar uma página só-admin:
   var DESTINO_CORRETOR = 'Dash5.html';
-
   var pagina = (location.pathname.split('/').pop() || '').toLowerCase();
-  var paginaLiberada = (LIBERADAS_CORRETOR.indexOf(pagina) !== -1);
+
+  // login / index / raiz: não faz nada (evita interferir no fluxo de login)
+  if (PUBLICAS.indexOf(pagina) !== -1) return;
 
   document.addEventListener('DOMContentLoaded', function () {
     (async function () {
       try {
-        if (!window.DB) return;          // sem camada de dados, não interfere
-        await DB.requireAuth();          // exige login (senão vai pro login)
-
+        if (!window.DB) return;
+        await DB.requireAuth();
         var info = await DB.getCurrentUserRole();
         var isAdmin = !!(info && info.role === 'admin');
+        if (isAdmin) return;
 
-        if (isAdmin) return;             // admin: acesso total
-
-        // ---------- CORRETOR ----------
-        if (!paginaLiberada) {
-          window.location.replace(DESTINO_CORRETOR);  // pagina so-admin -> barra
+        // Corretor: se a página não está na lista de liberadas, é só-admin → barra.
+        if (LIBERADAS_CORRETOR.indexOf(pagina) === -1) {
+          window.location.replace(DESTINO_CORRETOR);
           return;
         }
-        ocultarControlesDeAdmin();       // pagina liberada -> esconde edicao
+        ocultarControlesDeAdmin();
       } catch (e) {
         window.location.replace('login.html');
       }
     })();
   });
 
-  // Esconde, para o corretor, tudo que leva a editar/cadastrar.
   function ocultarControlesDeAdmin() {
     document.body.classList.add('perfil-corretor');
     var st = document.createElement('style');

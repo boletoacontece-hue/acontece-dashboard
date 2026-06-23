@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2B5C2B">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Análise de Vendas — Acontece</title>
+    <style>
+        :root{--verde:#2B5C2B;--ouro:#C6A664;--ouro-escuro:#a8884a;--creme:#F7F5F2;
+            --tinta:#243024;--cinza:#6b7280;--linha:#e5e7eb;--vermelho:#c0392b;--azul:#2d6a8e;}
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Trebuchet MS',Arial,sans-serif;background:var(--creme);color:var(--tinta);padding:18px}
+        .container{max-width:1280px;margin:0 auto}
+        .top-header{display:flex;align-items:center;justify-content:space-between;gap:12px;
+            background:var(--verde);color:#fff;border-radius:14px;padding:16px 20px;margin-bottom:16px}
+        .top-header h1{font-size:22px} .top-header .sub{font-size:12px;opacity:.85;margin-top:2px}
+        .header-nav{display:flex;gap:8px;flex-wrap:wrap}
+        .header-nav a{color:#fff;text-decoration:none;font-size:13px;padding:7px 12px;border-radius:8px;
+            background:rgba(255,255,255,.12)} .header-nav a:hover{background:rgba(255,255,255,.24)}
+        .filtros{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;background:#fff;
+            border:1px solid var(--linha);border-radius:12px;padding:14px 16px;margin-bottom:16px}
+        .campo{display:flex;flex-direction:column;gap:4px}
+        .campo label{font-size:11px;font-weight:bold;color:var(--cinza);text-transform:uppercase;letter-spacing:.4px}
+        .campo select{padding:8px 10px;border:1px solid var(--linha);border-radius:8px;font-family:inherit;font-size:14px;background:#fff;min-width:150px}
+        .filtros .limpar{margin-left:auto;background:var(--creme);border:1px solid var(--linha);border-radius:8px;padding:8px 14px;cursor:pointer;font-family:inherit;font-size:13px}
+        .kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px}
+        .kpi{background:#fff;border:1px solid var(--linha);border-radius:12px;padding:14px;position:relative;overflow:hidden}
+        .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ouro)}
+        .kpi .rotulo{font-size:11px;color:var(--cinza);text-transform:uppercase;letter-spacing:.4px;font-weight:bold}
+        .kpi .valor{font-size:24px;font-weight:bold;color:var(--verde);margin-top:6px;line-height:1.1}
+        .kpi .unid{font-size:12px;color:var(--cinza);font-weight:normal}
+        .kpi.alerta::before{background:var(--vermelho)} .kpi.alerta .valor{color:var(--vermelho)}
+        .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+        .card{background:#fff;border:1px solid var(--linha);border-radius:12px;padding:16px}
+        .card h3{font-size:14px;color:var(--verde);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+        .card h3::before{content:"";width:10px;height:10px;background:var(--ouro);border-radius:2px;transform:rotate(45deg)}
+        .chart-box{position:relative;height:260px}
+        table{width:100%;border-collapse:collapse;font-size:13px}
+        th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--linha);white-space:nowrap}
+        th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--cinza);background:#fafafa}
+        td.num{text-align:right;font-variant-numeric:tabular-nums}
+        .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:bold}
+        .b-disp{background:#e6f0e6;color:var(--verde)} .b-vend{background:#e7eef5;color:var(--azul)}
+        .b-susp{background:#fdf0e3;color:#b9770e} .b-ret{background:#f3e7e6;color:var(--vermelho)}
+        .flag90{background:var(--vermelho);color:#fff;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:bold}
+        .excl{color:var(--ouro-escuro);font-weight:bold}
+        .vazio{text-align:center;color:var(--cinza);padding:30px}
+        @media (max-width:768px){
+            .kpi-grid{grid-template-columns:1fr 1fr}.charts-grid{grid-template-columns:1fr}
+            .top-header{flex-wrap:wrap} table{display:block;overflow-x:auto;white-space:nowrap}
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="top-header">
+        <div>
+            <h1>Análise de Vendas</h1>
+            <div class="sub">Acontece Imobiliária — tempo de venda, comissões e desempenho da carteira</div>
+        </div>
+        <nav class="header-nav">
+            <a href="Dash5.html">← Dashboard</a>
+            <a href="Relatorios.html">Relatórios</a>
+        </nav>
+    </div>
+
+    <div class="filtros">
+        <div class="campo"><label for="fStatus">Status</label><select id="fStatus"><option value="">Todos</option></select></div>
+        <div class="campo"><label for="fCaptador">Captador</label><select id="fCaptador"><option value="">Todos</option></select></div>
+        <div class="campo"><label for="fExcl">Exclusividade</label>
+            <select id="fExcl"><option value="">Todas</option><option value="sim">Com exclusividade</option><option value="nao">Sem exclusividade</option></select>
+        </div>
+        <button class="limpar" id="btnLimpar">Limpar filtros</button>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="kpi"><div class="rotulo">Tempo médio em venda</div><div class="valor" id="kTempoVenda">—</div></div>
+        <div class="kpi"><div class="rotulo">Tempo médio até vender</div><div class="valor" id="kTempoVendido">—</div></div>
+        <div class="kpi alerta"><div class="rotulo">Imóveis +90 dias</div><div class="valor" id="kEncalhados">—</div></div>
+        <div class="kpi"><div class="rotulo">Retirados de venda</div><div class="valor" id="kRetirados">—</div></div>
+        <div class="kpi"><div class="rotulo">Com exclusividade</div><div class="valor" id="kExcl">—</div></div>
+        <div class="kpi"><div class="rotulo">Comissão média (global)</div><div class="valor" id="kComissao">—</div></div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="card"><h3>Tempo em venda (imóveis disponíveis)</h3><div class="chart-box"><canvas id="chTempo"></canvas></div></div>
+        <div class="card"><h3>Situação da carteira</h3><div class="chart-box"><canvas id="chStatus"></canvas></div></div>
+        <div class="card"><h3>Comissão média por vendedor</h3><div class="chart-box"><canvas id="chComissao"></canvas></div></div>
+        <div class="card"><h3>Exclusividade da carteira</h3><div class="chart-box"><canvas id="chExcl"></canvas></div></div>
+    </div>
+
+    <div class="card">
+        <h3>Imóveis</h3>
+        <div style="overflow-x:auto;margin-top:12px">
+            <table>
+                <thead><tr>
+                    <th>Código</th><th>Endereço</th><th>Captador</th><th>Status</th>
+                    <th>Excl.</th><th class="num">Preço</th><th class="num">Comissão</th>
+                    <th class="num">Dias em venda</th><th class="num">Dias p/ vender</th><th></th>
+                </tr></thead>
+                <tbody id="tbody"><tr><td colspan="10" class="vazio">Carregando…</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+<script src="db-supabase.js"></script>
+<script src="controle-acesso.js"></script>
+<script>
+const BRL=v=>(v==null||isNaN(v))?'—':v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+function parseDia(d){ if(!d) return null; const s=String(d).slice(0,10).split('-'); if(s.length<3) return null;
+    return new Date(Date.UTC(+s[0],+s[1]-1,+s[2])); }
+function diasEntre(a,b){ if(!a||!b) return null; return Math.round((b-a)/86400000); }
+function hojeUTC(){ const h=new Date(); return new Date(Date.UTC(h.getUTCFullYear(),h.getUTCMonth(),h.getUTCDate())); }
+
+let IMOVEIS=[], VENDAS=[], capData={}, charts={};
+
+async function carregar(){
+    try{
+        await DB.requireAuth();
+        const [ri,rv]=await Promise.all([
+            DB.client.from('imoveis').select('*'),
+            DB.client.from('vendas').select('*')
+        ]);
+        if(ri.error) throw ri.error;
+        const HOJE=hojeUTC();
+        IMOVEIS=(ri.data||[]).map(r=>{
+            const cap=parseDia(r.data_captacao);
+            const dv=(r.status==='Disponível')?diasEntre(cap,HOJE):null;
+            const pct=(r.comissao_percentual!=null)?Number(r.comissao_percentual):null;
+            capData[r.codigo]=cap;
+            return {...r,_cap:cap,_diasVenda:dv,_pct:pct,_encalhado:(dv!=null&&dv>90)};
+        });
+        VENDAS=((rv&&rv.data)||[]).map(v=>{
+            const dvenda=parseDia(v.data_venda);
+            const dias=(capData[v.imovel_codigo])?diasEntre(capData[v.imovel_codigo],dvenda):null;
+            return {...v,_dataVenda:dvenda,_diasAteVender:dias,_comissao:Number(v.comissao)||0};
+        });
+        montarFiltros(); render();
+    }catch(e){
+        console.error(e);
+        document.getElementById('tbody').innerHTML='<tr><td colspan="10" class="vazio">'+
+            'Não foi possível carregar. Se ainda não rodou a migração <b>006</b>, rode-a no Supabase e recarregue.</td></tr>';
+    }
+}
+
+function montarFiltros(){
+    const st=[...new Set(IMOVEIS.map(r=>r.status).filter(Boolean))].sort();
+    const cp=[...new Set(IMOVEIS.map(r=>r.captador).filter(Boolean))].sort();
+    const sS=document.getElementById('fStatus'), sC=document.getElementById('fCaptador');
+    st.forEach(x=>sS.insertAdjacentHTML('beforeend','<option>'+x+'</option>'));
+    cp.forEach(x=>sC.insertAdjacentHTML('beforeend','<option>'+x+'</option>'));
+    ['fStatus','fCaptador','fExcl'].forEach(id=>document.getElementById(id).addEventListener('change',render));
+    document.getElementById('btnLimpar').addEventListener('click',()=>{
+        ['fStatus','fCaptador','fExcl'].forEach(id=>document.getElementById(id).value=''); render();
+    });
+}
+
+function filtrarImoveis(){
+    const st=document.getElementById('fStatus').value, cp=document.getElementById('fCaptador').value, ex=document.getElementById('fExcl').value;
+    return IMOVEIS.filter(r=>(!st||r.status===st)&&(!cp||r.captador===cp)&&
+        (!ex||(ex==='sim'?r.exclusividade===true:r.exclusividade!==true)));
+}
+function filtrarVendas(){
+    const cp=document.getElementById('fCaptador').value;
+    return VENDAS.filter(v=>!cp||v.captador===cp);
+}
+function media(a){ const v=a.filter(x=>x!=null&&!isNaN(x)); return v.length?v.reduce((s,b)=>s+b,0)/v.length:null; }
+function set(id,h){ document.getElementById(id).innerHTML=h; }
+
+function render(){
+    const imv=filtrarImoveis(), vnd=filtrarVendas();
+    set('kTempoVenda', (m=>m==null?'—':Math.round(m)+' <span class="unid">dias</span>')(media(imv.map(r=>r._diasVenda))));
+    set('kTempoVendido',(m=>m==null?'—':Math.round(m)+' <span class="unid">dias</span>')(media(vnd.map(v=>v._diasAteVender))));
+    set('kEncalhados', imv.filter(r=>r._encalhado).length);
+    set('kRetirados', imv.filter(r=>r.status==='Retirado').length);
+    set('kExcl', Math.round(imv.filter(r=>r.exclusividade===true).length/(imv.length||1)*100)+'<span class="unid">%</span>');
+    set('kComissao', (m=>m==null?'—':BRL(m))(media(vnd.map(v=>v._comissao))));
+    desenharGraficos(imv,vnd); desenharTabela(imv);
+}
+
+function desenharGraficos(imv,vnd){
+    const VERDE='#2B5C2B',OURO='#C6A664',AZUL='#2d6a8e',VERM='#c0392b',CINZA='#9aa0a6';
+    Object.values(charts).forEach(c=>c&&c.destroy());
+
+    const disp=imv.filter(r=>r.status==='Disponível'&&r._diasVenda!=null);
+    const bk=[0,0,0,0]; disp.forEach(r=>{const d=r._diasVenda; bk[d<=30?0:d<=60?1:d<=90?2:3]++;});
+    charts.tempo=new Chart(document.getElementById('chTempo'),{type:'bar',
+        data:{labels:['0–30','31–60','61–90','+90 dias'],datasets:[{data:bk,backgroundColor:[VERDE,VERDE,OURO,VERM],borderRadius:6}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+
+    const ordem=['Disponível','Vendido','Suspenso','Retirado'];
+    charts.status=new Chart(document.getElementById('chStatus'),{type:'doughnut',
+        data:{labels:ordem,datasets:[{data:ordem.map(s=>imv.filter(r=>r.status===s).length),backgroundColor:[VERDE,AZUL,OURO,VERM]}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+
+    const porV={}; vnd.forEach(v=>{(porV[v.corretor||'—']=porV[v.corretor||'—']||[]).push(v._comissao);});
+    const vl=Object.keys(porV), vv=vl.map(k=>media(porV[k]));
+    charts.comissao=new Chart(document.getElementById('chComissao'),{type:'bar',
+        data:{labels:vl.length?vl:['Sem vendas'],datasets:[{data:vv.length?vv:[0],backgroundColor:OURO,borderRadius:6}]},
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+            tooltip:{callbacks:{label:c=>BRL(c.raw)}}},scales:{x:{beginAtZero:true,ticks:{callback:v=>BRL(v)}}}}});
+
+    const cE=imv.filter(r=>r.exclusividade===true).length, sE=imv.length-cE;
+    charts.excl=new Chart(document.getElementById('chExcl'),{type:'doughnut',
+        data:{labels:['Com exclusividade','Sem exclusividade'],datasets:[{data:[cE,sE],backgroundColor:[VERDE,CINZA]}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+}
+
+function desenharTabela(imv){
+    const cls={'Disponível':'b-disp','Vendido':'b-vend','Suspenso':'b-susp','Retirado':'b-ret'};
+    const diasVendaPorCod={}; VENDAS.forEach(v=>{diasVendaPorCod[v.imovel_codigo]=v._diasAteVender;});
+    const linhas=imv.slice().sort((a,b)=>(b._diasVenda||0)-(a._diasVenda||0)).map(r=>{
+        const valCom=(r._pct!=null)?(Number(r.preco||0)*r._pct/100):null;
+        const dav=diasVendaPorCod[r.codigo];
+        return '<tr>'+
+            '<td>'+(r.codigo||'')+'</td><td>'+(r.endereco||'')+'</td><td>'+(r.captador||'')+'</td>'+
+            '<td><span class="badge '+(cls[r.status]||'')+'">'+(r.status||'')+'</span></td>'+
+            '<td>'+(r.exclusividade?'<span class="excl">Sim</span>':'Não')+'</td>'+
+            '<td class="num">'+BRL(Number(r.preco))+'</td>'+
+            '<td class="num">'+(r._pct!=null?(r._pct+'%'):'—')+(valCom!=null?'<br><small>'+BRL(valCom)+'</small>':'')+'</td>'+
+            '<td class="num">'+(r._diasVenda!=null?r._diasVenda:'—')+'</td>'+
+            '<td class="num">'+((r.status==='Vendido'&&dav!=null)?dav:'—')+'</td>'+
+            '<td>'+(r._encalhado?'<span class="flag90">+90 dias</span>':'')+'</td>'+
+        '</tr>';}).join('');
+    document.getElementById('tbody').innerHTML=linhas||'<tr><td colspan="10" class="vazio">Nenhum imóvel para os filtros.</td></tr>';
+}
+
+document.addEventListener('DOMContentLoaded', carregar);
+</script>
+</body>
+</html>

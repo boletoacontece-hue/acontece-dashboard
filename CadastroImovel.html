@@ -184,7 +184,22 @@
                         <option value="Disponível">Disponível</option>
                         <option value="Vendido">Vendido</option>
                         <option value="Suspenso">Suspenso</option>
+                        <option value="Retirado">Retirado</option>
                     </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Exclusividade</label>
+                    <select id="exclusividade" class="form-input">
+                        <option value="nao">Sem exclusividade</option>
+                        <option value="sim">Com exclusividade</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Comissão (%)</label>
+                    <input type="number" id="comissaoPercentual" class="form-input" step="0.1" min="0" max="100" placeholder="Ex: 5">
+                    <span class="hint">Percentual combinado na captação.</span>
                 </div>
             </div>
             <div class="form-group">
@@ -228,6 +243,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="db-supabase.js"></script>
+<script src="controle-acesso.js"></script>
 <script>
 function formatBRL(v){ return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
 function moedaInput(el){
@@ -288,6 +304,8 @@ async function salvar(e){
     const dateIso=document.getElementById('date').value;
     const captador=document.getElementById('captador').value;
     const status=document.getElementById('status').value;
+    const exclusividade=document.getElementById('exclusividade').value==='sim';
+    const comissaoPercentual=document.getElementById('comissaoPercentual').value;
     if(!code||!address||!dateIso||!captador||!(price>0)){
         alerta('Preencha todos os campos obrigatórios (valor maior que zero).','err'); return;
     }
@@ -297,7 +315,7 @@ async function salvar(e){
             alerta(`O código ${code} já está cadastrado. Use um código diferente.`,'err');
             btn.disabled=false; return;
         }
-        await DB.addImovel({code,address,captador,dateIso,price,status});
+        await DB.addImovel({code,address,captador,dateIso,price,status,exclusividade,comissaoPercentual});
         alerta(`Imóvel ${code} cadastrado com sucesso!`,'ok');
         limpar();
         await renderRecentes();
