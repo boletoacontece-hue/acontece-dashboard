@@ -574,7 +574,7 @@ const DB = {
         const numero = await this.getConfig('whatsapp_gerente_numero');
         const nome = await this.getConfig('whatsapp_gerente_nome');
         return {
-            numero: numero || '5561999999999',
+            numero: numero || '5561992956728',
             nome: nome || 'Gerente'
         };
     }

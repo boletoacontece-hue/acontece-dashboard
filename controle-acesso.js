@@ -5,7 +5,7 @@
    CORRETOR  → SÓ-LEITURA do sistema + solicitar visitas
        • PODE ver:  Dashboard, Relatórios, Análise de Vendas, imóveis captados
        • PODE usar: Visitas e Registrar Visita
-       • NÃO acessa: Cadastrar Imóvel, Registrar Venda, Configurações, Propostas
+       • NÃO acessa: Cadastrar Imóvel, Registrar Venda, Configurações
        • NÃO edita:  botões de edição/cadastro ficam ocultos (e o banco recusa)
 
    Pode ser incluído em TODAS as páginas (login/index são ignorados com segurança),
