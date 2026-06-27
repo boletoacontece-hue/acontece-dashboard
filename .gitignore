@@ -1,8 +1,8 @@
 # ===== NÃO publicar dados sensíveis no repositório público =====
 # backups e exports de dados
 seed/
-*.json
 acontece_backup_*.json
+*.backup.json
 
 # planilhas (dados reais de imóveis/clientes)
 *.xlsx
@@ -16,3 +16,6 @@ acontece_backup_*.json
 # lixo de sistema
 .DS_Store
 Thumbs.db
+
+# manifest do PWA precisa ir pro site (exceção explícita, por garantia)
+!manifest.json
