@@ -721,7 +721,7 @@
                     currentUser = user;
                     // Buscar dados completos do corretor
                     currentCorretor = await DB.getCorretorByEmail(user.email);
-                    console.log('✅ Usuário autenticado:', currentCorretor?.name || user.email);
+                    console.log('✅ Usuário autenticado:', currentCorretor?.nome || user.email);
                 }
             } catch (error) {
                 console.warn('⚠️ Erro na autenticação:', error);
@@ -976,7 +976,7 @@
                 return;
             }
 
-            if (!currentCorretor || !currentCorretor.name) {
+            if (!currentCorretor || !currentCorretor.nome) {
                 showToast('Erro: Corretor não identificado. Faça login novamente.', 'error');
                 return;
             }
@@ -985,7 +985,7 @@
                 showLoading(true);
 
                 const payload = {
-                    corretor_nome: currentCorretor.name,
+                    corretor_nome: currentCorretor.nome,
                     corretor_id: currentCorretor.id || null,
                     cliente_nome: clienteNome,
                     cliente_telefone: null,
