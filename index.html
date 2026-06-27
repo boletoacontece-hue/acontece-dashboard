@@ -2,11 +2,52 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=login.html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acontece Imobiliária — Dashboard</title>
+
+    <!-- PWA (precisa estar aqui para o navegador oferecer "Instalar") -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2B5C2B">
     <link rel="icon" href="Logo01.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Acontece">
+
+    <style>
+        html,body{height:100%;margin:0}
+        body{display:flex;align-items:center;justify-content:center;
+            background:linear-gradient(135deg,#1a4d1b 0%,#2B5C2B 100%);
+            font-family:-apple-system,'Segoe UI',Arial,sans-serif;color:#fff;text-align:center}
+        .splash img{width:110px;height:110px;border-radius:22px;margin-bottom:16px;
+            box-shadow:0 8px 24px rgba(0,0,0,.3)}
+        .splash .nome{font-size:19px;font-weight:bold;letter-spacing:.4px}
+        .splash .sub{font-size:13px;opacity:.85;margin-top:6px}
+        .splash a{color:#fff}
+        .spin{width:32px;height:32px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;
+            border-radius:50%;animation:s 1s linear infinite;margin:18px auto 0}
+        @keyframes s{to{transform:rotate(360deg)}}
+    </style>
 </head>
-<body style="font-family:-apple-system,Segoe UI,Arial,sans-serif;background:#1a4d1b;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
-    <p>Redirecionando… <a href="login.html" style="color:#fff;">clique aqui se não for automático</a>.</p>
+<body>
+    <div class="splash">
+        <img src="Logo01.png" alt="Acontece" onerror="this.style.display='none'">
+        <div class="nome">Acontece Imobiliária</div>
+        <div class="sub">Redirecionando… <a href="login.html">clique aqui</a> se não for automático.</div>
+        <div class="spin"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="db-supabase.js"></script>
+    <script src="pwa-register.js" defer></script>
+    <script>
+        // Espera ~1,5s para o service worker registrar (necessário p/ o "Instalar" aparecer),
+        // depois manda para o destino certo conforme a sessão.
+        (async function () {
+            let destino = 'login.html';
+            try { if (await DB.getSession()) destino = 'Dash5.html'; } catch (e) {}
+            setTimeout(function () { window.location.replace(destino); }, 1500);
+        })();
+    </script>
 </body>
 </html>
