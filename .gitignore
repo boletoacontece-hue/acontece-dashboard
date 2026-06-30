@@ -1,5 +1,5 @@
 # ===== NÃO publicar dados sensíveis no repositório público =====
-# backups e exports de dados
+# backups e exports de dados (mantém o intuito original, sem bloquear o manifest)
 seed/
 acontece_backup_*.json
 *.backup.json
@@ -17,5 +17,5 @@ acontece_backup_*.json
 .DS_Store
 Thumbs.db
 
-# manifest do PWA precisa ir pro site (exceção explícita, por garantia)
+# Garantir que o manifest do PWA SEMPRE seja publicado
 !manifest.json

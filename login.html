@@ -62,13 +62,13 @@
             .btn-login{padding:14px;font-size:15px;}
         }
     </style>
-    <link rel="manifest" href="manifest.json">
+    <!-- PWA (restaurado) -->
     <meta name="theme-color" content="#2B5C2B">
+    <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Acontece">
-    <script src="pwa-register.js" defer></script>
 </head>
 <body>
     <div class="login-container">
@@ -139,5 +139,6 @@
 
         document.getElementById('loginForm').addEventListener('submit', handleLogin);
     </script>
+    <script src="pwa-register.js" defer></script>
 </body>
 </html>

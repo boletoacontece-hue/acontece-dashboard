@@ -1,8 +1,9 @@
 {
-  "name": "Acontece Imobiliária",
+  "name": "Acontece Imobiliária — Dashboard de Vendas",
   "short_name": "Acontece",
-  "description": "Sistema de vendas e visitas — Acontece Imobiliária",
+  "description": "Sistema de vendas, visitas e gestão da carteira — Acontece Imobiliária",
   "lang": "pt-BR",
+  "dir": "ltr",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -24,6 +25,6 @@
     { "name": "Registrar Visita", "short_name": "Visita", "url": "./RegistrarVisita.html",
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
     { "name": "Dashboard", "short_name": "Dashboard", "url": "./Dash5.html",
-      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] } 
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
   ]
 }

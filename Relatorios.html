@@ -946,13 +946,13 @@
             }
         }
     </style>
-    <link rel="manifest" href="manifest.json">
+    <!-- PWA (restaurado) -->
     <meta name="theme-color" content="#2B5C2B">
+    <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Acontece">
-    <script src="pwa-register.js" defer></script>
 </head>
 <body>
     <!-- HEADER COM NAVEGAÇÃO -->
@@ -963,7 +963,7 @@
                 <a href="Dash5.html">Dashboard</a>
                 <a href="Relatorios.html" class="active">Relatórios</a>
                 <a href="AnaliseVendas.html">Análise</a>
-                <a href="Propostas.html">Propostas</a>
+                <a href="Visitas.html">Visitas</a>
                 <a href="Configuracoes.html">Configurações</a>
             </div>
             <div class="user-dropdown" id="userDropdown">
@@ -1172,8 +1172,8 @@
         <a href="Relatorios.html" class="nav-item active">
             <span class="label">Relatórios</span>
         </a>
-        <a href="Propostas.html" class="nav-item">
-            <span class="label">Propostas</span>
+        <a href="Visitas.html" class="nav-item">
+            <span class="label">Visitas</span>
         </a>
         <a href="Configuracoes.html" class="nav-item">
             <span class="label">Config</span>
@@ -2266,5 +2266,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="db-supabase.js"></script>
     <script src="controle-acesso.js"></script>
+    <script src="pwa-register.js" defer></script>
 </body>
 </html>

@@ -898,13 +898,13 @@
             }
         }
     </style>
-    <link rel="manifest" href="manifest.json">
+    <!-- PWA (restaurado) -->
     <meta name="theme-color" content="#2B5C2B">
+    <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Acontece">
-    <script src="pwa-register.js" defer></script>
 </head>
 <body>
     <!-- HEADER COM NAVEGAÇÃO -->
@@ -915,7 +915,7 @@
                 <a href="Dash5.html" class="active">Dashboard</a>
                 <a href="Relatorios.html">Relatórios</a>
                 <a href="AnaliseVendas.html">Análise</a>
-                <a href="Propostas.html">Propostas</a>
+                <a href="Visitas.html">Visitas</a>
                 <a href="Configuracoes.html">Configurações</a>
             </div>
             <div class="user-dropdown" id="userDropdown">
@@ -983,11 +983,6 @@
                 <div class="kpi-label">Comissão Total</div>
                 <div class="kpi-value money" id="kpi-commission">R$ 0</div>
                 <div class="kpi-subtitle">acumulada</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Comissão Média</div>
-                <div class="kpi-value money" id="kpi-commission-avg">R$ 0</div>
-                <div class="kpi-subtitle">por venda</div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-label">Imóveis Captados</div>
@@ -1523,9 +1518,6 @@
             document.getElementById('kpi-count').textContent = salesData.length;
             document.getElementById('kpi-volume').textContent = formatCurrency(totalValue);
             document.getElementById('kpi-commission').textContent = formatCurrency(totalCommission);
-            const avgCommission = salesData.length ? totalCommission / salesData.length : 0;
-            const elAvg = document.getElementById('kpi-commission-avg');
-            if (elAvg) elAvg.textContent = formatCurrency(avgCommission);
             document.getElementById('kpi-captados').textContent = captedData.length;
             
             const percentVolume = (totalValue / currentGoals.volume) * 100;
@@ -2116,8 +2108,8 @@
         <a href="Relatorios.html" class="nav-item">
             <span class="label">Relatórios</span>
         </a>
-        <a href="Propostas.html" class="nav-item">
-            <span class="label">Propostas</span>
+        <a href="Visitas.html" class="nav-item">
+            <span class="label">Visitas</span>
         </a>
         <a href="Configuracoes.html" class="nav-item">
             <span class="label">Config</span>
@@ -2127,5 +2119,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="db-supabase.js"></script>
     <script src="controle-acesso.js"></script>
+    <script src="pwa-register.js" defer></script>
 </body>
 </html>
