@@ -118,6 +118,69 @@
             box-shadow: 0 4px 10px rgba(44, 110, 46, 0.3);
         }
 
+        /* ===== BARRA DE NAVEGAÇÃO ===== */
+        .header-nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--borda);
+        }
+        .header-nav-bar .nav-links {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .header-nav-bar .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .header-nav-bar .nav-links a:hover {
+            background: var(--light);
+            color: var(--primary);
+        }
+        .header-nav-bar .nav-links a.active {
+            background: var(--primary);
+            color: #fff;
+        }
+        .header-nav-bar .nav-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .nav-btn {
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            padding: 8px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .nav-btn.voltar { background: var(--light); color: var(--dark); }
+        .nav-btn.voltar:hover { background: #e6e8e6; }
+        .nav-btn.sair { background: var(--danger); color: #fff; }
+        .nav-btn.sair:hover { background: #a31f1f; }
+        @media (max-width: 768px) {
+            .header-nav-bar { flex-direction: column; align-items: stretch; }
+            .header-nav-bar .nav-links { justify-content: center; }
+            .header-nav-bar .nav-buttons { justify-content: center; }
+        }
+
         /* ===== FILTROS ===== */
         .filtros {
             background: var(--white);
@@ -738,6 +801,24 @@
                     </a>
                 </div>
             </div>
+
+            <!-- MENU DE NAVEGAÇÃO (links de admin são ocultados p/ corretor via controle-acesso.js) -->
+            <nav class="header-nav-bar">
+                <div class="nav-links">
+                    <a href="Dash5.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                    <a href="Relatorios.html"><i class="fas fa-file-lines"></i> Relatórios</a>
+                    <a href="AnaliseVendas.html"><i class="fas fa-chart-pie"></i> Análise</a>
+                    <a href="Visitas.html" class="active"><i class="fas fa-calendar-check"></i> Visitas</a>
+                    <a href="Propostas.html"><i class="fas fa-handshake"></i> Propostas</a>
+                    <a href="CadastroImovel.html"><i class="fas fa-house"></i> Cadastrar Imóvel</a>
+                    <a href="RegistrarVenda.html"><i class="fas fa-sack-dollar"></i> Registrar Venda</a>
+                    <a href="Configuracoes.html"><i class="fas fa-gear"></i> Configurações</a>
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-btn voltar" onclick="voltarPagina()"><i class="fas fa-arrow-left"></i> Voltar</button>
+                    <button class="nav-btn sair" onclick="DB.signOut()"><i class="fas fa-right-from-bracket"></i> Sair</button>
+                </div>
+            </nav>
         </div>
     </div>
 
@@ -815,6 +896,13 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="db-supabase.js"></script>
     <script src="controle-acesso.js"></script>
+    <script>
+        // Botão "Voltar": volta no histórico; se não houver, vai pro Dashboard.
+        function voltarPagina() {
+            if (window.history.length > 1 && document.referrer) window.history.back();
+            else window.location.href = 'Dash5.html';
+        }
+    </script>
     <script>
         // ===== VARIÁVEIS GLOBAIS =====
         let visitasCache = [];
